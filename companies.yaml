@@ -1,0 +1,185 @@
+# RoleFeed employer list — the core asset of this project.
+#
+# Each entry is an organisation Mark would plausibly take an operations leadership role
+# at. The `slug` is a CANDIDATE board token, guessed from the organisation's name.
+# It has NOT been verified. Run `python discover.py` to probe each slug against the
+# four public ATS endpoints and write the verified results to companies.resolved.yaml.
+#
+# Most guesses will be wrong. That is expected and fine — discovery is cheap, and the
+# ones that miss get corrected by hand from the organisation's careers page URL.
+#
+# To correct one by hand: open the careers page, look at the URL. If it contains
+# boards.greenhouse.io/acme then the token is `acme` and the ats is `greenhouse`.
+# Same pattern for jobs.lever.co/acme, jobs.ashbyhq.com/acme, and
+# jobs.smartrecruiters.com/Acme.
+#
+# Add `ats:` and a corrected `slug:` to pin an entry and skip probing for it.
+
+companies:
+
+  # ---------------------------------------------------------------------------
+  # Govtech, public-sector digital and delivery consultancies
+  # Closest adjacency to Apolitical. Ops roles here value public-sector fluency.
+  # ---------------------------------------------------------------------------
+  - { name: Public Digital, slug: publicdigital, sector: govtech }
+  - { name: TPXimpact, slug: tpximpact, sector: govtech }
+  - { name: Made Tech, slug: madetech, sector: govtech }
+  - { name: dxw, slug: dxw, sector: govtech }
+  - { name: Softwire, slug: softwire, sector: govtech }
+  - { name: Kainos, slug: kainos, sector: govtech }
+  - { name: Civica, slug: civica, sector: govtech }
+  - { name: Netcompany, slug: netcompany, sector: govtech }
+  - { name: Faculty, slug: faculty, sector: govtech }
+  - { name: Behavioural Insights Team, slug: behaviouralinsightsteam, sector: govtech }
+  - { name: Nesta, slug: nesta, sector: govtech }
+  - { name: Centre for Public Impact, slug: centreforpublicimpact, sector: govtech }
+  - { name: Polimapper, slug: polimapper, sector: govtech }
+  - { name: Unboxed, slug: unboxed, sector: govtech }
+  - { name: Notbinary, slug: notbinary, sector: govtech }
+
+  # ---------------------------------------------------------------------------
+  # Think tanks and policy institutes
+  # Westminster-based, and Mark works in Westminster. Ops director roles here are
+  # often titled Director of Operations or Chief Operating Officer at small headcount.
+  # ---------------------------------------------------------------------------
+  - { name: Institute for Government, slug: instituteforgovernment, sector: policy }
+  - { name: Tony Blair Institute, slug: tonyblairinstitute, sector: policy }
+  - { name: Onward, slug: ukonward, sector: policy }
+  - { name: Policy Exchange, slug: policyexchange, sector: policy }
+  - { name: Centre for Policy Studies, slug: centreforpolicystudies, sector: policy }
+  - { name: Demos, slug: demos, sector: policy }
+  - { name: IPPR, slug: ippr, sector: policy }
+  - { name: Resolution Foundation, slug: resolutionfoundation, sector: policy }
+  - { name: Social Market Foundation, slug: socialmarketfoundation, sector: policy }
+  - { name: Centre for Cities, slug: centreforcities, sector: policy }
+  - { name: Britain Remade, slug: britainremade, sector: policy }
+  - { name: UK Day One, slug: ukdayone, sector: policy }
+  - { name: Reform, slug: reformthinktank, sector: policy }
+  - { name: New Local, slug: newlocal, sector: policy }
+  - { name: Chatham House, slug: chathamhouse, sector: policy }
+  - { name: RUSI, slug: rusi, sector: policy }
+  - { name: IISS, slug: iiss, sector: policy }
+  - { name: Ada Lovelace Institute, slug: adalovelaceinstitute, sector: policy }
+
+  # ---------------------------------------------------------------------------
+  # Mission-driven scale-ups: education, health, social impact
+  # ---------------------------------------------------------------------------
+  - { name: Multiverse, slug: multiverse, sector: mission }
+  - { name: Beam, slug: beam, sector: mission }
+  - { name: Cera, slug: cera, sector: mission }
+  - { name: Elder, slug: elder, sector: mission }
+  - { name: Peppy, slug: peppyhealth, sector: mission }
+  - { name: Thriva, slug: thriva, sector: mission }
+  - { name: Lindus Health, slug: lindushealth, sector: mission }
+  - { name: Huma, slug: huma, sector: mission }
+  - { name: Ufonia, slug: ufonia, sector: mission }
+  - { name: Zinc, slug: zinc, sector: mission }
+  - { name: Founders Pledge, slug: founderspledge, sector: mission }
+  - { name: Impetus, slug: impetus, sector: mission }
+  - { name: Big Society Capital, slug: bigsocietycapital, sector: mission }
+
+  # ---------------------------------------------------------------------------
+  # Fintech and UK tech with substantial operations functions
+  # These have the largest ops orgs and the most director-level ops headcount.
+  # ---------------------------------------------------------------------------
+  - { name: Monzo, slug: monzo, sector: fintech }
+  - { name: Starling Bank, slug: starlingbank, sector: fintech }
+  - { name: Wise, slug: wise, sector: fintech }
+  - { name: Revolut, slug: revolut, sector: fintech }
+  - { name: Zopa, slug: zopa, sector: fintech }
+  - { name: Marshmallow, slug: marshmallow, sector: fintech }
+  - { name: Tide, slug: tide, sector: fintech }
+  - { name: ClearScore, slug: clearscore, sector: fintech }
+  - { name: Cleo, slug: cleo, sector: fintech }
+  - { name: Plum, slug: plum, sector: fintech }
+  - { name: Freetrade, slug: freetrade, sector: fintech }
+  - { name: Curve, slug: curve, sector: fintech }
+  - { name: Griffin, slug: griffin, sector: fintech }
+  - { name: Allica Bank, slug: allicabank, sector: fintech }
+  - { name: Yonder, slug: yonder, sector: fintech }
+  - { name: 11FS, slug: 11fs, sector: fintech }
+
+  # ---------------------------------------------------------------------------
+  # Climate, energy and mobility
+  # Mark ran electrification work at Uber and integrated bp pulse. Direct relevance.
+  # ---------------------------------------------------------------------------
+  - { name: Octopus Energy, slug: octopusenergy, sector: climate }
+  - { name: Kraken Technologies, slug: krakentechnologies, sector: climate }
+  - { name: OVO Energy, slug: ovoenergy, sector: climate }
+  - { name: Field, slug: fieldenergy, sector: climate }
+  - { name: Modo Energy, slug: modoenergy, sector: climate }
+  - { name: Ripple Energy, slug: rippleenergy, sector: climate }
+  - { name: Sylvera, slug: sylvera, sector: climate }
+  - { name: Isometric, slug: isometric, sector: climate }
+  - { name: CUR8, slug: cur8, sector: climate }
+  - { name: Supercritical, slug: supercritical, sector: climate }
+  - { name: Carbon Re, slug: carbonre, sector: climate }
+  - { name: Zeigo, slug: zeigo, sector: climate }
+  - { name: Rio, slug: rio, sector: climate }
+
+  # ---------------------------------------------------------------------------
+  # Defence, aerospace and space
+  # Aligned to stated interests. Ops roles here are programme-heavy.
+  # ---------------------------------------------------------------------------
+  - { name: Helsing, slug: helsing, sector: defence }
+  - { name: Anduril, slug: anduril, sector: defence }
+  - { name: Tekever, slug: tekever, sector: defence }
+  - { name: QinetiQ, slug: qinetiq, sector: defence }
+  - { name: Space Forge, slug: spaceforge, sector: defence }
+  - { name: Orbex, slug: orbex, sector: defence }
+  - { name: Skyrora, slug: skyrora, sector: defence }
+  - { name: Oxford Space Systems, slug: oxfordspacesystems, sector: defence }
+  - { name: Advai, slug: advai, sector: defence }
+  - { name: Improbable, slug: improbable, sector: defence }
+
+  # ---------------------------------------------------------------------------
+  # AI, robotics and physical AI
+  # Aligned to stated interests. Fast-scaling, ops-hungry.
+  # ---------------------------------------------------------------------------
+  - { name: Wayve, slug: wayve, sector: ai }
+  - { name: Synthesia, slug: synthesia, sector: ai }
+  - { name: ElevenLabs, slug: elevenlabs, sector: ai }
+  - { name: PolyAI, slug: polyai, sector: ai }
+  - { name: Quantexa, slug: quantexa, sector: ai }
+  - { name: Tractable, slug: tractable, sector: ai }
+  - { name: Isomorphic Labs, slug: isomorphiclabs, sector: ai }
+  - { name: Basecamp Research, slug: basecampresearch, sector: ai }
+  - { name: Cusp AI, slug: cuspai, sector: ai }
+  - { name: Nscale, slug: nscale, sector: ai }
+  - { name: Dexory, slug: dexory, sector: ai }
+  - { name: Automata, slug: automata, sector: ai }
+  - { name: Oxa, slug: oxa, sector: ai }
+  - { name: Humanoid, slug: humanoid, sector: ai }
+  - { name: Signal AI, slug: signalai, sector: ai }
+
+  # ---------------------------------------------------------------------------
+  # Charities, foundations and funders
+  # Director of Operations and COO roles are common and often well-paid at the larger end.
+  # ---------------------------------------------------------------------------
+  - { name: Wellcome Trust, slug: wellcome, sector: charity }
+  - { name: Nuffield Foundation, slug: nuffieldfoundation, sector: charity }
+  - { name: Esmee Fairbairn Foundation, slug: esmeefairbairn, sector: charity }
+  - { name: Comic Relief, slug: comicrelief, sector: charity }
+  - { name: Shelter, slug: shelter, sector: charity }
+  - { name: Crisis, slug: crisis, sector: charity }
+  - { name: Centrepoint, slug: centrepoint, sector: charity }
+  - { name: Citizens Advice, slug: citizensadvice, sector: charity }
+  - { name: Trussell, slug: trussell, sector: charity }
+  - { name: Impact on Urban Health, slug: impactonurbanhealth, sector: charity }
+  - { name: Access Foundation, slug: accessfoundation, sector: charity }
+  - { name: Joseph Rowntree Foundation, slug: jrf, sector: charity }
+
+  # ---------------------------------------------------------------------------
+  # Marketplaces, logistics and mobility
+  # Mark's background: Gett business travel, Glue Home partnerships, Uber.
+  # ---------------------------------------------------------------------------
+  - { name: Bolt, slug: bolt, sector: mobility }
+  - { name: Zeelo, slug: zeelo, sector: mobility }
+  - { name: Zipcar, slug: zipcar, sector: mobility }
+  - { name: Motorway, slug: motorway, sector: mobility }
+  - { name: Cazoo, slug: cazoo, sector: mobility }
+  - { name: Flexport, slug: flexport, sector: mobility }
+  - { name: Zencargo, slug: zencargo, sector: mobility }
+  - { name: Beacon, slug: beacon, sector: mobility }
+  - { name: Packfleet, slug: packfleet, sector: mobility }
+  - { name: Gophr, slug: gophr, sector: mobility }
