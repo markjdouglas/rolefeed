@@ -1,0 +1,93 @@
+# Collects open roles every two hours and commits the result.
+#
+# The commit is the deployment trigger: Cloudflare Pages watches this repository and
+# rebuilds the site whenever main changes. One push-driven mechanism carries data from
+# the ATS endpoints all the way to the live page, with no webhooks to wire up.
+#
+# Three things here are easy to get wrong the first time:
+#   1. `permissions: contents: write` — without it the commit step fails with a 403,
+#      because the default token is read-only.
+#   2. `concurrency` — a slow run must not overlap the next scheduled one, or two jobs
+#      race to commit the same file and one loses.
+#   3. The commit is conditional. Committing "no changes" every run would produce twelve
+#      empty commits a day and a pointless Pages rebuild each time.
+
+name: Collect roles
+
+on:
+  schedule:
+    # Every two hours, on the hour, UTC. GitHub queues scheduled workflows and runs them
+    # late under load — often 5 to 15 minutes, occasionally more. The page treats the
+    # next run as "due at", never as a promise.
+    - cron: "0 */2 * * *"
+  # Run on demand from the Actions tab. Free, and it means no refresh button and no
+  # token-holding proxy.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -q -r requirements.txt
+
+      - name: Collect roles
+        run: python fetch.py --json
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Commit the feed if it changed
+        run: |
+          git config user.name "rolefeed-bot"
+          git config user.email "markjdouglas@users.noreply.github.com"
+          if git diff --quiet --exit-code site/data/jobs.json; then
+            echo "No change in the feed. Nothing to commit."
+          else
+            NEW=$(python -c "import json;print(json.load(open('site/data/jobs.json'))['new_this_run'])")
+            TOTAL=$(python -c "import json;print(json.load(open('site/data/jobs.json'))['matching_roles'])")
+            git add site/data/jobs.json
+            git commit -m "Feed update: ${TOTAL} roles, ${NEW} new"
+            git push
+          fi
+
+      - name: Summarise the run
+        if: always()
+        run: |
+          if [ -f site/data/jobs.json ]; then
+            python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          feed = json.load(open("site/data/jobs.json"))
+          print("## Collection summary\n")
+          print(f"- Matching roles: **{feed['matching_roles']}**")
+          print(f"- New this run: **{feed['new_this_run']}**")
+          print(f"- New in last 48h: **{feed['new_last_48h']}**")
+          print(f"- Closed this run: {feed['closed_this_run']}")
+          print(f"- Employers queried: {feed['employers_queried']}")
+          print(f"- Employers failed: {feed['employers_failed']}")
+          if feed.get("failures"):
+              print("\n<details><summary>Failures</summary>\n")
+              for failure in feed["failures"]:
+                  print(f"- {failure}")
+              print("\n</details>")
+          PY
+          else
+            echo "No feed produced — the collector failed." >> "$GITHUB_STEP_SUMMARY"
+          fi

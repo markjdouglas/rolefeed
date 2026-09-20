@@ -24,6 +24,7 @@ from datetime import datetime, timezone
 import yaml
 
 from ats import ADAPTERS, fetch_workday
+from state import FEED, load_previous, merge, write_feed
 
 RESOLVED = "companies.resolved.yaml"
 
@@ -35,7 +36,7 @@ SIZE_LABELS = {
     "mid": "MID  (250-1,000)",
     "scaleup": "SCALEUP  (50-250)",
 }
-SNAPSHOT = pathlib.Path("data/jobs.json")
+
 
 # ---------------------------------------------------------------------------
 # Matching rules. These are the product. Everything else is plumbing.
@@ -102,10 +103,18 @@ LOCATION_INCLUDE = re.compile(
 # Locations that look UK-ish but are not. Guards against "New London", "UKraine" and
 # remote roles pinned to another continent.
 LOCATION_EXCLUDE = re.compile(
-    r"\b(new\s+london|london,\s*(on|ontario|ky|kentucky)|ukraine"
-    r"|united\s+states|usa|u\.s\.|canada|india|singapore|australia"
-    r"|germany|france|spain|netherlands|poland|brazil|japan|remote\s*-\s*us)\b",
-    re.IGNORECASE,
+    r"""
+    \b(
+        new\s+london | london,\s*(on|ontario|ky|kentucky) | ukraine
+      | united\s+states | usa | u\.s\.a? | us          # bare "US" catches
+      | north\s+america | latam | apac                   # "Remote - Central US"
+      | canada | india | singapore | australia | new\s+zealand
+      | germany | france | spain | netherlands | poland | portugal
+      | brazil | mexico | japan | china | israel | uae | dubai
+      | sweden | denmark | norway | finland | ireland | switzerland
+    )\b
+    """,
+    re.IGNORECASE | re.VERBOSE,
 )
 
 
@@ -180,7 +189,8 @@ def collect(companies: list[dict]) -> tuple[list[dict], list[str]]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Collect and filter job postings.")
     parser.add_argument("--all", action="store_true", help="show every role, unfiltered")
-    parser.add_argument("--json", action="store_true", help="also write data/jobs.json")
+    parser.add_argument("--json", action="store_true",
+                        help="merge into site/data/jobs.json, preserving first_seen")
     parser.add_argument("--size", help="one bucket only: enterprise, large, mid, scaleup")
     parser.add_argument("--sector", help="one sector only")
     args = parser.parse_args()
@@ -210,13 +220,19 @@ def main() -> int:
         seen.setdefault(dedupe_key(posting), posting)
     unique = list(seen.values())
 
-    if args.all:
-        results = unique
-    else:
-        results = [
-            p for p in unique
-            if matches_title(p["title"]) and matches_location(p["location"])
-        ]
+    # Everything in the right geography goes into the feed. `priority` records whether
+    # it also passes the title filter.
+    #
+    # Publishing the wider set deliberately: it makes the title filter tunable in the
+    # browser instead of in Python, so refining it costs a click rather than a code
+    # change and a twenty-minute re-run. It also makes the rejected pile visible, which
+    # is the only way to tell an over-tight filter from a genuinely empty market.
+    in_scope = [p for p in unique if matches_location(p["location"])]
+    for posting in in_scope:
+        posting["priority"] = matches_title(posting["title"])
+
+    published = in_scope
+    results = in_scope if args.all else [p for p in in_scope if p["priority"]]
 
     # Group by company size, largest employers first. Mark is less interested in small
     # companies, so the ordering puts the relevant buckets at the top of the output.
@@ -246,8 +262,8 @@ def main() -> int:
 
     print()
     print(
-        f"{len(results)} matching roles from {len(unique)} total "
-        f"across {len(companies) - len(failures)} employers."
+        f"{len(results)} shown / {len(in_scope)} in scope (UK or remote) "
+        f"from {len(unique)} total across {len(companies) - len(failures)} employers."
     )
     counts = {b: sum(1 for p in results if p.get("size") == b) for b in SIZE_ORDER}
     print("By size: " + ", ".join(f"{b} {n}" for b, n in counts.items() if n))
@@ -257,17 +273,23 @@ def main() -> int:
             print(f"  ...and {len(failures) - 10} more")
 
     if args.json:
-        SNAPSHOT.parent.mkdir(exist_ok=True)
-        snapshot = {
-            "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            "employers_queried": len(companies),
-            "total_roles": len(unique),
-            "matching_roles": len(results),
-            "failures": failures,
-            "jobs": results,
-        }
-        SNAPSHOT.write_text(json.dumps(snapshot, indent=2) + "\n")
-        print(f"Snapshot written to {SNAPSHOT}.")
+        # Merge into the previous feed so first_seen survives, then publish.
+        previous = load_previous()
+        jobs, counts = merge(published, previous)
+        write_feed(
+            jobs,
+            counts,
+            employers_queried=len(companies),
+            failures=failures,
+            total_roles_seen=len(unique),
+        )
+        priority_total = sum(1 for j in jobs if j.get("priority"))
+        print(
+            f"\nFeed written to {FEED}: {counts['total']} UK/remote roles "
+            f"({priority_total} title-matched), "
+            f"{counts['new_this_run']} new this run, "
+            f"{counts['closed_this_run']} closed."
+        )
 
     return 0
 
