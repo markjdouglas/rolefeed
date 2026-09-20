@@ -165,7 +165,8 @@ venv.bak/
 .ropeproject
 
 # mkdocs documentation
-/site
+# /site   <- disabled: this is mkdocs' output dir in the stock
+#              Python .gitignore, but OUR site/ is the deployed app.
 
 # mypy
 .mypy_cache/

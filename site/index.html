@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RoleFeed</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg style='background:%2314102b' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 27' shape-rendering='crispEdges' role='img' aria-label='RoleFeed goose'%3E%3Crect x='15' y='0' width='6' height='1' fill='%232a2250'/%3E%3Crect x='14' y='1' width='1' height='1' fill='%232a2250'/%3E%3Crect x='15' y='1' width='3' height='1' fill='%23fffdf7'/%3E%3Crect x='18' y='1' width='3' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='1' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='2' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='2' width='1' height='1' fill='%23fffdf7'/%3E%3Crect x='15' y='2' width='6' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='2' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='3' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='3' width='7' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='3' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='4' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='4' width='2' height='1' fill='%23f4eddf'/%3E%3Crect x='16' y='4' width='2' height='1' fill='%23241d47'/%3E%3Crect x='18' y='4' width='3' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='4' width='1' height='1' fill='%232a2250'/%3E%3Crect x='22' y='4' width='3' height='1' fill='%23f2a63a'/%3E%3Crect x='13' y='5' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='5' width='2' height='1' fill='%23f4eddf'/%3E%3Crect x='16' y='5' width='2' height='1' fill='%23241d47'/%3E%3Crect x='18' y='5' width='3' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='5' width='5' height='1' fill='%23f2a63a'/%3E%3Crect x='13' y='6' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='6' width='7' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='6' width='1' height='1' fill='%232a2250'/%3E%3Crect x='22' y='6' width='3' height='1' fill='%23f2a63a'/%3E%3Crect x='14' y='7' width='1' height='1' fill='%232a2250'/%3E%3Crect x='15' y='7' width='6' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='7' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='8' width='1' height='1' fill='%232a2250'/%3E%3Crect x='15' y='8' width='4' height='1' fill='%23f4eddf'/%3E%3Crect x='19' y='8' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='9' width='1' height='1' fill='%232a2250'/%3E%3Crect x='15' y='9' width='4' height='1' fill='%23f4eddf'/%3E%3Crect x='19' y='9' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='10' width='1' height='1' fill='%232a2250'/%3E%3Crect x='15' y='10' width='4' height='1' fill='%23f4eddf'/%3E%3Crect x='19' y='10' width='1' height='1' fill='%232a2250'/%3E%3Crect x='7' y='11' width='7' height='1' fill='%232a2250'/%3E%3Crect x='14' y='11' width='4' height='1' fill='%23f4eddf'/%3E%3Crect x='18' y='11' width='2' height='1' fill='%232a2250'/%3E%3Crect x='5' y='12' width='2' height='1' fill='%232a2250'/%3E%3Crect x='7' y='12' width='2' height='1' fill='%23d9d0bb'/%3E%3Crect x='9' y='12' width='10' height='1' fill='%23f4eddf'/%3E%3Crect x='19' y='12' width='1' height='1' fill='%232a2250'/%3E%3Crect x='4' y='13' width='1' height='1' fill='%232a2250'/%3E%3Crect x='5' y='13' width='3' height='1' fill='%23d9d0bb'/%3E%3Crect x='8' y='13' width='12' height='1' fill='%23f4eddf'/%3E%3Crect x='20' y='13' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='14' width='1' height='1' fill='%232a2250'/%3E%3Crect x='4' y='14' width='2' height='1' fill='%23d9d0bb'/%3E%3Crect x='6' y='14' width='14' height='1' fill='%23f4eddf'/%3E%3Crect x='20' y='14' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='15' width='1' height='1' fill='%232a2250'/%3E%3Crect x='4' y='15' width='1' height='1' fill='%23d9d0bb'/%3E%3Crect x='5' y='15' width='15' height='1' fill='%23f4eddf'/%3E%3Crect x='20' y='15' width='1' height='1' fill='%232a2250'/%3E%3Crect x='2' y='16' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='16' width='1' height='1' fill='%23d9d0bb'/%3E%3Crect x='4' y='16' width='5' height='1' fill='%23f4eddf'/%3E%3Crect x='9' y='16' width='4' height='1' fill='%23d9d0bb'/%3E%3Crect x='13' y='16' width='7' height='1' fill='%23f4eddf'/%3E%3Crect x='20' y='16' width='1' height='1' fill='%232a2250'/%3E%3Crect x='2' y='17' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='17' width='1' height='1' fill='%23d9d0bb'/%3E%3Crect x='4' y='17' width='4' height='1' fill='%23f4eddf'/%3E%3Crect x='8' y='17' width='6' height='1' fill='%23d9d0bb'/%3E%3Crect x='14' y='17' width='6' height='1' fill='%23f4eddf'/%3E%3Crect x='20' y='17' width='1' height='1' fill='%232a2250'/%3E%3Crect x='2' y='18' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='18' width='2' height='1' fill='%23d9d0bb'/%3E%3Crect x='5' y='18' width='3' height='1' fill='%23f4eddf'/%3E%3Crect x='8' y='18' width='5' height='1' fill='%23d9d0bb'/%3E%3Crect x='13' y='18' width='6' height='1' fill='%23f4eddf'/%3E%3Crect x='19' y='18' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='19' width='1' height='1' fill='%232a2250'/%3E%3Crect x='4' y='19' width='2' height='1' fill='%23d9d0bb'/%3E%3Crect x='6' y='19' width='3' height='1' fill='%23f4eddf'/%3E%3Crect x='9' y='19' width='3' height='1' fill='%23d9d0bb'/%3E%3Crect x='12' y='19' width='6' height='1' fill='%23f4eddf'/%3E%3Crect x='18' y='19' width='1' height='1' fill='%232a2250'/%3E%3Crect x='4' y='20' width='2' height='1' fill='%231a1533'/%3E%3Crect x='6' y='20' width='2' height='1' fill='%23d9d0bb'/%3E%3Crect x='8' y='20' width='8' height='1' fill='%23f4eddf'/%3E%3Crect x='16' y='20' width='2' height='1' fill='%231a1533'/%3E%3Crect x='6' y='21' width='3' height='1' fill='%231a1533'/%3E%3Crect x='9' y='21' width='5' height='1' fill='%23f4eddf'/%3E%3Crect x='14' y='21' width='2' height='1' fill='%231a1533'/%3E%3Crect x='9' y='22' width='1' height='1' fill='%232a2250'/%3E%3Crect x='10' y='22' width='2' height='1' fill='%23f2a63a'/%3E%3Crect x='12' y='22' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='22' width='2' height='1' fill='%23f2a63a'/%3E%3Crect x='15' y='22' width='1' height='1' fill='%232a2250'/%3E%3Crect x='8' y='23' width='1' height='1' fill='%232a2250'/%3E%3Crect x='9' y='23' width='3' height='1' fill='%23f2a63a'/%3E%3Crect x='12' y='23' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='23' width='3' height='1' fill='%23f2a63a'/%3E%3Crect x='16' y='23' width='1' height='1' fill='%232a2250'/%3E%3Crect x='7' y='24' width='1' height='1' fill='%232a2250'/%3E%3Crect x='8' y='24' width='1' height='1' fill='%23f2a63a'/%3E%3Crect x='9' y='24' width='2' height='1' fill='%23c17d15'/%3E%3Crect x='11' y='24' width='1' height='1' fill='%23f2a63a'/%3E%3Crect x='12' y='24' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='24' width='1' height='1' fill='%23f2a63a'/%3E%3Crect x='14' y='24' width='2' height='1' fill='%23c17d15'/%3E%3Crect x='16' y='24' width='1' height='1' fill='%23f2a63a'/%3E%3Crect x='17' y='24' width='1' height='1' fill='%232a2250'/%3E%3Crect x='8' y='25' width='4' height='1' fill='%232a2250'/%3E%3Crect x='13' y='25' width='4' height='1' fill='%232a2250'/%3E%3C/svg%3E">
+<style>
+  /* ---------------------------------------------------------------------
+     Design tokens. Every colour in the page comes from here, so retheming
+     means editing this block and nothing else.
+     --------------------------------------------------------------------- */
+  :root {
+    /* Base. Indigo, unchanged — Superhuman's own base is #1b1938, so this is a
+       well-trodden value for a dark canvas. */
+    --bg:            #14102b;
+    --surface:       #1a1733;   /* neutral-warm, not violet-tinted */
+    --surface-2:     #221e3d;
+
+    /* Separation is CREAM at low alpha, not purple. This single change is what stops
+       the page reading as "a purple app": structure becomes neutral, so the accent
+       has something to stand against. */
+    --border:        rgba(244, 237, 223, 0.13);
+    --border-bright: rgba(244, 237, 223, 0.26);
+    --rule:          rgba(244, 237, 223, 0.09);
+
+    /* Purple now does exactly one job: mark what you should act on or look at.
+       Primary button, focus ring, matched chip. Nowhere else. */
+    --purple:        #8b6cff;
+    --purple-bright: #a98bff;
+
+    --gold:          #e9c46a;   /* deco rules and the plinth */
+    --cream:         #f4eddf;
+    --cream-dim:     #cfc6b8;
+    --muted:         #9d9483;   /* warm grey, was lavender — the other purple leak */
+
+    --amber:         #ffb84d;
+    --amber-dim:     #6b4a17;
+    --green:         #5ad1a0;
+    --red:           #ff7a7a;
+
+    /* Pixel art means no rounding. Everything is square. */
+    --radius:   0px;
+    --radius-s: 0px;
+    --gutter: 16px;
+    --max:   1180px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--cream);
+    font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "tnum";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+
+  a { color: var(--purple-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---------------------------------------------------------------------
+     Header
+     --------------------------------------------------------------------- */
+  header {
+    border-bottom: 2px solid var(--rule);
+    background: var(--bg);
+    border-top: 3px solid var(--gold);
+    padding: 22px 0 0;
+  }
+
+  .masthead { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+  /* image-rendering: pixelated keeps the marks blocky when scaled. Without it the
+     browser smooths them and the whole point is lost. */
+  .goose svg { width: 42px; height: 38px; image-rendering: pixelated; display: block; }
+  .wordmark { margin: 0; line-height: 0; }
+  .wordmark svg { width: 232px; height: auto; image-rendering: pixelated; display: block; }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.45;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    border-left: 2px solid var(--rule);
+    padding-left: 14px;
+    margin-left: 4px;
+  }
+
+  /* Stat row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+    gap: 10px;
+    margin: 18px 0 0;
+  }
+  .stat {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 11px 13px;
+  }
+  .stat .n {
+    font-size: 25px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .l {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .stat.accent { border-color: var(--amber-dim); }
+  .stat.accent .n { color: var(--amber); }
+
+  /* Freshness strip */
+  .freshness { margin: 16px 0 0; padding-bottom: 18px; }
+  .freshness-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--cream-dim);
+  }
+  .pulse {
+    width: 8px; height: 8px;
+    background: var(--green);
+    box-shadow: 0 0 0 3px rgba(90, 209, 160, 0.16);
+    flex: none;
+  }
+  .pulse.warn { background: var(--amber); box-shadow: 0 0 0 3px rgba(255,184,77,0.16); }
+  .pulse.bad  { background: var(--red);   box-shadow: 0 0 0 3px rgba(255,122,122,0.16); }
+
+  .track {
+    margin-top: 9px;
+    height: 4px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    overflow: hidden;
+  }
+  .track .fill {
+    height: 100%;
+    min-width: 5px;          /* a just-collected feed still reads as a bar, not a dot */
+    background: var(--gold);
+    border-radius: 0;
+    transition: width 0.6s linear;
+  }
+  .track.overdue .fill { background: var(--amber); }
+
+  .sep { color: var(--border-bright); }
+
+  /* ---------------------------------------------------------------------
+     Controls
+     --------------------------------------------------------------------- */
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(20, 16, 43, 0.93);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+  }
+  .control-row { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; }
+
+  input[type="search"], select {
+    background: var(--surface-2);
+    color: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    padding: 7px 11px;
+    font: inherit;
+    font-size: 13px;
+  }
+  input[type="search"] { flex: 1 1 220px; min-width: 0; }
+  input[type="search"]::placeholder { color: var(--muted); }
+  input[type="search"]:focus, select:focus {
+    outline: none;
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(139, 108, 255, 0.16);
+  }
+
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    padding: 6px 13px;
+    font-size: 13px;
+    color: var(--cream-dim);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .toggle:hover { border-color: var(--border-bright); }
+  .toggle.on {
+    background: rgba(244, 237, 223, 0.10);
+    border-color: var(--border-bright);
+    color: var(--cream);
+  }
+  .toggle.on.amber {
+    background: rgba(255, 184, 77, 0.13);
+    border-color: var(--amber);
+  }
+  .toggle input { display: none; }
+  .toggle .tick { width: 13px; text-align: center; opacity: 0.45; }
+  .toggle.on .tick { opacity: 1; color: var(--gold); }
+  .toggle.on.amber .tick { color: var(--amber); }
+
+  .count-note { font-size: 12px; color: var(--muted); margin-top: 9px; }
+  .count-note button {
+    background: none; border: none; padding: 0;
+    color: var(--cream-dim); font: inherit; cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* ---------------------------------------------------------------------
+     Results
+     --------------------------------------------------------------------- */
+  main { padding: 22px 0 80px; }
+
+  .bucket { margin-bottom: 26px; }
+  .bucket-head {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%;
+    background: none; border: none; padding: 0 0 9px;
+    color: var(--cream); font: inherit; cursor: pointer;
+    border-bottom: 2px solid var(--rule);
+    text-align: left;
+  }
+  .bucket-head h2 {
+    margin: 0; font-size: 13px; font-weight: 620;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .bucket-head .range { color: var(--muted); font-size: 12px; font-weight: 400; letter-spacing: 0; text-transform: none; }
+  .bucket-head .n {
+    margin-left: auto;
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    border-radius: 0;
+    padding: 1px 9px;
+    font-size: 12px;
+    color: var(--cream-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .bucket-head .chev { color: var(--muted); font-size: 11px; transition: transform 0.15s; }
+  .bucket.collapsed .chev { transform: rotate(-90deg); }
+  .bucket.collapsed .roles { display: none; }
+
+  .roles { display: grid; gap: 8px; padding-top: 12px; }
+
+  .role {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-left: 4px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 14px;
+    align-items: start;
+    transition: border-color 0.12s, background 0.12s;
+  }
+  .role:hover { border-color: var(--border-bright); background: #201a47; }
+  .role.is-new { border-left-color: var(--amber); }
+  .role.priority-mark { border-left-color: var(--purple); }
+  .role.shortlisted { border-left-color: var(--green); }
+  .role.dismissed { opacity: 0.42; }
+  .role.secondary .title { color: var(--cream-dim); font-weight: 500; }
+
+  .role .title {
+    grid-column: 1;
+    font-size: 15px;
+    font-weight: 580;
+    letter-spacing: -0.005em;
+  }
+  .role .meta {
+    grid-column: 1;
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  }
+  .role .company { color: var(--cream-dim); font-weight: 500; }
+
+  .chip {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+    border-radius: 0;
+    padding: 0 7px;
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .chip.new { background: rgba(255,184,77,0.14); border-color: var(--amber-dim); color: var(--amber); font-weight: 600; }
+  .chip.match { background: rgba(139,108,255,0.14); border-color: var(--purple); color: var(--purple-bright); }
+
+  .role .actions {
+    grid-column: 2; grid-row: 1 / span 2;
+    display: flex; gap: 5px; align-items: center;
+  }
+  .btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--cream-dim);
+    border-radius: var(--radius-s);
+    padding: 5px 10px;
+    font: inherit; font-size: 12.5px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--border-bright); color: var(--cream); }
+  .btn.star.on { background: rgba(90,209,160,0.14); border-color: var(--green); color: var(--green); }
+  /* Cream, not purple. Eight purple buttons down a page is not "a single gesture of
+     colour" — it is the same mistake relocated. Superhuman uses warm cream for
+     buttons for exactly this reason: the primary action reads as primary because it
+     is the lightest thing on a dark canvas, and the accent stays rare. */
+  .btn.open {
+    background: var(--cream);
+    border-color: var(--cream);
+    color: #1a1533;
+    font-weight: 650;
+  }
+  .btn.open:hover {
+    background: #fffdf7; border-color: #fffdf7; text-decoration: none;
+  }
+
+  .empty, .loading {
+    text-align: center;
+    padding: 56px 20px;
+    color: var(--muted);
+  }
+  .empty strong { color: var(--cream); display: block; margin-bottom: 6px; font-size: 16px; }
+
+  .banner {
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    border: 1px solid var(--amber-dim);
+    background: rgba(255,184,77,0.08);
+    color: var(--cream-dim);
+  }
+  .banner.bad { border-color: #6b2323; background: rgba(255,122,122,0.08); }
+  .banner strong { color: var(--amber); }
+  .banner.bad strong { color: var(--red); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 0 40px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .freshness-line .sep { display: none; }
+    .role { grid-template-columns: 1fr; }
+    .role .actions { grid-column: 1; grid-row: auto; padding-top: 6px; }
+    .stat .n { font-size: 21px; }
+    h1 { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="masthead">
+      <span class="goose"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 27" shape-rendering="crispEdges" role="img" aria-label="RoleFeed goose"><rect x="15" y="0" width="6" height="1" fill="#2a2250"/><rect x="14" y="1" width="1" height="1" fill="#2a2250"/><rect x="15" y="1" width="3" height="1" fill="#fffdf7"/><rect x="18" y="1" width="3" height="1" fill="#f4eddf"/><rect x="21" y="1" width="1" height="1" fill="#2a2250"/><rect x="13" y="2" width="1" height="1" fill="#2a2250"/><rect x="14" y="2" width="1" height="1" fill="#fffdf7"/><rect x="15" y="2" width="6" height="1" fill="#f4eddf"/><rect x="21" y="2" width="1" height="1" fill="#2a2250"/><rect x="13" y="3" width="1" height="1" fill="#2a2250"/><rect x="14" y="3" width="7" height="1" fill="#f4eddf"/><rect x="21" y="3" width="1" height="1" fill="#2a2250"/><rect x="13" y="4" width="1" height="1" fill="#2a2250"/><rect x="14" y="4" width="2" height="1" fill="#f4eddf"/><rect x="16" y="4" width="2" height="1" fill="#241d47"/><rect x="18" y="4" width="3" height="1" fill="#f4eddf"/><rect x="21" y="4" width="1" height="1" fill="#2a2250"/><rect x="22" y="4" width="3" height="1" fill="#f2a63a"/><rect x="13" y="5" width="1" height="1" fill="#2a2250"/><rect x="14" y="5" width="2" height="1" fill="#f4eddf"/><rect x="16" y="5" width="2" height="1" fill="#241d47"/><rect x="18" y="5" width="3" height="1" fill="#f4eddf"/><rect x="21" y="5" width="5" height="1" fill="#f2a63a"/><rect x="13" y="6" width="1" height="1" fill="#2a2250"/><rect x="14" y="6" width="7" height="1" fill="#f4eddf"/><rect x="21" y="6" width="1" height="1" fill="#2a2250"/><rect x="22" y="6" width="3" height="1" fill="#f2a63a"/><rect x="14" y="7" width="1" height="1" fill="#2a2250"/><rect x="15" y="7" width="6" height="1" fill="#f4eddf"/><rect x="21" y="7" width="1" height="1" fill="#2a2250"/><rect x="14" y="8" width="1" height="1" fill="#2a2250"/><rect x="15" y="8" width="4" height="1" fill="#f4eddf"/><rect x="19" y="8" width="1" height="1" fill="#2a2250"/><rect x="14" y="9" width="1" height="1" fill="#2a2250"/><rect x="15" y="9" width="4" height="1" fill="#f4eddf"/><rect x="19" y="9" width="1" height="1" fill="#2a2250"/><rect x="14" y="10" width="1" height="1" fill="#2a2250"/><rect x="15" y="10" width="4" height="1" fill="#f4eddf"/><rect x="19" y="10" width="1" height="1" fill="#2a2250"/><rect x="7" y="11" width="7" height="1" fill="#2a2250"/><rect x="14" y="11" width="4" height="1" fill="#f4eddf"/><rect x="18" y="11" width="2" height="1" fill="#2a2250"/><rect x="5" y="12" width="2" height="1" fill="#2a2250"/><rect x="7" y="12" width="2" height="1" fill="#d9d0bb"/><rect x="9" y="12" width="10" height="1" fill="#f4eddf"/><rect x="19" y="12" width="1" height="1" fill="#2a2250"/><rect x="4" y="13" width="1" height="1" fill="#2a2250"/><rect x="5" y="13" width="3" height="1" fill="#d9d0bb"/><rect x="8" y="13" width="12" height="1" fill="#f4eddf"/><rect x="20" y="13" width="1" height="1" fill="#2a2250"/><rect x="3" y="14" width="1" height="1" fill="#2a2250"/><rect x="4" y="14" width="2" height="1" fill="#d9d0bb"/><rect x="6" y="14" width="14" height="1" fill="#f4eddf"/><rect x="20" y="14" width="1" height="1" fill="#2a2250"/><rect x="3" y="15" width="1" height="1" fill="#2a2250"/><rect x="4" y="15" width="1" height="1" fill="#d9d0bb"/><rect x="5" y="15" width="15" height="1" fill="#f4eddf"/><rect x="20" y="15" width="1" height="1" fill="#2a2250"/><rect x="2" y="16" width="1" height="1" fill="#2a2250"/><rect x="3" y="16" width="1" height="1" fill="#d9d0bb"/><rect x="4" y="16" width="5" height="1" fill="#f4eddf"/><rect x="9" y="16" width="4" height="1" fill="#d9d0bb"/><rect x="13" y="16" width="7" height="1" fill="#f4eddf"/><rect x="20" y="16" width="1" height="1" fill="#2a2250"/><rect x="2" y="17" width="1" height="1" fill="#2a2250"/><rect x="3" y="17" width="1" height="1" fill="#d9d0bb"/><rect x="4" y="17" width="4" height="1" fill="#f4eddf"/><rect x="8" y="17" width="6" height="1" fill="#d9d0bb"/><rect x="14" y="17" width="6" height="1" fill="#f4eddf"/><rect x="20" y="17" width="1" height="1" fill="#2a2250"/><rect x="2" y="18" width="1" height="1" fill="#2a2250"/><rect x="3" y="18" width="2" height="1" fill="#d9d0bb"/><rect x="5" y="18" width="3" height="1" fill="#f4eddf"/><rect x="8" y="18" width="5" height="1" fill="#d9d0bb"/><rect x="13" y="18" width="6" height="1" fill="#f4eddf"/><rect x="19" y="18" width="1" height="1" fill="#2a2250"/><rect x="3" y="19" width="1" height="1" fill="#2a2250"/><rect x="4" y="19" width="2" height="1" fill="#d9d0bb"/><rect x="6" y="19" width="3" height="1" fill="#f4eddf"/><rect x="9" y="19" width="3" height="1" fill="#d9d0bb"/><rect x="12" y="19" width="6" height="1" fill="#f4eddf"/><rect x="18" y="19" width="1" height="1" fill="#2a2250"/><rect x="4" y="20" width="2" height="1" fill="#1a1533"/><rect x="6" y="20" width="2" height="1" fill="#d9d0bb"/><rect x="8" y="20" width="8" height="1" fill="#f4eddf"/><rect x="16" y="20" width="2" height="1" fill="#1a1533"/><rect x="6" y="21" width="3" height="1" fill="#1a1533"/><rect x="9" y="21" width="5" height="1" fill="#f4eddf"/><rect x="14" y="21" width="2" height="1" fill="#1a1533"/><rect x="9" y="22" width="1" height="1" fill="#2a2250"/><rect x="10" y="22" width="2" height="1" fill="#f2a63a"/><rect x="12" y="22" width="1" height="1" fill="#2a2250"/><rect x="13" y="22" width="2" height="1" fill="#f2a63a"/><rect x="15" y="22" width="1" height="1" fill="#2a2250"/><rect x="8" y="23" width="1" height="1" fill="#2a2250"/><rect x="9" y="23" width="3" height="1" fill="#f2a63a"/><rect x="12" y="23" width="1" height="1" fill="#2a2250"/><rect x="13" y="23" width="3" height="1" fill="#f2a63a"/><rect x="16" y="23" width="1" height="1" fill="#2a2250"/><rect x="7" y="24" width="1" height="1" fill="#2a2250"/><rect x="8" y="24" width="1" height="1" fill="#f2a63a"/><rect x="9" y="24" width="2" height="1" fill="#c17d15"/><rect x="11" y="24" width="1" height="1" fill="#f2a63a"/><rect x="12" y="24" width="1" height="1" fill="#2a2250"/><rect x="13" y="24" width="1" height="1" fill="#f2a63a"/><rect x="14" y="24" width="2" height="1" fill="#c17d15"/><rect x="16" y="24" width="1" height="1" fill="#f2a63a"/><rect x="17" y="24" width="1" height="1" fill="#2a2250"/><rect x="8" y="25" width="4" height="1" fill="#2a2250"/><rect x="13" y="25" width="4" height="1" fill="#2a2250"/></svg></span>
+      <h1 class="wordmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 86 26" shape-rendering="crispEdges" role="img" aria-label="RoleFeed"><rect x="0" y="0" width="86" height="2" fill="#e9c46a"/><rect x="0" y="3" width="86" height="1" fill="#e9c46a" opacity="0.40"/><rect x="0" y="7" width="7" height="1" fill="#f4eddf"/><rect x="0" y="8" width="8" height="1" fill="#f4eddf"/><rect x="0" y="9" width="2" height="1" fill="#f4eddf"/><rect x="6" y="9" width="2" height="1" fill="#f4eddf"/><rect x="0" y="10" width="2" height="1" fill="#f4eddf"/><rect x="6" y="10" width="2" height="1" fill="#f4eddf"/><rect x="0" y="11" width="2" height="1" fill="#f4eddf"/><rect x="6" y="11" width="2" height="1" fill="#f4eddf"/><rect x="0" y="12" width="8" height="1" fill="#f4eddf"/><rect x="0" y="13" width="7" height="1" fill="#f4eddf"/><rect x="0" y="14" width="2" height="1" fill="#f4eddf"/><rect x="4" y="14" width="2" height="1" fill="#f4eddf"/><rect x="0" y="15" width="2" height="1" fill="#f4eddf"/><rect x="5" y="15" width="2" height="1" fill="#f4eddf"/><rect x="0" y="16" width="2" height="1" fill="#f4eddf"/><rect x="6" y="16" width="2" height="1" fill="#f4eddf"/><rect x="0" y="17" width="2" height="1" fill="#f4eddf"/><rect x="6" y="17" width="2" height="1" fill="#f4eddf"/><rect x="0" y="18" width="2" height="1" fill="#f4eddf"/><rect x="7" y="18" width="2" height="1" fill="#f4eddf"/><rect x="0" y="19" width="2" height="1" fill="#f4eddf"/><rect x="7" y="19" width="2" height="1" fill="#f4eddf"/><rect x="12" y="7" width="6" height="1" fill="#f4eddf"/><rect x="11" y="8" width="8" height="1" fill="#f4eddf"/><rect x="11" y="9" width="2" height="1" fill="#f4eddf"/><rect x="17" y="9" width="2" height="1" fill="#f4eddf"/><rect x="11" y="10" width="2" height="1" fill="#f4eddf"/><rect x="17" y="10" width="2" height="1" fill="#f4eddf"/><rect x="11" y="11" width="2" height="1" fill="#f4eddf"/><rect x="17" y="11" width="2" height="1" fill="#f4eddf"/><rect x="11" y="12" width="2" height="1" fill="#f4eddf"/><rect x="17" y="12" width="2" height="1" fill="#f4eddf"/><rect x="11" y="13" width="2" height="1" fill="#f4eddf"/><rect x="17" y="13" width="2" height="1" fill="#f4eddf"/><rect x="11" y="14" width="2" height="1" fill="#f4eddf"/><rect x="17" y="14" width="2" height="1" fill="#f4eddf"/><rect x="11" y="15" width="2" height="1" fill="#f4eddf"/><rect x="17" y="15" width="2" height="1" fill="#f4eddf"/><rect x="11" y="16" width="2" height="1" fill="#f4eddf"/><rect x="17" y="16" width="2" height="1" fill="#f4eddf"/><rect x="11" y="17" width="2" height="1" fill="#f4eddf"/><rect x="17" y="17" width="2" height="1" fill="#f4eddf"/><rect x="11" y="18" width="8" height="1" fill="#f4eddf"/><rect x="12" y="19" width="6" height="1" fill="#f4eddf"/><rect x="22" y="7" width="2" height="1" fill="#f4eddf"/><rect x="22" y="8" width="2" height="1" fill="#f4eddf"/><rect x="22" y="9" width="2" height="1" fill="#f4eddf"/><rect x="22" y="10" width="2" height="1" fill="#f4eddf"/><rect x="22" y="11" width="2" height="1" fill="#f4eddf"/><rect x="22" y="12" width="2" height="1" fill="#f4eddf"/><rect x="22" y="13" width="2" height="1" fill="#f4eddf"/><rect x="22" y="14" width="2" height="1" fill="#f4eddf"/><rect x="22" y="15" width="2" height="1" fill="#f4eddf"/><rect x="22" y="16" width="2" height="1" fill="#f4eddf"/><rect x="22" y="17" width="2" height="1" fill="#f4eddf"/><rect x="22" y="18" width="8" height="1" fill="#f4eddf"/><rect x="22" y="19" width="8" height="1" fill="#f4eddf"/><rect x="33" y="7" width="9" height="1" fill="#f4eddf"/><rect x="33" y="8" width="9" height="1" fill="#f4eddf"/><rect x="33" y="9" width="2" height="1" fill="#f4eddf"/><rect x="33" y="10" width="2" height="1" fill="#f4eddf"/><rect x="33" y="11" width="2" height="1" fill="#f4eddf"/><rect x="33" y="12" width="7" height="1" fill="#f4eddf"/><rect x="33" y="13" width="7" height="1" fill="#f4eddf"/><rect x="33" y="14" width="2" height="1" fill="#f4eddf"/><rect x="33" y="15" width="2" height="1" fill="#f4eddf"/><rect x="33" y="16" width="2" height="1" fill="#f4eddf"/><rect x="33" y="17" width="2" height="1" fill="#f4eddf"/><rect x="33" y="18" width="9" height="1" fill="#f4eddf"/><rect x="33" y="19" width="9" height="1" fill="#f4eddf"/><rect x="44" y="7" width="9" height="1" fill="#8b6cff"/><rect x="44" y="8" width="9" height="1" fill="#8b6cff"/><rect x="44" y="9" width="2" height="1" fill="#8b6cff"/><rect x="44" y="10" width="2" height="1" fill="#8b6cff"/><rect x="44" y="11" width="2" height="1" fill="#8b6cff"/><rect x="44" y="12" width="7" height="1" fill="#8b6cff"/><rect x="44" y="13" width="7" height="1" fill="#8b6cff"/><rect x="44" y="14" width="2" height="1" fill="#8b6cff"/><rect x="44" y="15" width="2" height="1" fill="#8b6cff"/><rect x="44" y="16" width="2" height="1" fill="#8b6cff"/><rect x="44" y="17" width="2" height="1" fill="#8b6cff"/><rect x="44" y="18" width="2" height="1" fill="#8b6cff"/><rect x="44" y="19" width="2" height="1" fill="#8b6cff"/><rect x="55" y="7" width="9" height="1" fill="#8b6cff"/><rect x="55" y="8" width="9" height="1" fill="#8b6cff"/><rect x="55" y="9" width="2" height="1" fill="#8b6cff"/><rect x="55" y="10" width="2" height="1" fill="#8b6cff"/><rect x="55" y="11" width="2" height="1" fill="#8b6cff"/><rect x="55" y="12" width="7" height="1" fill="#8b6cff"/><rect x="55" y="13" width="7" height="1" fill="#8b6cff"/><rect x="55" y="14" width="2" height="1" fill="#8b6cff"/><rect x="55" y="15" width="2" height="1" fill="#8b6cff"/><rect x="55" y="16" width="2" height="1" fill="#8b6cff"/><rect x="55" y="17" width="2" height="1" fill="#8b6cff"/><rect x="55" y="18" width="9" height="1" fill="#8b6cff"/><rect x="55" y="19" width="9" height="1" fill="#8b6cff"/><rect x="66" y="7" width="9" height="1" fill="#8b6cff"/><rect x="66" y="8" width="9" height="1" fill="#8b6cff"/><rect x="66" y="9" width="2" height="1" fill="#8b6cff"/><rect x="66" y="10" width="2" height="1" fill="#8b6cff"/><rect x="66" y="11" width="2" height="1" fill="#8b6cff"/><rect x="66" y="12" width="7" height="1" fill="#8b6cff"/><rect x="66" y="13" width="7" height="1" fill="#8b6cff"/><rect x="66" y="14" width="2" height="1" fill="#8b6cff"/><rect x="66" y="15" width="2" height="1" fill="#8b6cff"/><rect x="66" y="16" width="2" height="1" fill="#8b6cff"/><rect x="66" y="17" width="2" height="1" fill="#8b6cff"/><rect x="66" y="18" width="9" height="1" fill="#8b6cff"/><rect x="66" y="19" width="9" height="1" fill="#8b6cff"/><rect x="77" y="7" width="6" height="1" fill="#8b6cff"/><rect x="77" y="8" width="7" height="1" fill="#8b6cff"/><rect x="77" y="9" width="2" height="1" fill="#8b6cff"/><rect x="83" y="9" width="2" height="1" fill="#8b6cff"/><rect x="77" y="10" width="2" height="1" fill="#8b6cff"/><rect x="84" y="10" width="2" height="1" fill="#8b6cff"/><rect x="77" y="11" width="2" height="1" fill="#8b6cff"/><rect x="84" y="11" width="2" height="1" fill="#8b6cff"/><rect x="77" y="12" width="2" height="1" fill="#8b6cff"/><rect x="84" y="12" width="2" height="1" fill="#8b6cff"/><rect x="77" y="13" width="2" height="1" fill="#8b6cff"/><rect x="84" y="13" width="2" height="1" fill="#8b6cff"/><rect x="77" y="14" width="2" height="1" fill="#8b6cff"/><rect x="84" y="14" width="2" height="1" fill="#8b6cff"/><rect x="77" y="15" width="2" height="1" fill="#8b6cff"/><rect x="84" y="15" width="2" height="1" fill="#8b6cff"/><rect x="77" y="16" width="2" height="1" fill="#8b6cff"/><rect x="84" y="16" width="2" height="1" fill="#8b6cff"/><rect x="77" y="17" width="2" height="1" fill="#8b6cff"/><rect x="83" y="17" width="2" height="1" fill="#8b6cff"/><rect x="77" y="18" width="7" height="1" fill="#8b6cff"/><rect x="77" y="19" width="6" height="1" fill="#8b6cff"/><rect x="0" y="22" width="86" height="2" fill="#e9c46a"/><rect x="0" y="25" width="86" height="1" fill="#e9c46a" opacity="0.40"/></svg></h1>
+      <span class="tagline">Transport, logistics, mobility &amp; aviation<br>Senior operations</span>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="freshness">
+      <div class="freshness-line" id="freshness">
+        <span class="pulse"></span><span>Loading&hellip;</span>
+      </div>
+      <div class="track" id="track"><div class="fill" style="width:0%"></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="wrap">
+    <div class="control-row">
+      <input type="search" id="q" placeholder="Search title or company&hellip;" autocomplete="off">
+      <select id="size">
+        <option value="">All sizes</option>
+        <option value="enterprise">Enterprise (5,000+)</option>
+        <option value="large">Large (1,000&ndash;5,000)</option>
+        <option value="mid">Mid (250&ndash;1,000)</option>
+        <option value="scaleup">Scaleup (50&ndash;250)</option>
+      </select>
+      <select id="sector"><option value="">All sectors</option></select>
+      <select id="company"><option value="">All employers</option></select>
+      <select id="sort">
+        <option value="new">Newest first</option>
+        <option value="company">By employer</option>
+        <option value="title">By title</option>
+      </select>
+      <label class="toggle on" id="t-priority"><span class="tick">&#10003;</span>Matched only</label>
+      <label class="toggle amber" id="t-recent"><span class="tick">&#10003;</span>New in 48h</label>
+      <label class="toggle" id="t-star"><span class="tick">&#10003;</span>Shortlisted</label>
+      <label class="toggle" id="t-dismissed"><span class="tick">&#10003;</span>Show dismissed</label>
+    </div>
+    <div class="count-note" id="countNote"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div id="banner"></div>
+  <div class="loading" id="results">Loading the feed&hellip;</div>
+</main>
+
+<footer class="wrap">
+  <span id="footNote"></span>
+</footer>
+
+<script>
+"use strict";
+
+/* ---------------------------------------------------------------------------
+   State. `feed` is the published JSON; `local` is per-viewer annotation.
+
+   Shortlist and dismiss live in localStorage for now. That means one browser on
+   one machine: it will not follow you to your phone, and clearing site data
+   loses it. Moving this to Cloudflare KV via a Pages Function is the planned
+   next step, and only this object needs to change when it happens.
+   --------------------------------------------------------------------------- */
+const LS_KEY = "rolefeed.annotations.v1";
+const HOUR = 3600 * 1000;
+
+let feed = null;
+const local = load();
+
+const ui = {
+  q: "", size: "", sector: "", company: "", sort: "new",
+  priority: true, recent: false, starred: false, showDismissed: false,
+};
+
+/* Sector slugs are how the employer list stores them; these are how they should read. */
+const SECTOR_LABELS = {
+  ridehail: "Ride-hail", micromobility: "Micromobility", lastmile: "Last mile",
+  freight: "Freight", fulfilment: "Fulfilment", charging: "EV charging",
+  fleet: "Fleet & telematics", publictransport: "Public transport",
+  aviation: "Aviation & space", autonomy: "Autonomy",
+};
+const sectorLabel = s => SECTOR_LABELS[s] || s || "";
+
+const BUCKETS = [
+  ["enterprise", "Enterprise", "5,000+"],
+  ["large",      "Large",      "1,000–5,000"],
+  ["mid",        "Mid",        "250–1,000"],
+  ["scaleup",    "Scaleup",    "50–250"],
+  ["unknown",    "Unclassified", ""],
+];
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
+  catch (e) { return {}; }   // private mode, blocked storage, corrupt value
+}
+function save() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(local)); }
+  catch (e) { /* nothing we can do; the page must still work */ }
+}
+function annotation(key) { return local[key] || {}; }
+
+/* --------------------------------------------------------------------------
+   Formatting
+   -------------------------------------------------------------------------- */
+function ago(iso) {
+  if (!iso) return "";
+  const ms = Date.now() - new Date(iso).getTime();
+  if (ms < 0) return "just now";
+  const mins = Math.floor(ms / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return mins + "m ago";
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + "h ago";
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return "yesterday";
+  if (days < 30) return days + "d ago";
+  return Math.floor(days / 30) + "mo ago";
+}
+
+function clockUK(iso) {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleTimeString("en-GB", {
+    hour: "2-digit", minute: "2-digit", timeZone: "Europe/London",
+  });
+}
+
+function isRecent(job, hours) {
+  if (!job.first_seen) return false;
+  return Date.now() - new Date(job.first_seen).getTime() < hours * HOUR;
+}
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+  ));
+}
+
+/* --------------------------------------------------------------------------
+   Header: stats and the freshness strip
+   -------------------------------------------------------------------------- */
+function renderStats() {
+  const matched = feed.jobs.filter(j => j.priority).length;
+  const employers = new Set(feed.jobs.map(j => j.company)).size;
+  const tiles = [
+    { n: matched,               l: "Matched roles" },
+    { n: feed.new_last_48h,     l: "New in 48h", accent: true },
+    { n: feed.new_last_7d,      l: "New in 7 days" },
+    { n: feed.jobs.length,      l: "UK / remote total" },
+    { n: employers,             l: "Employers hiring" },
+    { n: feed.employers_queried, l: "Employers queried" },
+  ];
+  document.getElementById("stats").innerHTML = tiles.map(t => `
+    <div class="stat${t.accent ? " accent" : ""}">
+      <div class="n">${t.n == null ? "—" : t.n}</div>
+      <div class="l">${t.l}</div>
+    </div>`).join("");
+}
+
+/* The countdown is advisory, never a promise. GitHub queues scheduled workflows
+   and runs them late under load — frequently 5 to 15 minutes, sometimes far more.
+   So this shows "due", and when the window passes it says so plainly rather than
+   counting into negative numbers and looking broken. */
+function renderFreshness() {
+  const el = document.getElementById("freshness");
+  const track = document.getElementById("track");
+  const fill = track.firstElementChild;
+
+  const collected = new Date(feed.generated_at).getTime();
+  const interval = (feed.run_interval_hours || 2) * HOUR;
+  const due = collected + interval;
+  const now = Date.now();
+  const age = now - collected;
+
+  let cls = "", note = "", pct = Math.min(100, (age / interval) * 100);
+
+  if (age > 4 * HOUR) {
+    cls = "bad";
+    note = `<strong style="color:var(--red)">Data is ${Math.floor(age / HOUR)}h old</strong>
+            <span class="sep">&middot;</span> the last collection may have failed`;
+    pct = 100;
+  } else if (now >= due) {
+    cls = "warn";
+    const late = Math.floor((now - due) / 60000);
+    note = `Next collection <strong>due now</strong>
+            <span class="sep">&middot;</span> ${late}m past due, GitHub queues run late`;
+    pct = 100;
+  } else {
+    const left = due - now;
+    const h = Math.floor(left / HOUR), m = Math.floor((left % HOUR) / 60000);
+    note = `Next due ${clockUK(new Date(due).toISOString())}
+            <span class="sep">&middot;</span> in ${h > 0 ? h + "h " : ""}${m}m`;
+  }
+
+  el.innerHTML = `
+    <span class="pulse ${cls}"></span>
+    <span>Collected <strong style="color:var(--cream)">${clockUK(feed.generated_at)}</strong>
+      &middot; ${ago(feed.generated_at)}</span>
+    <span class="sep">|</span>
+    <span>${note}</span>`;
+
+  track.classList.toggle("overdue", pct >= 100);
+  fill.style.width = pct.toFixed(1) + "%";
+}
+
+function renderBanner() {
+  const el = document.getElementById("banner");
+  const bits = [];
+  if (feed.employers_failed > 0) {
+    bits.push(`<div class="banner">
+      <strong>${feed.employers_failed} employers unavailable</strong> in the last run.
+      Most are enterprise employers awaiting a Workday careers URL, which is expected.
+    </div>`);
+  }
+  if (!feed.jobs.length) {
+    bits.push(`<div class="banner bad">
+      <strong>The feed is empty.</strong> That is more likely a broken collection than
+      an empty market &mdash; check the Actions tab.
+    </div>`);
+  }
+  el.innerHTML = bits.join("");
+}
+
+/* --------------------------------------------------------------------------
+   Filter options, derived from the data rather than hardcoded
+   -------------------------------------------------------------------------- */
+function populateSelects() {
+  const fill = (id, values) => {
+    const sel = document.getElementById(id);
+    const first = sel.firstElementChild.outerHTML;
+    sel.innerHTML = first + values.sort((a, b) => a.localeCompare(b))
+      .map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
+  };
+  // Sector dropdown shows readable labels but filters on the underlying slug.
+  const sectors = [...new Set(feed.jobs.map(j => j.sector).filter(Boolean))]
+    .sort((a, b) => sectorLabel(a).localeCompare(sectorLabel(b)));
+  const sel = document.getElementById("sector");
+  sel.innerHTML = sel.firstElementChild.outerHTML + sectors
+    .map(v => `<option value="${esc(v)}">${esc(sectorLabel(v))}</option>`).join("");
+  fill("company", [...new Set(feed.jobs.map(j => j.company).filter(Boolean))]);
+}
+
+function visible() {
+  const q = ui.q.trim().toLowerCase();
+  return feed.jobs.filter(job => {
+    const ann = annotation(job.key);
+    if (!ui.showDismissed && ann.dismissed) return false;
+    if (ui.starred && !ann.starred) return false;
+    if (ui.priority && !job.priority) return false;
+    if (ui.recent && !isRecent(job, 48)) return false;
+    if (ui.size && job.size !== ui.size) return false;
+    if (ui.sector && job.sector !== ui.sector) return false;
+    if (ui.company && job.company !== ui.company) return false;
+    if (q && !(job.title + " " + job.company).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function sortJobs(jobs) {
+  const by = {
+    new: (a, b) => (b.first_seen || "").localeCompare(a.first_seen || ""),
+    company: (a, b) => a.company.localeCompare(b.company) || a.title.localeCompare(b.title),
+    title: (a, b) => a.title.localeCompare(b.title),
+  }[ui.sort];
+  return [...jobs].sort(by);
+}
+
+/* --------------------------------------------------------------------------
+   Rendering results, segmented by employer size
+   -------------------------------------------------------------------------- */
+function roleCard(job) {
+  const ann = annotation(job.key);
+  const fresh = isRecent(job, 48);
+  const cls = [
+    "role",
+    fresh ? "is-new" : "",
+    ann.starred ? "shortlisted" : "",
+    ann.dismissed ? "dismissed" : "",
+    job.priority ? "" : "secondary",
+  ].filter(Boolean).join(" ");
+
+  const chips = [
+    fresh ? '<span class="chip new">NEW</span>' : "",
+    job.priority ? "" : '<span class="chip">wider scope</span>',
+    job.sector ? `<span class="chip">${esc(sectorLabel(job.sector))}</span>` : "",
+    job.missing_runs ? '<span class="chip">may have closed</span>' : "",
+  ].filter(Boolean).join("");
+
+  return `
+  <article class="${cls}" data-key="${esc(job.key)}">
+    <div class="title">${esc(job.title)}</div>
+    <div class="meta">
+      <span class="company">${esc(job.company)}</span>
+      <span class="sep">&middot;</span><span>${esc(job.location || "Location not stated")}</span>
+      <span class="sep">&middot;</span><span>seen ${ago(job.first_seen)}</span>
+      ${chips}
+    </div>
+    <div class="actions">
+      <button class="btn star ${ann.starred ? "on" : ""}" data-act="star"
+              title="Shortlist">${ann.starred ? "★" : "☆"}</button>
+      <button class="btn" data-act="dismiss"
+              title="Dismiss">${ann.dismissed ? "Undo" : "Hide"}</button>
+      <a class="btn open" href="${esc(job.url)}" target="_blank" rel="noopener">Open</a>
+    </div>
+  </article>`;
+}
+
+function render() {
+  const shown = sortJobs(visible());
+  const host = document.getElementById("results");
+
+  document.getElementById("countNote").innerHTML =
+    `Showing <strong>${shown.length}</strong> of ${feed.jobs.length} UK or remote roles.` +
+    (ui.priority
+      ? ` <button id="loosen">Include the wider scope</button> to see what the title filter rejected.`
+      : ` <button id="tighten">Matched roles only</button>.`);
+
+  if (!shown.length) {
+    host.className = "empty";
+    host.innerHTML = `<strong>Nothing matches those filters.</strong>
+      Try clearing the search, or turning off &ldquo;Matched only&rdquo; to see the wider scope.`;
+    wireCountNote();
+    return;
+  }
+
+  host.className = "";
+  host.innerHTML = BUCKETS.map(([key, label, range]) => {
+    const rows = shown.filter(j => (j.size || "unknown") === key);
+    if (!rows.length) return "";
+    const collapsed = localStorage.getItem("rolefeed.collapsed." + key) === "1";
+    return `
+    <section class="bucket ${collapsed ? "collapsed" : ""}" data-bucket="${key}">
+      <button class="bucket-head">
+        <span class="chev">&#9660;</span>
+        <h2>${label}</h2>
+        ${range ? `<span class="range">${range}</span>` : ""}
+        <span class="n">${rows.length}</span>
+      </button>
+      <div class="roles">${rows.map(roleCard).join("")}</div>
+    </section>`;
+  }).join("");
+
+  wireCountNote();
+}
+
+function wireCountNote() {
+  const loosen = document.getElementById("loosen");
+  if (loosen) loosen.onclick = () => { setToggle("priority", false); };
+  const tighten = document.getElementById("tighten");
+  if (tighten) tighten.onclick = () => { setToggle("priority", true); };
+}
+
+/* --------------------------------------------------------------------------
+   Events
+   -------------------------------------------------------------------------- */
+function setToggle(name, value) {
+  ui[name] = value;
+  const map = { priority: "t-priority", recent: "t-recent", starred: "t-star", showDismissed: "t-dismissed" };
+  document.getElementById(map[name]).classList.toggle("on", value);
+  render();
+}
+
+function wire() {
+  const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+
+  document.getElementById("q").addEventListener("input", debounce(e => {
+    ui.q = e.target.value; render();
+  }, 140));
+
+  [["size", "size"], ["sector", "sector"], ["company", "company"], ["sort", "sort"]]
+    .forEach(([id, key]) => {
+      document.getElementById(id).addEventListener("change", e => {
+        ui[key] = e.target.value; render();
+      });
+    });
+
+  [["t-priority", "priority"], ["t-recent", "recent"], ["t-star", "starred"], ["t-dismissed", "showDismissed"]]
+    .forEach(([id, key]) => {
+      document.getElementById(id).addEventListener("click", () => setToggle(key, !ui[key]));
+    });
+
+  // One listener for the whole results area rather than one per card.
+  document.getElementById("results").addEventListener("click", e => {
+    const head = e.target.closest(".bucket-head");
+    if (head) {
+      const section = head.closest(".bucket");
+      section.classList.toggle("collapsed");
+      try {
+        localStorage.setItem("rolefeed.collapsed." + section.dataset.bucket,
+          section.classList.contains("collapsed") ? "1" : "0");
+      } catch (err) { /* ignore */ }
+      return;
+    }
+    const btn = e.target.closest("button[data-act]");
+    if (!btn) return;
+    const key = btn.closest(".role").dataset.key;
+    const ann = local[key] = local[key] || {};
+    if (btn.dataset.act === "star") ann.starred = !ann.starred;
+    if (btn.dataset.act === "dismiss") ann.dismissed = !ann.dismissed;
+    save();
+    render();
+  });
+}
+
+/* --------------------------------------------------------------------------
+   Boot
+   -------------------------------------------------------------------------- */
+async function boot() {
+  try {
+    // Cache-bust, so a redeploy is picked up rather than served from cache.
+    const res = await fetch("data/jobs.json?t=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    feed = await res.json();
+  } catch (err) {
+    document.getElementById("results").className = "empty";
+    document.getElementById("results").innerHTML =
+      `<strong>Could not load the feed.</strong>
+       <code>data/jobs.json</code> did not load (${esc(err.message)}).
+       If you are opening this file directly, serve it instead:
+       <code>cd site &amp;&amp; python -m http.server 8000</code>`;
+    document.getElementById("freshness").innerHTML =
+      '<span class="pulse bad"></span><span>Feed unavailable</span>';
+    return;
+  }
+
+  renderStats();
+  renderFreshness();
+  renderBanner();
+  populateSelects();
+  wire();
+  render();
+
+  document.getElementById("footNote").innerHTML =
+    `${feed.employers_queried} employers queried &middot;
+     ${feed.total_roles_seen} roles seen &middot;
+     ${feed.jobs.length} in scope &middot;
+     collected ${clockUK(feed.generated_at)} UK.
+     Shortlists are stored in this browser only.`;
+
+  // Keep the freshness strip honest without reloading the page.
+  setInterval(renderFreshness, 30000);
+}
+
+boot();
+</script>
+</body>
+</html>
