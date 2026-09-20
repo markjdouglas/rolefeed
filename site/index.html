@@ -2,7 +2,14 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- viewport-fit=cover lets the page paint under the notch and home indicator; the
+     safe-area insets below then keep content clear of them. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Tints Safari's toolbars to match the page instead of leaving a white band. -->
+<meta name="theme-color" content="#14102b">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>RoleFeed</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg style='background:%2314102b' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 27' shape-rendering='crispEdges' role='img' aria-label='RoleFeed goose'%3E%3Crect x='15' y='0' width='6' height='1' fill='%232a2250'/%3E%3Crect x='14' y='1' width='1' height='1' fill='%232a2250'/%3E%3Crect x='15' y='1' width='3' height='1' fill='%23fffdf7'/%3E%3Crect x='18' y='1' width='3' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='1' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='2' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='2' width='1' height='1' fill='%23fffdf7'/%3E%3Crect x='15' y='2' width='6' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='2' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='3' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='3' width='7' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='3' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='4' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='4' width='2' height='1' fill='%23f4eddf'/%3E%3Crect x='16' y='4' width='2' height='1' fill='%23241d47'/%3E%3Crect x='18' y='4' width='3' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='4' width='1' height='1' fill='%232a2250'/%3E%3Crect x='22' y='4' width='3' height='1' fill='%23f2a63a'/%3E%3Crect x='13' y='5' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='5' width='2' height='1' fill='%23f4eddf'/%3E%3Crect x='16' y='5' width='2' height='1' fill='%23241d47'/%3E%3Crect x='18' y='5' width='3' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='5' width='5' height='1' fill='%23f2a63a'/%3E%3Crect x='13' y='6' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='6' width='7' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='6' width='1' height='1' fill='%232a2250'/%3E%3Crect x='22' y='6' width='3' height='1' fill='%23f2a63a'/%3E%3Crect x='14' y='7' width='1' height='1' fill='%232a2250'/%3E%3Crect x='15' y='7' width='6' height='1' fill='%23f4eddf'/%3E%3Crect x='21' y='7' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='8' width='1' height='1' fill='%232a2250'/%3E%3Crect x='15' y='8' width='4' height='1' fill='%23f4eddf'/%3E%3Crect x='19' y='8' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='9' width='1' height='1' fill='%232a2250'/%3E%3Crect x='15' y='9' width='4' height='1' fill='%23f4eddf'/%3E%3Crect x='19' y='9' width='1' height='1' fill='%232a2250'/%3E%3Crect x='14' y='10' width='1' height='1' fill='%232a2250'/%3E%3Crect x='15' y='10' width='4' height='1' fill='%23f4eddf'/%3E%3Crect x='19' y='10' width='1' height='1' fill='%232a2250'/%3E%3Crect x='7' y='11' width='7' height='1' fill='%232a2250'/%3E%3Crect x='14' y='11' width='4' height='1' fill='%23f4eddf'/%3E%3Crect x='18' y='11' width='2' height='1' fill='%232a2250'/%3E%3Crect x='5' y='12' width='2' height='1' fill='%232a2250'/%3E%3Crect x='7' y='12' width='2' height='1' fill='%23d9d0bb'/%3E%3Crect x='9' y='12' width='10' height='1' fill='%23f4eddf'/%3E%3Crect x='19' y='12' width='1' height='1' fill='%232a2250'/%3E%3Crect x='4' y='13' width='1' height='1' fill='%232a2250'/%3E%3Crect x='5' y='13' width='3' height='1' fill='%23d9d0bb'/%3E%3Crect x='8' y='13' width='12' height='1' fill='%23f4eddf'/%3E%3Crect x='20' y='13' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='14' width='1' height='1' fill='%232a2250'/%3E%3Crect x='4' y='14' width='2' height='1' fill='%23d9d0bb'/%3E%3Crect x='6' y='14' width='14' height='1' fill='%23f4eddf'/%3E%3Crect x='20' y='14' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='15' width='1' height='1' fill='%232a2250'/%3E%3Crect x='4' y='15' width='1' height='1' fill='%23d9d0bb'/%3E%3Crect x='5' y='15' width='15' height='1' fill='%23f4eddf'/%3E%3Crect x='20' y='15' width='1' height='1' fill='%232a2250'/%3E%3Crect x='2' y='16' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='16' width='1' height='1' fill='%23d9d0bb'/%3E%3Crect x='4' y='16' width='5' height='1' fill='%23f4eddf'/%3E%3Crect x='9' y='16' width='4' height='1' fill='%23d9d0bb'/%3E%3Crect x='13' y='16' width='7' height='1' fill='%23f4eddf'/%3E%3Crect x='20' y='16' width='1' height='1' fill='%232a2250'/%3E%3Crect x='2' y='17' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='17' width='1' height='1' fill='%23d9d0bb'/%3E%3Crect x='4' y='17' width='4' height='1' fill='%23f4eddf'/%3E%3Crect x='8' y='17' width='6' height='1' fill='%23d9d0bb'/%3E%3Crect x='14' y='17' width='6' height='1' fill='%23f4eddf'/%3E%3Crect x='20' y='17' width='1' height='1' fill='%232a2250'/%3E%3Crect x='2' y='18' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='18' width='2' height='1' fill='%23d9d0bb'/%3E%3Crect x='5' y='18' width='3' height='1' fill='%23f4eddf'/%3E%3Crect x='8' y='18' width='5' height='1' fill='%23d9d0bb'/%3E%3Crect x='13' y='18' width='6' height='1' fill='%23f4eddf'/%3E%3Crect x='19' y='18' width='1' height='1' fill='%232a2250'/%3E%3Crect x='3' y='19' width='1' height='1' fill='%232a2250'/%3E%3Crect x='4' y='19' width='2' height='1' fill='%23d9d0bb'/%3E%3Crect x='6' y='19' width='3' height='1' fill='%23f4eddf'/%3E%3Crect x='9' y='19' width='3' height='1' fill='%23d9d0bb'/%3E%3Crect x='12' y='19' width='6' height='1' fill='%23f4eddf'/%3E%3Crect x='18' y='19' width='1' height='1' fill='%232a2250'/%3E%3Crect x='4' y='20' width='2' height='1' fill='%231a1533'/%3E%3Crect x='6' y='20' width='2' height='1' fill='%23d9d0bb'/%3E%3Crect x='8' y='20' width='8' height='1' fill='%23f4eddf'/%3E%3Crect x='16' y='20' width='2' height='1' fill='%231a1533'/%3E%3Crect x='6' y='21' width='3' height='1' fill='%231a1533'/%3E%3Crect x='9' y='21' width='5' height='1' fill='%23f4eddf'/%3E%3Crect x='14' y='21' width='2' height='1' fill='%231a1533'/%3E%3Crect x='9' y='22' width='1' height='1' fill='%232a2250'/%3E%3Crect x='10' y='22' width='2' height='1' fill='%23f2a63a'/%3E%3Crect x='12' y='22' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='22' width='2' height='1' fill='%23f2a63a'/%3E%3Crect x='15' y='22' width='1' height='1' fill='%232a2250'/%3E%3Crect x='8' y='23' width='1' height='1' fill='%232a2250'/%3E%3Crect x='9' y='23' width='3' height='1' fill='%23f2a63a'/%3E%3Crect x='12' y='23' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='23' width='3' height='1' fill='%23f2a63a'/%3E%3Crect x='16' y='23' width='1' height='1' fill='%232a2250'/%3E%3Crect x='7' y='24' width='1' height='1' fill='%232a2250'/%3E%3Crect x='8' y='24' width='1' height='1' fill='%23f2a63a'/%3E%3Crect x='9' y='24' width='2' height='1' fill='%23c17d15'/%3E%3Crect x='11' y='24' width='1' height='1' fill='%23f2a63a'/%3E%3Crect x='12' y='24' width='1' height='1' fill='%232a2250'/%3E%3Crect x='13' y='24' width='1' height='1' fill='%23f2a63a'/%3E%3Crect x='14' y='24' width='2' height='1' fill='%23c17d15'/%3E%3Crect x='16' y='24' width='1' height='1' fill='%23f2a63a'/%3E%3Crect x='17' y='24' width='1' height='1' fill='%232a2250'/%3E%3Crect x='8' y='25' width='4' height='1' fill='%232a2250'/%3E%3Crect x='13' y='25' width='4' height='1' fill='%232a2250'/%3E%3C/svg%3E">
 <style>
@@ -35,6 +42,7 @@
     --muted:         #9d9483;   /* warm grey, was lavender — the other purple leak */
 
     --amber:         #ffb84d;
+    --hot:           #ff6a3d;   /* posted in the last 24h — hotter than amber */
     --amber-dim:     #6b4a17;
     --green:         #5ad1a0;
     --red:           #ff7a7a;
@@ -48,11 +56,20 @@
 
   * { box-sizing: border-box; }
 
-  html { -webkit-text-size-adjust: 100%; }
+  html {
+    -webkit-text-size-adjust: 100%;   /* stop Safari inflating text on rotate */
+    background: var(--bg);            /* colours the overscroll rubber-band area */
+  }
 
   body {
     margin: 0;
     background: var(--bg);
+    /* iOS momentum scrolling, and no grey flash on tap. */
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: transparent;
+    /* Keeps content out from under the notch and the home indicator. */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     color: var(--cream);
     font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
           "Helvetica Neue", Arial, sans-serif;
@@ -75,29 +92,37 @@
     padding: 22px 0 0;
   }
 
-  .masthead { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  /* --px is the size of one art pixel, shared by both marks so their grids align. */
+  .masthead {
+    --px: 2.6;
+    display: flex;
+    align-items: flex-end;      /* baselines, not centres: the goose stands on the rule */
+    gap: calc(var(--px) * 5px);
+    flex-wrap: wrap;
+  }
 
-  /* image-rendering: pixelated keeps the marks blocky when scaled. Without it the
-     browser smooths them and the whole point is lost. */
-  .goose svg { width: 42px; height: 38px; image-rendering: pixelated; display: block; }
-  .wordmark { margin: 0; line-height: 0; }
-  .wordmark svg { width: 232px; height: auto; image-rendering: pixelated; display: block; }
+  /* image-rendering: pixelated stops the browser smoothing the blocks, which is the
+     whole point of drawing them as blocks. */
+  .goose svg, .wordmark svg { image-rendering: pixelated; display: block; }
+  .goose svg    { width: calc(var(--px) * 30px); height: calc(var(--px) * 27px); }
+  .wordmark     { margin: 0; line-height: 0; }
+  .wordmark svg { width: calc(var(--px) * 86px); height: calc(var(--px) * 26px); }
 
   .tagline {
     color: var(--muted);
-    font-size: 11px;
-    line-height: 1.45;
+    font-size: 10.5px;
+    line-height: 1.5;
     text-transform: uppercase;
-    letter-spacing: 0.11em;
+    letter-spacing: 0.12em;
     border-left: 2px solid var(--rule);
     padding-left: 14px;
-    margin-left: 4px;
+    margin-bottom: 4px;
   }
 
   /* Stat row */
   .stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
     gap: 10px;
     margin: 18px 0 0;
   }
@@ -115,7 +140,8 @@
     font-variant-numeric: tabular-nums;
   }
   .stat .l {
-    font-size: 11px;
+    white-space: nowrap;
+    font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: var(--muted);
@@ -123,6 +149,8 @@
   }
   .stat.accent { border-color: var(--amber-dim); }
   .stat.accent .n { color: var(--amber); }
+  .stat.hotstat { border-color: var(--hot); }
+  .stat.hotstat .n { color: var(--hot); }
 
   /* Freshness strip */
   .freshness { margin: 16px 0 0; padding-bottom: 18px; }
@@ -143,22 +171,31 @@
   .pulse.warn { background: var(--amber); box-shadow: 0 0 0 3px rgba(255,184,77,0.16); }
   .pulse.bad  { background: var(--red);   box-shadow: 0 0 0 3px rgba(255,122,122,0.16); }
 
-  .track {
-    margin-top: 9px;
-    height: 4px;
+  /* A segmented meter rather than a smooth bar: discrete blocks suit the pixel
+     theme, and a block either is or is not lit, which reads faster than a bar edge. */
+  .meter { display: flex; gap: 2px; margin-top: 10px; }
+  .meter i {
+    flex: 1;
+    height: 7px;
     background: var(--surface-2);
     border: 1px solid var(--border);
-    border-radius: 0;
-    overflow: hidden;
+    transition: background 0.25s, border-color 0.25s;
   }
-  .track .fill {
-    height: 100%;
-    min-width: 5px;          /* a just-collected feed still reads as a bar, not a dot */
-    background: var(--gold);
-    border-radius: 0;
-    transition: width 0.6s linear;
+  .meter i.lit    { background: var(--gold);  border-color: var(--gold); }
+  /* The leading block pulses, so the page reads as live rather than as a stale render. */
+  .meter i.edge   { background: var(--cream); border-color: var(--cream); animation: blip 1s steps(2) infinite; }
+  .meter.overdue i.lit  { background: var(--amber); border-color: var(--amber); }
+  .meter.overdue i.edge { background: var(--amber); border-color: var(--amber); }
+  @keyframes blip { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.35; } }
+
+  .clock {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+    color: var(--cream);
+    font-weight: 620;
+    letter-spacing: 0.02em;
   }
-  .track.overdue .fill { background: var(--amber); }
+  .clock.overdue { color: var(--amber); }
 
   .sep { color: var(--border-bright); }
 
@@ -169,7 +206,8 @@
     position: sticky;
     top: 0;
     z-index: 20;
-    background: rgba(20, 16, 43, 0.93);
+    background: rgba(20, 16, 43, 0.96);
+    -webkit-backdrop-filter: blur(10px);   /* Safari still needs the prefix */
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
     padding: 12px 0;
@@ -181,12 +219,26 @@
     color: var(--cream);
     border: 1px solid var(--border);
     border-radius: var(--radius-s);
-    padding: 7px 11px;
+    padding: 9px 11px;
     font: inherit;
     font-size: 13px;
+    /* Safari renders search inputs and selects with its own chrome unless told not to. */
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 38px;
   }
   input[type="search"] { flex: 1 1 220px; min-width: 0; }
   input[type="search"]::placeholder { color: var(--muted); }
+  /* Removes Safari's native magnifier and clear button, which ignore our styling. */
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+  /* Mobile Safari zooms the entire page when a focused field's text is under 16px,
+     leaving the user pinching back out. Raising the font on touch devices is the fix;
+     it is applied by pointer type rather than width so a small laptop keeps 13px. */
+  @media (pointer: coarse) {
+    input[type="search"], select { font-size: 16px; min-height: 44px; }
+  }
   input[type="search"]:focus, select:focus {
     outline: none;
     border-color: var(--purple);
@@ -205,7 +257,10 @@
     color: var(--cream-dim);
     cursor: pointer;
     user-select: none;
+    -webkit-user-select: none;
     white-space: nowrap;
+    touch-action: manipulation;
+    min-height: 34px;
   }
   .toggle:hover { border-color: var(--border-bright); }
   .toggle.on {
@@ -221,6 +276,22 @@
   .toggle .tick { width: 13px; text-align: center; opacity: 0.45; }
   .toggle.on .tick { opacity: 1; color: var(--gold); }
   .toggle.on.amber .tick { color: var(--amber); }
+
+  .toggle .flame { font-size: 12px; filter: grayscale(1) opacity(0.5); }
+  .toggle.hot.on {
+    background: rgba(255, 106, 61, 0.16);
+    border-color: var(--hot);
+    color: var(--cream);
+  }
+  .toggle.hot.on .flame { filter: none; }
+
+  .chip.hot {
+    background: rgba(255, 106, 61, 0.18);
+    border-color: var(--hot);
+    color: var(--hot);
+    font-weight: 650;
+  }
+  .role.is-hot { border-left-color: var(--hot); }
 
   .count-note { font-size: 12px; color: var(--muted); margin-top: 9px; }
   .count-note button {
@@ -369,6 +440,21 @@
 
   @media (max-width: 640px) {
     .freshness-line .sep { display: none; }
+    .masthead { --px: 2; gap: 10px; }
+    .tagline { flex-basis: 100%; border-left: 0; padding-left: 0; margin-top: 4px; }
+    /* Bigger tap targets and a roomier grid on a phone. */
+    .btn { min-height: 40px; padding: 9px 13px; }
+    .toggle { min-height: 40px; }
+    .role { padding: 13px; }
+    main { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
+    footer { padding-bottom: calc(30px + env(safe-area-inset-bottom)); }
+    .controls { padding: 10px 0; }
+    /* Four tiles, not eight. The other four are reference figures, and on a phone
+       they push the actual roles three screens down. They stay in the footer line. */
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .stat.minor { display: none; }
+    .stat { padding: 9px 11px; }
+    .stat .n { font-size: 22px; }
     .role { grid-template-columns: 1fr; }
     .role .actions { grid-column: 1; grid-row: auto; padding-top: 6px; }
     .stat .n { font-size: 21px; }
@@ -392,7 +478,7 @@
       <div class="freshness-line" id="freshness">
         <span class="pulse"></span><span>Loading&hellip;</span>
       </div>
-      <div class="track" id="track"><div class="fill" style="width:0%"></div></div>
+      <div class="meter" id="meter"></div>
     </div>
   </div>
 </header>
@@ -416,6 +502,7 @@
         <option value="title">By title</option>
       </select>
       <label class="toggle on" id="t-priority"><span class="tick">&#10003;</span>Matched only</label>
+      <label class="toggle hot" id="t-hot"><span class="flame">&#128293;</span>Hot &mdash; 24h</label>
       <label class="toggle amber" id="t-recent"><span class="tick">&#10003;</span>New in 48h</label>
       <label class="toggle" id="t-star"><span class="tick">&#10003;</span>Shortlisted</label>
       <label class="toggle" id="t-dismissed"><span class="tick">&#10003;</span>Show dismissed</label>
@@ -452,8 +539,13 @@ const local = load();
 
 const ui = {
   q: "", size: "", sector: "", company: "", sort: "new",
-  priority: true, recent: false, starred: false, showDismissed: false,
+  priority: true, hot: false, recent: false, starred: false, showDismissed: false,
 };
+
+// Hot means first seen in the last 24 hours. The window matters: the application-
+// timing thesis is that the first 48 hours carry most of the odds, so 24 marks the
+// half of that window still fully open.
+const HOT_HOURS = 24;
 
 /* Sector slugs are how the employer list stores them; these are how they should read. */
 const SECTOR_LABELS = {
@@ -511,6 +603,7 @@ function isRecent(job, hours) {
   if (!job.first_seen) return false;
   return Date.now() - new Date(job.first_seen).getTime() < hours * HOUR;
 }
+function isHot(job) { return isRecent(job, HOT_HOURS); }
 
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"']/g, c => (
@@ -524,16 +617,19 @@ function esc(s) {
 function renderStats() {
   const matched = feed.jobs.filter(j => j.priority).length;
   const employers = new Set(feed.jobs.map(j => j.company)).size;
+  const hotCount = feed.jobs.filter(isHot).length;
   const tiles = [
-    { n: matched,               l: "Matched roles" },
-    { n: feed.new_last_48h,     l: "New in 48h", accent: true },
-    { n: feed.new_last_7d,      l: "New in 7 days" },
-    { n: feed.jobs.length,      l: "UK / remote total" },
-    { n: employers,             l: "Employers hiring" },
-    { n: feed.employers_queried, l: "Employers queried" },
+    { n: matched,               l: "Matched" },
+    { n: hotCount,              l: "Hot \u00b7 24h", hot: true },
+    { n: feed.new_last_48h,     l: "New \u00b7 48h", accent: true },
+    { n: feed.new_last_7d,      l: "New \u00b7 7d", minor: true },
+    { n: feed.jobs.length,      l: "In scope" },
+    { n: employers,             l: "Hiring now", minor: true },
+    { n: feed.employers_queried,  l: "Boards live", minor: true },
+    { n: feed.employers_total || feed.employers_queried, l: "Tracked", minor: true },
   ];
   document.getElementById("stats").innerHTML = tiles.map(t => `
-    <div class="stat${t.accent ? " accent" : ""}">
+    <div class="stat${t.accent ? " accent" : ""}${t.hot ? " hotstat" : ""}${t.minor ? " minor" : ""}">
       <div class="n">${t.n == null ? "—" : t.n}</div>
       <div class="l">${t.l}</div>
     </div>`).join("");
@@ -543,10 +639,16 @@ function renderStats() {
    and runs them late under load — frequently 5 to 15 minutes, sometimes far more.
    So this shows "due", and when the window passes it says so plainly rather than
    counting into negative numbers and looking broken. */
+const METER_BLOCKS = 24;   // one block per 5 minutes of a 2-hour cycle
+
+/** Countdown, live to the second.
+ *
+ *  Presented as "due", never as a promise: GitHub queues scheduled workflows and
+ *  runs them late under load, often by 5 to 15 minutes. Once the window passes the
+ *  display says so plainly rather than counting into negatives. */
 function renderFreshness() {
   const el = document.getElementById("freshness");
-  const track = document.getElementById("track");
-  const fill = track.firstElementChild;
+  const meter = document.getElementById("meter");
 
   const collected = new Date(feed.generated_at).getTime();
   const interval = (feed.run_interval_hours || 2) * HOUR;
@@ -554,24 +656,27 @@ function renderFreshness() {
   const now = Date.now();
   const age = now - collected;
 
-  let cls = "", note = "", pct = Math.min(100, (age / interval) * 100);
+  const pad = n => String(n).padStart(2, "0");
+  let cls = "", note = "", overdue = false;
+  let frac = Math.min(1, age / interval);
 
   if (age > 4 * HOUR) {
-    cls = "bad";
-    note = `<strong style="color:var(--red)">Data is ${Math.floor(age / HOUR)}h old</strong>
+    cls = "bad"; overdue = true; frac = 1;
+    note = `<span class="clock overdue">${Math.floor(age / HOUR)}h stale</span>
             <span class="sep">&middot;</span> the last collection may have failed`;
-    pct = 100;
   } else if (now >= due) {
-    cls = "warn";
-    const late = Math.floor((now - due) / 60000);
-    note = `Next collection <strong>due now</strong>
-            <span class="sep">&middot;</span> ${late}m past due, GitHub queues run late`;
-    pct = 100;
+    cls = "warn"; overdue = true; frac = 1;
+    const late = now - due;
+    note = `<span class="clock overdue">+${pad(Math.floor(late / 60000))}:${pad(Math.floor(late / 1000) % 60)}</span>
+            <span class="sep">&middot;</span> due now, GitHub queues run late`;
   } else {
     const left = due - now;
-    const h = Math.floor(left / HOUR), m = Math.floor((left % HOUR) / 60000);
-    note = `Next due ${clockUK(new Date(due).toISOString())}
-            <span class="sep">&middot;</span> in ${h > 0 ? h + "h " : ""}${m}m`;
+    const h = Math.floor(left / HOUR);
+    const m = Math.floor((left % HOUR) / 60000);
+    const sec = Math.floor((left % 60000) / 1000);
+    note = `next collection in
+            <span class="clock">${h > 0 ? h + ":" : ""}${pad(m)}:${pad(sec)}</span>
+            <span class="sep">&middot;</span> due ${clockUK(new Date(due).toISOString())}`;
   }
 
   el.innerHTML = `
@@ -581,8 +686,17 @@ function renderFreshness() {
     <span class="sep">|</span>
     <span>${note}</span>`;
 
-  track.classList.toggle("overdue", pct >= 100);
-  fill.style.width = pct.toFixed(1) + "%";
+  // Rebuild the blocks only when the lit count changes, not 60 times a minute.
+  const lit = Math.round(frac * METER_BLOCKS);
+  if (meter.dataset.lit !== String(lit) || meter.childElementCount !== METER_BLOCKS) {
+    meter.dataset.lit = String(lit);
+    meter.innerHTML = Array.from({ length: METER_BLOCKS }, (_, i) => {
+      if (i < lit - 1) return '<i class="lit"></i>';
+      if (i === lit - 1) return '<i class="lit edge"></i>';
+      return "<i></i>";
+    }).join("");
+  }
+  meter.classList.toggle("overdue", overdue);
 }
 
 function renderBanner() {
@@ -629,6 +743,7 @@ function visible() {
     if (!ui.showDismissed && ann.dismissed) return false;
     if (ui.starred && !ann.starred) return false;
     if (ui.priority && !job.priority) return false;
+    if (ui.hot && !isHot(job)) return false;
     if (ui.recent && !isRecent(job, 48)) return false;
     if (ui.size && job.size !== ui.size) return false;
     if (ui.sector && job.sector !== ui.sector) return false;
@@ -653,18 +768,22 @@ function sortJobs(jobs) {
 function roleCard(job) {
   const ann = annotation(job.key);
   const fresh = isRecent(job, 48);
+  const hot = isHot(job);
   const cls = [
     "role",
-    fresh ? "is-new" : "",
+    hot ? "is-hot" : (fresh ? "is-new" : ""),
     ann.starred ? "shortlisted" : "",
     ann.dismissed ? "dismissed" : "",
     job.priority ? "" : "secondary",
   ].filter(Boolean).join(" ");
 
   const chips = [
-    fresh ? '<span class="chip new">NEW</span>' : "",
+    hot ? '<span class="chip hot">\u{1F525} HOT</span>'
+        : (fresh ? '<span class="chip new">NEW</span>' : ""),
     job.priority ? "" : '<span class="chip">wider scope</span>',
     job.sector ? `<span class="chip">${esc(sectorLabel(job.sector))}</span>` : "",
+    job.geo === "remote-unspecified" ? '<span class="chip">remote, region unstated</span>' : "",
+    job.geo === "unstated" ? '<span class="chip">location unstated</span>' : "",
     job.missing_runs ? '<span class="chip">may have closed</span>' : "",
   ].filter(Boolean).join("");
 
@@ -737,7 +856,8 @@ function wireCountNote() {
    -------------------------------------------------------------------------- */
 function setToggle(name, value) {
   ui[name] = value;
-  const map = { priority: "t-priority", recent: "t-recent", starred: "t-star", showDismissed: "t-dismissed" };
+  const map = { priority: "t-priority", hot: "t-hot", recent: "t-recent",
+                starred: "t-star", showDismissed: "t-dismissed" };
   document.getElementById(map[name]).classList.toggle("on", value);
   render();
 }
@@ -756,7 +876,8 @@ function wire() {
       });
     });
 
-  [["t-priority", "priority"], ["t-recent", "recent"], ["t-star", "starred"], ["t-dismissed", "showDismissed"]]
+  [["t-priority", "priority"], ["t-hot", "hot"], ["t-recent", "recent"],
+   ["t-star", "starred"], ["t-dismissed", "showDismissed"]]
     .forEach(([id, key]) => {
       document.getElementById(id).addEventListener("click", () => setToggle(key, !ui[key]));
     });
@@ -819,8 +940,15 @@ async function boot() {
      collected ${clockUK(feed.generated_at)} UK.
      Shortlists are stored in this browser only.`;
 
-  // Keep the freshness strip honest without reloading the page.
-  setInterval(renderFreshness, 30000);
+  // Tick every second so the countdown is live. Cheap: it rewrites one line of text
+  // and only rebuilds the meter blocks when the lit count actually changes.
+  setInterval(renderFreshness, 1000);
+
+  // iOS suspends timers when Safari is backgrounded, so the countdown would be wrong
+  // on return. Recompute the moment the tab becomes visible again.
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) { renderFreshness(); render(); }
+  });
 }
 
 boot();
