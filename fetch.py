@@ -94,28 +94,114 @@ TITLE_EXCLUDE = re.compile(
     re.IGNORECASE | re.VERBOSE,
 )
 
-# Locations that count. London, UK-wide, or genuinely remote.
-LOCATION_INCLUDE = re.compile(
-    r"\b(london|united\s+kingdom|uk|england|remote|hybrid|anywhere)\b",
+# ---------------------------------------------------------------------------
+# Geography. Two ways in, and only two:
+#   1. The role is in the UK.
+#   2. The role is remote AND the region it is remote *within* is inside GMT ±3.
+#
+# A Berlin office role is neither, so it is out. "Remote - Europe" is in. This is
+# stricter than the previous rule, which admitted any role whose location mentioned
+# "remote" regardless of where that remote was anchored.
+# ---------------------------------------------------------------------------
+
+UK = re.compile(
+    r"\b(london|united\s+kingdom|u\.k\.|uk|england|scotland|wales|"
+    r"northern\s+ireland|britain|manchester|birmingham|leeds|bristol|glasgow|"
+    r"edinburgh|cardiff|belfast|cambridge|oxford|reading|hatfield|milton\s+keynes)\b",
     re.IGNORECASE,
 )
 
-# Locations that look UK-ish but are not. Guards against "New London", "UKraine" and
-# remote roles pinned to another continent.
-LOCATION_EXCLUDE = re.compile(
+REMOTE = re.compile(r"\b(remote|anywhere|distributed|work\s+from\s+home|wfh|hybrid)\b",
+                    re.IGNORECASE)
+
+# Regions whose standard offset sits within three hours of GMT/BST. A three-hour
+# spread is the practical limit for a shared working day: it still leaves a five-hour
+# overlap with UK hours.
+TZ_OK = re.compile(
     r"""
     \b(
-        new\s+london | london,\s*(on|ontario|ky|kentucky) | ukraine
-      | united\s+states | usa | u\.s\.a? | us          # bare "US" catches
-      | north\s+america | latam | apac                   # "Remote - Central US"
-      | canada | india | singapore | australia | new\s+zealand
-      | germany | france | spain | netherlands | poland | portugal
-      | brazil | mexico | japan | china | israel | uae | dubai
-      | sweden | denmark | norway | finland | ireland | switzerland
+        emea | europe | european | eu\b | uk\b | gmt | bst | cet | cest | wet | eet
+      | ireland | dublin | portugal | lisbon | spain | madrid | barcelona
+      | france | paris | germany | berlin | munich | netherlands | amsterdam
+      | belgium | brussels | luxembourg | switzerland | zurich | geneva
+      | italy | rome | milan | austria | vienna | denmark | copenhagen
+      | sweden | stockholm | norway | oslo | finland | helsinki | iceland
+      | poland | warsaw | krakow | czech | prague | slovakia | hungary | budapest
+      | romania | bucharest | bulgaria | sofia | greece | athens | croatia | serbia
+      | estonia | tallinn | latvia | riga | lithuania | vilnius
+      | turkey | istanbul | israel | tel\s+aviv
+      | south\s+africa | cape\s+town | johannesburg | nigeria | lagos | ghana | accra
+      | kenya | nairobi | egypt | cairo | morocco | casablanca | tunisia
+      | brazil | s[aã]o\s+paulo | argentina | buenos\s+aires | cape\s+verde
     )\b
     """,
     re.IGNORECASE | re.VERBOSE,
 )
+
+# Regions definitively outside GMT ±3. Checked first, because a posting reading
+# "Remote - US, UK" should not qualify on the strength of the word remote.
+TZ_BAD = re.compile(
+    r"""
+    \b(
+        united\s+states | usa | u\.s\.a? | us\b | americas | latam | nam\b
+      | north\s+america | south\s+america | canada | toronto | vancouver
+      | mexico | chile | colombia | peru
+      | apac | asia | india | bengaluru | bangalore | mumbai | delhi | hyderabad
+      | pakistan | philippines | manila | vietnam | thailand | indonesia | jakarta
+      | singapore | malaysia | hong\s+kong | china | shanghai | beijing | shenzhen
+      | japan | tokyo | korea | seoul | taiwan | australia | sydney | melbourne
+      | new\s+zealand | auckland
+      | uae | dubai | abu\s+dhabi | saudi | riyadh | qatar | doha
+      | new\s+london | london,\s*(on|ontario|ky|kentucky) | ukraine
+    )\b
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+
+
+# Places that contain a UK place name but are not in the UK. Checked before anything
+# else, because "London, Ontario" would otherwise match the UK pattern and win.
+UK_IMPOSTORS = re.compile(
+    r"\b(new\s+london|london,\s*(on|ontario|ky|kentucky|oh|ohio)|"
+    r"londonderry,\s*(nh|vt)|birmingham,\s*(al|alabama|mi)|"
+    r"manchester,\s*(nh|ct|new\s+hampshire)|cambridge,\s*(ma|massachusetts)|"
+    r"bristol,\s*(ct|ri|tn)|boston,\s*(ma|massachusetts))\b",
+    re.IGNORECASE,
+)
+
+
+def location_verdict(location: str) -> tuple[bool, str]:
+    """Return (in_scope, reason). The reason is kept on the posting so a surprising
+    inclusion or exclusion can be explained later without re-deriving it."""
+    if not location:
+        # No location given. Keep it rather than silently dropping a possible London
+        # role, but label it so it can be filtered in the UI.
+        return True, "unstated"
+
+    # Impostors first. A UK place name in another country must not qualify.
+    if UK_IMPOSTORS.search(location):
+        return False, "uk-impostor"
+
+    bad = bool(TZ_BAD.search(location))
+    uk = bool(UK.search(location))
+
+    # A posting naming both the UK and somewhere far away is usually a genuinely
+    # multi-site role, so the UK mention wins.
+    if uk:
+        return True, "uk"
+    if bad:
+        return False, "outside-tz"
+    if REMOTE.search(location):
+        if TZ_OK.search(location):
+            return True, "remote-in-tz"
+        # Bare "Remote" with no region at all. Keep, flagged: it is frequently a
+        # UK or European employer being lazy, and dropping them loses real roles.
+        return True, "remote-unspecified"
+    return False, "not-uk"
+
+
+def matches_location(location: str) -> bool:
+    return location_verdict(location)[0]
 
 
 def matches_title(title: str) -> bool:
@@ -203,6 +289,7 @@ def main() -> int:
         return 1
 
     companies = config.get("companies", [])
+    employers_total = len(companies) + len(config.get("unresolved", []))
     if args.size:
         companies = [c for c in companies if c.get("size") == args.size]
     if args.sector:
@@ -227,9 +314,14 @@ def main() -> int:
     # browser instead of in Python, so refining it costs a click rather than a code
     # change and a twenty-minute re-run. It also makes the rejected pile visible, which
     # is the only way to tell an over-tight filter from a genuinely empty market.
-    in_scope = [p for p in unique if matches_location(p["location"])]
-    for posting in in_scope:
+    in_scope = []
+    for posting in unique:
+        ok, reason = location_verdict(posting["location"])
+        if not ok:
+            continue
+        posting["geo"] = reason
         posting["priority"] = matches_title(posting["title"])
+        in_scope.append(posting)
 
     published = in_scope
     results = in_scope if args.all else [p for p in in_scope if p["priority"]]
@@ -280,6 +372,7 @@ def main() -> int:
             jobs,
             counts,
             employers_queried=len(companies),
+            employers_total=employers_total,
             failures=failures,
             total_roles_seen=len(unique),
         )

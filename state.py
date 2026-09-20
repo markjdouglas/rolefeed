@@ -137,7 +137,8 @@ def write_feed(
     counts: dict[str, int],
     *,
     employers_queried: int,
-    failures: list[str],
+    employers_total: int | None = None,
+    failures: list[str] | None = None,
     total_roles_seen: int,
     path: pathlib.Path = FEED,
 ) -> dict:
@@ -151,9 +152,13 @@ def write_feed(
             timespec="seconds"
         ),
         "run_interval_hours": RUN_INTERVAL_HOURS,
+        # Two different numbers, and conflating them overstates coverage:
+        # `queried` is the boards we can actually reach, `total` is the employer
+        # list. The gap between them is the unresolved pile.
         "employers_queried": employers_queried,
-        "employers_failed": len(failures),
-        "failures": failures[:20],
+        "employers_total": employers_total or employers_queried,
+        "employers_failed": len(failures or []),
+        "failures": (failures or [])[:20],
         "total_roles_seen": total_roles_seen,
         "matching_roles": counts["total"],
         "new_this_run": counts["new_this_run"],
