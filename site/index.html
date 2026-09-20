@@ -104,6 +104,34 @@
   /* image-rendering: pixelated stops the browser smoothing the blocks, which is the
      whole point of drawing them as blocks. */
   .goose svg, .wordmark svg { image-rendering: pixelated; display: block; }
+
+  /* Frame selection. Only the group matching data-frame is drawn; the others are
+     display:none, so there is nothing to composite and no cost to carrying them. */
+  .goose .gf { display: none; }
+  .goose[data-frame="idle"]  .gf-idle,
+  .goose[data-frame="blink"] .gf-blink,
+  .goose[data-frame="peck"]  .gf-peck { display: block; }
+
+  /* The waddle moves her by whole art pixels. steps(1) on each segment keeps the
+     positions discrete — a smooth transform would land her on half a pixel and the
+     browser would resample the blocks into mush. */
+  .goose.waddle svg {
+    animation: waddle 0.72s steps(1, end) 1;
+  }
+  @keyframes waddle {
+    0%,  100% { transform: translateX(0); }
+    20%       { transform: translateX(calc(var(--px) * 1px)); }
+    40%       { transform: translateX(0); }
+    60%       { transform: translateX(calc(var(--px) * -1px)); }
+    80%       { transform: translateX(0); }
+  }
+
+  /* Someone who has asked their OS for less motion gets a goose that simply stands
+     there. The mascot is decoration; it is never worth overriding that preference. */
+  @media (prefers-reduced-motion: reduce) {
+    .goose.waddle svg { animation: none; }
+    .meter i.edge { animation: none; }
+  }
   .goose svg    { width: calc(var(--px) * 30px); height: calc(var(--px) * 27px); }
   .wordmark     { margin: 0; line-height: 0; }
   .wordmark svg { width: calc(var(--px) * 86px); height: calc(var(--px) * 26px); }
@@ -213,6 +241,22 @@
     padding: 12px 0;
   }
   .control-row { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; }
+  .control-row.extra { margin-top: 9px; }
+
+  /* The Filters button exists only on touch layouts; on a wide screen every control
+     is already visible and a disclosure would just be an extra click. */
+  .filters-btn { display: none; }
+  .filters-btn .caret { font-size: 9px; transition: transform 0.18s; }
+  .controls.open .filters-btn .caret { transform: rotate(180deg); }
+  .filters-btn .badge {
+    background: var(--gold);
+    color: #1a1533;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 6px;
+    min-width: 18px;
+    text-align: center;
+  }
 
   input[type="search"], select {
     background: var(--surface-2);
@@ -448,7 +492,48 @@
     .role { padding: 13px; }
     main { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
     footer { padding-bottom: calc(30px + env(safe-area-inset-bottom)); }
-    .controls { padding: 10px 0; }
+    /* The whole filter set wrapped to four rows and, being sticky, occupied over half
+       the viewport while content scrolled underneath. The fix is a compact sticky bar:
+       search plus a disclosure. The panel is then a deliberate action, not permanent
+       furniture, and the sticky element is one row tall. */
+    .controls { padding: 8px 0; }
+    .control-row.primary { gap: 8px; }
+    .control-row.extra {
+      display: none;
+      margin-top: 8px;
+      /* Long enough on a small screen to need its own scroll rather than pushing the
+         page down. dvh, not vh, because Safari's toolbars change the viewport height
+         as you scroll and vh would jump. */
+      max-height: 52dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+    }
+    .controls.open .control-row.extra { display: flex; }
+
+    .filters-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      flex: none;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      font: inherit;
+      font-size: 14px;
+      padding: 0 13px;
+      min-height: 44px;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .controls.open .filters-btn { border-color: var(--border-bright); }
+    /* Selects and toggles fill the panel two-up rather than wrapping raggedly. */
+    .control-row.extra select { flex: 1 1 calc(50% - 4px); }
+    .control-row.extra .toggle { flex: 1 1 calc(50% - 4px); justify-content: center; }
+    .count-note { margin-top: 6px; font-size: 11.5px; white-space: nowrap;
+                  overflow: hidden; text-overflow: ellipsis; }
+    .note-long { display: none; }
     /* Four tiles, not eight. The other four are reference figures, and on a phone
        they push the actual roles three screens down. They stay in the footer line. */
     .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
@@ -467,7 +552,7 @@
 <header>
   <div class="wrap">
     <div class="masthead">
-      <span class="goose"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 27" shape-rendering="crispEdges" role="img" aria-label="RoleFeed goose"><rect x="15" y="0" width="6" height="1" fill="#2a2250"/><rect x="14" y="1" width="1" height="1" fill="#2a2250"/><rect x="15" y="1" width="3" height="1" fill="#fffdf7"/><rect x="18" y="1" width="3" height="1" fill="#f4eddf"/><rect x="21" y="1" width="1" height="1" fill="#2a2250"/><rect x="13" y="2" width="1" height="1" fill="#2a2250"/><rect x="14" y="2" width="1" height="1" fill="#fffdf7"/><rect x="15" y="2" width="6" height="1" fill="#f4eddf"/><rect x="21" y="2" width="1" height="1" fill="#2a2250"/><rect x="13" y="3" width="1" height="1" fill="#2a2250"/><rect x="14" y="3" width="7" height="1" fill="#f4eddf"/><rect x="21" y="3" width="1" height="1" fill="#2a2250"/><rect x="13" y="4" width="1" height="1" fill="#2a2250"/><rect x="14" y="4" width="2" height="1" fill="#f4eddf"/><rect x="16" y="4" width="2" height="1" fill="#241d47"/><rect x="18" y="4" width="3" height="1" fill="#f4eddf"/><rect x="21" y="4" width="1" height="1" fill="#2a2250"/><rect x="22" y="4" width="3" height="1" fill="#f2a63a"/><rect x="13" y="5" width="1" height="1" fill="#2a2250"/><rect x="14" y="5" width="2" height="1" fill="#f4eddf"/><rect x="16" y="5" width="2" height="1" fill="#241d47"/><rect x="18" y="5" width="3" height="1" fill="#f4eddf"/><rect x="21" y="5" width="5" height="1" fill="#f2a63a"/><rect x="13" y="6" width="1" height="1" fill="#2a2250"/><rect x="14" y="6" width="7" height="1" fill="#f4eddf"/><rect x="21" y="6" width="1" height="1" fill="#2a2250"/><rect x="22" y="6" width="3" height="1" fill="#f2a63a"/><rect x="14" y="7" width="1" height="1" fill="#2a2250"/><rect x="15" y="7" width="6" height="1" fill="#f4eddf"/><rect x="21" y="7" width="1" height="1" fill="#2a2250"/><rect x="14" y="8" width="1" height="1" fill="#2a2250"/><rect x="15" y="8" width="4" height="1" fill="#f4eddf"/><rect x="19" y="8" width="1" height="1" fill="#2a2250"/><rect x="14" y="9" width="1" height="1" fill="#2a2250"/><rect x="15" y="9" width="4" height="1" fill="#f4eddf"/><rect x="19" y="9" width="1" height="1" fill="#2a2250"/><rect x="14" y="10" width="1" height="1" fill="#2a2250"/><rect x="15" y="10" width="4" height="1" fill="#f4eddf"/><rect x="19" y="10" width="1" height="1" fill="#2a2250"/><rect x="7" y="11" width="7" height="1" fill="#2a2250"/><rect x="14" y="11" width="4" height="1" fill="#f4eddf"/><rect x="18" y="11" width="2" height="1" fill="#2a2250"/><rect x="5" y="12" width="2" height="1" fill="#2a2250"/><rect x="7" y="12" width="2" height="1" fill="#d9d0bb"/><rect x="9" y="12" width="10" height="1" fill="#f4eddf"/><rect x="19" y="12" width="1" height="1" fill="#2a2250"/><rect x="4" y="13" width="1" height="1" fill="#2a2250"/><rect x="5" y="13" width="3" height="1" fill="#d9d0bb"/><rect x="8" y="13" width="12" height="1" fill="#f4eddf"/><rect x="20" y="13" width="1" height="1" fill="#2a2250"/><rect x="3" y="14" width="1" height="1" fill="#2a2250"/><rect x="4" y="14" width="2" height="1" fill="#d9d0bb"/><rect x="6" y="14" width="14" height="1" fill="#f4eddf"/><rect x="20" y="14" width="1" height="1" fill="#2a2250"/><rect x="3" y="15" width="1" height="1" fill="#2a2250"/><rect x="4" y="15" width="1" height="1" fill="#d9d0bb"/><rect x="5" y="15" width="15" height="1" fill="#f4eddf"/><rect x="20" y="15" width="1" height="1" fill="#2a2250"/><rect x="2" y="16" width="1" height="1" fill="#2a2250"/><rect x="3" y="16" width="1" height="1" fill="#d9d0bb"/><rect x="4" y="16" width="5" height="1" fill="#f4eddf"/><rect x="9" y="16" width="4" height="1" fill="#d9d0bb"/><rect x="13" y="16" width="7" height="1" fill="#f4eddf"/><rect x="20" y="16" width="1" height="1" fill="#2a2250"/><rect x="2" y="17" width="1" height="1" fill="#2a2250"/><rect x="3" y="17" width="1" height="1" fill="#d9d0bb"/><rect x="4" y="17" width="4" height="1" fill="#f4eddf"/><rect x="8" y="17" width="6" height="1" fill="#d9d0bb"/><rect x="14" y="17" width="6" height="1" fill="#f4eddf"/><rect x="20" y="17" width="1" height="1" fill="#2a2250"/><rect x="2" y="18" width="1" height="1" fill="#2a2250"/><rect x="3" y="18" width="2" height="1" fill="#d9d0bb"/><rect x="5" y="18" width="3" height="1" fill="#f4eddf"/><rect x="8" y="18" width="5" height="1" fill="#d9d0bb"/><rect x="13" y="18" width="6" height="1" fill="#f4eddf"/><rect x="19" y="18" width="1" height="1" fill="#2a2250"/><rect x="3" y="19" width="1" height="1" fill="#2a2250"/><rect x="4" y="19" width="2" height="1" fill="#d9d0bb"/><rect x="6" y="19" width="3" height="1" fill="#f4eddf"/><rect x="9" y="19" width="3" height="1" fill="#d9d0bb"/><rect x="12" y="19" width="6" height="1" fill="#f4eddf"/><rect x="18" y="19" width="1" height="1" fill="#2a2250"/><rect x="4" y="20" width="2" height="1" fill="#1a1533"/><rect x="6" y="20" width="2" height="1" fill="#d9d0bb"/><rect x="8" y="20" width="8" height="1" fill="#f4eddf"/><rect x="16" y="20" width="2" height="1" fill="#1a1533"/><rect x="6" y="21" width="3" height="1" fill="#1a1533"/><rect x="9" y="21" width="5" height="1" fill="#f4eddf"/><rect x="14" y="21" width="2" height="1" fill="#1a1533"/><rect x="9" y="22" width="1" height="1" fill="#2a2250"/><rect x="10" y="22" width="2" height="1" fill="#f2a63a"/><rect x="12" y="22" width="1" height="1" fill="#2a2250"/><rect x="13" y="22" width="2" height="1" fill="#f2a63a"/><rect x="15" y="22" width="1" height="1" fill="#2a2250"/><rect x="8" y="23" width="1" height="1" fill="#2a2250"/><rect x="9" y="23" width="3" height="1" fill="#f2a63a"/><rect x="12" y="23" width="1" height="1" fill="#2a2250"/><rect x="13" y="23" width="3" height="1" fill="#f2a63a"/><rect x="16" y="23" width="1" height="1" fill="#2a2250"/><rect x="7" y="24" width="1" height="1" fill="#2a2250"/><rect x="8" y="24" width="1" height="1" fill="#f2a63a"/><rect x="9" y="24" width="2" height="1" fill="#c17d15"/><rect x="11" y="24" width="1" height="1" fill="#f2a63a"/><rect x="12" y="24" width="1" height="1" fill="#2a2250"/><rect x="13" y="24" width="1" height="1" fill="#f2a63a"/><rect x="14" y="24" width="2" height="1" fill="#c17d15"/><rect x="16" y="24" width="1" height="1" fill="#f2a63a"/><rect x="17" y="24" width="1" height="1" fill="#2a2250"/><rect x="8" y="25" width="4" height="1" fill="#2a2250"/><rect x="13" y="25" width="4" height="1" fill="#2a2250"/></svg></span>
+      <span class="goose" id="goose" data-frame="idle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 27" shape-rendering="crispEdges" role="img" aria-label="RoleFeed goose"><g class="gf gf-idle"><rect x="15" y="0" width="6" height="1" fill="#2a2250"/><rect x="14" y="1" width="1" height="1" fill="#2a2250"/><rect x="15" y="1" width="3" height="1" fill="#fffdf7"/><rect x="18" y="1" width="3" height="1" fill="#f4eddf"/><rect x="21" y="1" width="1" height="1" fill="#2a2250"/><rect x="13" y="2" width="1" height="1" fill="#2a2250"/><rect x="14" y="2" width="1" height="1" fill="#fffdf7"/><rect x="15" y="2" width="6" height="1" fill="#f4eddf"/><rect x="21" y="2" width="1" height="1" fill="#2a2250"/><rect x="13" y="3" width="1" height="1" fill="#2a2250"/><rect x="14" y="3" width="7" height="1" fill="#f4eddf"/><rect x="21" y="3" width="1" height="1" fill="#2a2250"/><rect x="13" y="4" width="1" height="1" fill="#2a2250"/><rect x="14" y="4" width="2" height="1" fill="#f4eddf"/><rect x="16" y="4" width="2" height="1" fill="#241d47"/><rect x="18" y="4" width="3" height="1" fill="#f4eddf"/><rect x="21" y="4" width="1" height="1" fill="#2a2250"/><rect x="22" y="4" width="3" height="1" fill="#f2a63a"/><rect x="13" y="5" width="1" height="1" fill="#2a2250"/><rect x="14" y="5" width="2" height="1" fill="#f4eddf"/><rect x="16" y="5" width="2" height="1" fill="#241d47"/><rect x="18" y="5" width="3" height="1" fill="#f4eddf"/><rect x="21" y="5" width="5" height="1" fill="#f2a63a"/><rect x="13" y="6" width="1" height="1" fill="#2a2250"/><rect x="14" y="6" width="7" height="1" fill="#f4eddf"/><rect x="21" y="6" width="1" height="1" fill="#2a2250"/><rect x="22" y="6" width="3" height="1" fill="#f2a63a"/><rect x="14" y="7" width="1" height="1" fill="#2a2250"/><rect x="15" y="7" width="6" height="1" fill="#f4eddf"/><rect x="21" y="7" width="1" height="1" fill="#2a2250"/><rect x="14" y="8" width="1" height="1" fill="#2a2250"/><rect x="15" y="8" width="4" height="1" fill="#f4eddf"/><rect x="19" y="8" width="1" height="1" fill="#2a2250"/><rect x="14" y="9" width="1" height="1" fill="#2a2250"/><rect x="15" y="9" width="4" height="1" fill="#f4eddf"/><rect x="19" y="9" width="1" height="1" fill="#2a2250"/><rect x="14" y="10" width="1" height="1" fill="#2a2250"/><rect x="15" y="10" width="4" height="1" fill="#f4eddf"/><rect x="19" y="10" width="1" height="1" fill="#2a2250"/><rect x="7" y="11" width="7" height="1" fill="#2a2250"/><rect x="14" y="11" width="4" height="1" fill="#f4eddf"/><rect x="18" y="11" width="2" height="1" fill="#2a2250"/><rect x="5" y="12" width="2" height="1" fill="#2a2250"/><rect x="7" y="12" width="2" height="1" fill="#d9d0bb"/><rect x="9" y="12" width="10" height="1" fill="#f4eddf"/><rect x="19" y="12" width="1" height="1" fill="#2a2250"/><rect x="4" y="13" width="1" height="1" fill="#2a2250"/><rect x="5" y="13" width="3" height="1" fill="#d9d0bb"/><rect x="8" y="13" width="12" height="1" fill="#f4eddf"/><rect x="20" y="13" width="1" height="1" fill="#2a2250"/><rect x="3" y="14" width="1" height="1" fill="#2a2250"/><rect x="4" y="14" width="2" height="1" fill="#d9d0bb"/><rect x="6" y="14" width="14" height="1" fill="#f4eddf"/><rect x="20" y="14" width="1" height="1" fill="#2a2250"/><rect x="3" y="15" width="1" height="1" fill="#2a2250"/><rect x="4" y="15" width="1" height="1" fill="#d9d0bb"/><rect x="5" y="15" width="15" height="1" fill="#f4eddf"/><rect x="20" y="15" width="1" height="1" fill="#2a2250"/><rect x="2" y="16" width="1" height="1" fill="#2a2250"/><rect x="3" y="16" width="1" height="1" fill="#d9d0bb"/><rect x="4" y="16" width="5" height="1" fill="#f4eddf"/><rect x="9" y="16" width="4" height="1" fill="#d9d0bb"/><rect x="13" y="16" width="7" height="1" fill="#f4eddf"/><rect x="20" y="16" width="1" height="1" fill="#2a2250"/><rect x="2" y="17" width="1" height="1" fill="#2a2250"/><rect x="3" y="17" width="1" height="1" fill="#d9d0bb"/><rect x="4" y="17" width="4" height="1" fill="#f4eddf"/><rect x="8" y="17" width="6" height="1" fill="#d9d0bb"/><rect x="14" y="17" width="6" height="1" fill="#f4eddf"/><rect x="20" y="17" width="1" height="1" fill="#2a2250"/><rect x="2" y="18" width="1" height="1" fill="#2a2250"/><rect x="3" y="18" width="2" height="1" fill="#d9d0bb"/><rect x="5" y="18" width="3" height="1" fill="#f4eddf"/><rect x="8" y="18" width="5" height="1" fill="#d9d0bb"/><rect x="13" y="18" width="6" height="1" fill="#f4eddf"/><rect x="19" y="18" width="1" height="1" fill="#2a2250"/><rect x="3" y="19" width="1" height="1" fill="#2a2250"/><rect x="4" y="19" width="2" height="1" fill="#d9d0bb"/><rect x="6" y="19" width="3" height="1" fill="#f4eddf"/><rect x="9" y="19" width="3" height="1" fill="#d9d0bb"/><rect x="12" y="19" width="6" height="1" fill="#f4eddf"/><rect x="18" y="19" width="1" height="1" fill="#2a2250"/><rect x="4" y="20" width="2" height="1" fill="#1a1533"/><rect x="6" y="20" width="2" height="1" fill="#d9d0bb"/><rect x="8" y="20" width="8" height="1" fill="#f4eddf"/><rect x="16" y="20" width="2" height="1" fill="#1a1533"/><rect x="6" y="21" width="3" height="1" fill="#1a1533"/><rect x="9" y="21" width="5" height="1" fill="#f4eddf"/><rect x="14" y="21" width="2" height="1" fill="#1a1533"/><rect x="9" y="22" width="1" height="1" fill="#2a2250"/><rect x="10" y="22" width="2" height="1" fill="#f2a63a"/><rect x="12" y="22" width="1" height="1" fill="#2a2250"/><rect x="13" y="22" width="2" height="1" fill="#f2a63a"/><rect x="15" y="22" width="1" height="1" fill="#2a2250"/><rect x="8" y="23" width="1" height="1" fill="#2a2250"/><rect x="9" y="23" width="3" height="1" fill="#f2a63a"/><rect x="12" y="23" width="1" height="1" fill="#2a2250"/><rect x="13" y="23" width="3" height="1" fill="#f2a63a"/><rect x="16" y="23" width="1" height="1" fill="#2a2250"/><rect x="7" y="24" width="1" height="1" fill="#2a2250"/><rect x="8" y="24" width="1" height="1" fill="#f2a63a"/><rect x="9" y="24" width="2" height="1" fill="#c17d15"/><rect x="11" y="24" width="1" height="1" fill="#f2a63a"/><rect x="12" y="24" width="1" height="1" fill="#2a2250"/><rect x="13" y="24" width="1" height="1" fill="#f2a63a"/><rect x="14" y="24" width="2" height="1" fill="#c17d15"/><rect x="16" y="24" width="1" height="1" fill="#f2a63a"/><rect x="17" y="24" width="1" height="1" fill="#2a2250"/><rect x="8" y="25" width="4" height="1" fill="#2a2250"/><rect x="13" y="25" width="4" height="1" fill="#2a2250"/></g><g class="gf gf-blink"><rect x="15" y="0" width="6" height="1" fill="#2a2250"/><rect x="14" y="1" width="1" height="1" fill="#2a2250"/><rect x="15" y="1" width="3" height="1" fill="#fffdf7"/><rect x="18" y="1" width="3" height="1" fill="#f4eddf"/><rect x="21" y="1" width="1" height="1" fill="#2a2250"/><rect x="13" y="2" width="1" height="1" fill="#2a2250"/><rect x="14" y="2" width="1" height="1" fill="#fffdf7"/><rect x="15" y="2" width="6" height="1" fill="#f4eddf"/><rect x="21" y="2" width="1" height="1" fill="#2a2250"/><rect x="13" y="3" width="1" height="1" fill="#2a2250"/><rect x="14" y="3" width="7" height="1" fill="#f4eddf"/><rect x="21" y="3" width="1" height="1" fill="#2a2250"/><rect x="13" y="4" width="1" height="1" fill="#2a2250"/><rect x="14" y="4" width="7" height="1" fill="#f4eddf"/><rect x="21" y="4" width="1" height="1" fill="#2a2250"/><rect x="22" y="4" width="3" height="1" fill="#f2a63a"/><rect x="13" y="5" width="1" height="1" fill="#2a2250"/><rect x="14" y="5" width="2" height="1" fill="#f4eddf"/><rect x="16" y="5" width="2" height="1" fill="#2a2250"/><rect x="18" y="5" width="3" height="1" fill="#f4eddf"/><rect x="21" y="5" width="5" height="1" fill="#f2a63a"/><rect x="13" y="6" width="1" height="1" fill="#2a2250"/><rect x="14" y="6" width="7" height="1" fill="#f4eddf"/><rect x="21" y="6" width="1" height="1" fill="#2a2250"/><rect x="22" y="6" width="3" height="1" fill="#f2a63a"/><rect x="14" y="7" width="1" height="1" fill="#2a2250"/><rect x="15" y="7" width="6" height="1" fill="#f4eddf"/><rect x="21" y="7" width="1" height="1" fill="#2a2250"/><rect x="14" y="8" width="1" height="1" fill="#2a2250"/><rect x="15" y="8" width="4" height="1" fill="#f4eddf"/><rect x="19" y="8" width="1" height="1" fill="#2a2250"/><rect x="14" y="9" width="1" height="1" fill="#2a2250"/><rect x="15" y="9" width="4" height="1" fill="#f4eddf"/><rect x="19" y="9" width="1" height="1" fill="#2a2250"/><rect x="14" y="10" width="1" height="1" fill="#2a2250"/><rect x="15" y="10" width="4" height="1" fill="#f4eddf"/><rect x="19" y="10" width="1" height="1" fill="#2a2250"/><rect x="7" y="11" width="7" height="1" fill="#2a2250"/><rect x="14" y="11" width="4" height="1" fill="#f4eddf"/><rect x="18" y="11" width="2" height="1" fill="#2a2250"/><rect x="5" y="12" width="2" height="1" fill="#2a2250"/><rect x="7" y="12" width="2" height="1" fill="#d9d0bb"/><rect x="9" y="12" width="10" height="1" fill="#f4eddf"/><rect x="19" y="12" width="1" height="1" fill="#2a2250"/><rect x="4" y="13" width="1" height="1" fill="#2a2250"/><rect x="5" y="13" width="3" height="1" fill="#d9d0bb"/><rect x="8" y="13" width="12" height="1" fill="#f4eddf"/><rect x="20" y="13" width="1" height="1" fill="#2a2250"/><rect x="3" y="14" width="1" height="1" fill="#2a2250"/><rect x="4" y="14" width="2" height="1" fill="#d9d0bb"/><rect x="6" y="14" width="14" height="1" fill="#f4eddf"/><rect x="20" y="14" width="1" height="1" fill="#2a2250"/><rect x="3" y="15" width="1" height="1" fill="#2a2250"/><rect x="4" y="15" width="1" height="1" fill="#d9d0bb"/><rect x="5" y="15" width="15" height="1" fill="#f4eddf"/><rect x="20" y="15" width="1" height="1" fill="#2a2250"/><rect x="2" y="16" width="1" height="1" fill="#2a2250"/><rect x="3" y="16" width="1" height="1" fill="#d9d0bb"/><rect x="4" y="16" width="5" height="1" fill="#f4eddf"/><rect x="9" y="16" width="4" height="1" fill="#d9d0bb"/><rect x="13" y="16" width="7" height="1" fill="#f4eddf"/><rect x="20" y="16" width="1" height="1" fill="#2a2250"/><rect x="2" y="17" width="1" height="1" fill="#2a2250"/><rect x="3" y="17" width="1" height="1" fill="#d9d0bb"/><rect x="4" y="17" width="4" height="1" fill="#f4eddf"/><rect x="8" y="17" width="6" height="1" fill="#d9d0bb"/><rect x="14" y="17" width="6" height="1" fill="#f4eddf"/><rect x="20" y="17" width="1" height="1" fill="#2a2250"/><rect x="2" y="18" width="1" height="1" fill="#2a2250"/><rect x="3" y="18" width="2" height="1" fill="#d9d0bb"/><rect x="5" y="18" width="3" height="1" fill="#f4eddf"/><rect x="8" y="18" width="5" height="1" fill="#d9d0bb"/><rect x="13" y="18" width="6" height="1" fill="#f4eddf"/><rect x="19" y="18" width="1" height="1" fill="#2a2250"/><rect x="3" y="19" width="1" height="1" fill="#2a2250"/><rect x="4" y="19" width="2" height="1" fill="#d9d0bb"/><rect x="6" y="19" width="3" height="1" fill="#f4eddf"/><rect x="9" y="19" width="3" height="1" fill="#d9d0bb"/><rect x="12" y="19" width="6" height="1" fill="#f4eddf"/><rect x="18" y="19" width="1" height="1" fill="#2a2250"/><rect x="4" y="20" width="2" height="1" fill="#1a1533"/><rect x="6" y="20" width="2" height="1" fill="#d9d0bb"/><rect x="8" y="20" width="8" height="1" fill="#f4eddf"/><rect x="16" y="20" width="2" height="1" fill="#1a1533"/><rect x="6" y="21" width="3" height="1" fill="#1a1533"/><rect x="9" y="21" width="5" height="1" fill="#f4eddf"/><rect x="14" y="21" width="2" height="1" fill="#1a1533"/><rect x="9" y="22" width="1" height="1" fill="#2a2250"/><rect x="10" y="22" width="2" height="1" fill="#f2a63a"/><rect x="12" y="22" width="1" height="1" fill="#2a2250"/><rect x="13" y="22" width="2" height="1" fill="#f2a63a"/><rect x="15" y="22" width="1" height="1" fill="#2a2250"/><rect x="8" y="23" width="1" height="1" fill="#2a2250"/><rect x="9" y="23" width="3" height="1" fill="#f2a63a"/><rect x="12" y="23" width="1" height="1" fill="#2a2250"/><rect x="13" y="23" width="3" height="1" fill="#f2a63a"/><rect x="16" y="23" width="1" height="1" fill="#2a2250"/><rect x="7" y="24" width="1" height="1" fill="#2a2250"/><rect x="8" y="24" width="1" height="1" fill="#f2a63a"/><rect x="9" y="24" width="2" height="1" fill="#c17d15"/><rect x="11" y="24" width="1" height="1" fill="#f2a63a"/><rect x="12" y="24" width="1" height="1" fill="#2a2250"/><rect x="13" y="24" width="1" height="1" fill="#f2a63a"/><rect x="14" y="24" width="2" height="1" fill="#c17d15"/><rect x="16" y="24" width="1" height="1" fill="#f2a63a"/><rect x="17" y="24" width="1" height="1" fill="#2a2250"/><rect x="8" y="25" width="4" height="1" fill="#2a2250"/><rect x="13" y="25" width="4" height="1" fill="#2a2250"/></g><g class="gf gf-peck"><rect x="15" y="3" width="6" height="1" fill="#2a2250"/><rect x="14" y="4" width="1" height="1" fill="#2a2250"/><rect x="15" y="4" width="3" height="1" fill="#fffdf7"/><rect x="18" y="4" width="3" height="1" fill="#f4eddf"/><rect x="21" y="4" width="1" height="1" fill="#2a2250"/><rect x="13" y="5" width="1" height="1" fill="#2a2250"/><rect x="14" y="5" width="1" height="1" fill="#fffdf7"/><rect x="15" y="5" width="6" height="1" fill="#f4eddf"/><rect x="21" y="5" width="1" height="1" fill="#2a2250"/><rect x="13" y="6" width="1" height="1" fill="#2a2250"/><rect x="14" y="6" width="7" height="1" fill="#f4eddf"/><rect x="21" y="6" width="1" height="1" fill="#2a2250"/><rect x="13" y="7" width="1" height="1" fill="#2a2250"/><rect x="14" y="7" width="2" height="1" fill="#f4eddf"/><rect x="16" y="7" width="2" height="1" fill="#241d47"/><rect x="18" y="7" width="3" height="1" fill="#f4eddf"/><rect x="21" y="7" width="1" height="1" fill="#2a2250"/><rect x="22" y="7" width="3" height="1" fill="#f2a63a"/><rect x="13" y="8" width="1" height="1" fill="#2a2250"/><rect x="14" y="8" width="2" height="1" fill="#f4eddf"/><rect x="16" y="8" width="2" height="1" fill="#241d47"/><rect x="18" y="8" width="3" height="1" fill="#f4eddf"/><rect x="21" y="8" width="5" height="1" fill="#f2a63a"/><rect x="13" y="9" width="1" height="1" fill="#2a2250"/><rect x="14" y="9" width="7" height="1" fill="#f4eddf"/><rect x="21" y="9" width="1" height="1" fill="#2a2250"/><rect x="22" y="9" width="3" height="1" fill="#f2a63a"/><rect x="14" y="10" width="1" height="1" fill="#2a2250"/><rect x="15" y="10" width="6" height="1" fill="#f4eddf"/><rect x="21" y="10" width="1" height="1" fill="#2a2250"/><rect x="7" y="11" width="7" height="1" fill="#2a2250"/><rect x="14" y="11" width="6" height="1" fill="#f4eddf"/><rect x="20" y="11" width="2" height="1" fill="#2a2250"/><rect x="5" y="12" width="2" height="1" fill="#2a2250"/><rect x="7" y="12" width="2" height="1" fill="#d9d0bb"/><rect x="9" y="12" width="10" height="1" fill="#f4eddf"/><rect x="19" y="12" width="1" height="1" fill="#2a2250"/><rect x="4" y="13" width="1" height="1" fill="#2a2250"/><rect x="5" y="13" width="3" height="1" fill="#d9d0bb"/><rect x="8" y="13" width="12" height="1" fill="#f4eddf"/><rect x="20" y="13" width="1" height="1" fill="#2a2250"/><rect x="3" y="14" width="1" height="1" fill="#2a2250"/><rect x="4" y="14" width="2" height="1" fill="#d9d0bb"/><rect x="6" y="14" width="14" height="1" fill="#f4eddf"/><rect x="20" y="14" width="1" height="1" fill="#2a2250"/><rect x="3" y="15" width="1" height="1" fill="#2a2250"/><rect x="4" y="15" width="1" height="1" fill="#d9d0bb"/><rect x="5" y="15" width="15" height="1" fill="#f4eddf"/><rect x="20" y="15" width="1" height="1" fill="#2a2250"/><rect x="2" y="16" width="1" height="1" fill="#2a2250"/><rect x="3" y="16" width="1" height="1" fill="#d9d0bb"/><rect x="4" y="16" width="5" height="1" fill="#f4eddf"/><rect x="9" y="16" width="4" height="1" fill="#d9d0bb"/><rect x="13" y="16" width="7" height="1" fill="#f4eddf"/><rect x="20" y="16" width="1" height="1" fill="#2a2250"/><rect x="2" y="17" width="1" height="1" fill="#2a2250"/><rect x="3" y="17" width="1" height="1" fill="#d9d0bb"/><rect x="4" y="17" width="4" height="1" fill="#f4eddf"/><rect x="8" y="17" width="6" height="1" fill="#d9d0bb"/><rect x="14" y="17" width="6" height="1" fill="#f4eddf"/><rect x="20" y="17" width="1" height="1" fill="#2a2250"/><rect x="2" y="18" width="1" height="1" fill="#2a2250"/><rect x="3" y="18" width="2" height="1" fill="#d9d0bb"/><rect x="5" y="18" width="3" height="1" fill="#f4eddf"/><rect x="8" y="18" width="5" height="1" fill="#d9d0bb"/><rect x="13" y="18" width="6" height="1" fill="#f4eddf"/><rect x="19" y="18" width="1" height="1" fill="#2a2250"/><rect x="3" y="19" width="1" height="1" fill="#2a2250"/><rect x="4" y="19" width="2" height="1" fill="#d9d0bb"/><rect x="6" y="19" width="3" height="1" fill="#f4eddf"/><rect x="9" y="19" width="3" height="1" fill="#d9d0bb"/><rect x="12" y="19" width="6" height="1" fill="#f4eddf"/><rect x="18" y="19" width="1" height="1" fill="#2a2250"/><rect x="4" y="20" width="2" height="1" fill="#1a1533"/><rect x="6" y="20" width="2" height="1" fill="#d9d0bb"/><rect x="8" y="20" width="8" height="1" fill="#f4eddf"/><rect x="16" y="20" width="2" height="1" fill="#1a1533"/><rect x="6" y="21" width="3" height="1" fill="#1a1533"/><rect x="9" y="21" width="5" height="1" fill="#f4eddf"/><rect x="14" y="21" width="2" height="1" fill="#1a1533"/><rect x="9" y="22" width="1" height="1" fill="#2a2250"/><rect x="10" y="22" width="2" height="1" fill="#f2a63a"/><rect x="12" y="22" width="1" height="1" fill="#2a2250"/><rect x="13" y="22" width="2" height="1" fill="#f2a63a"/><rect x="15" y="22" width="1" height="1" fill="#2a2250"/><rect x="8" y="23" width="1" height="1" fill="#2a2250"/><rect x="9" y="23" width="3" height="1" fill="#f2a63a"/><rect x="12" y="23" width="1" height="1" fill="#2a2250"/><rect x="13" y="23" width="3" height="1" fill="#f2a63a"/><rect x="16" y="23" width="1" height="1" fill="#2a2250"/><rect x="7" y="24" width="1" height="1" fill="#2a2250"/><rect x="8" y="24" width="1" height="1" fill="#f2a63a"/><rect x="9" y="24" width="2" height="1" fill="#c17d15"/><rect x="11" y="24" width="1" height="1" fill="#f2a63a"/><rect x="12" y="24" width="1" height="1" fill="#2a2250"/><rect x="13" y="24" width="1" height="1" fill="#f2a63a"/><rect x="14" y="24" width="2" height="1" fill="#c17d15"/><rect x="16" y="24" width="1" height="1" fill="#f2a63a"/><rect x="17" y="24" width="1" height="1" fill="#2a2250"/><rect x="8" y="25" width="4" height="1" fill="#2a2250"/><rect x="13" y="25" width="4" height="1" fill="#2a2250"/></g></svg></span>
       <h1 class="wordmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 86 26" shape-rendering="crispEdges" role="img" aria-label="RoleFeed"><rect x="0" y="0" width="86" height="2" fill="#e9c46a"/><rect x="0" y="3" width="86" height="1" fill="#e9c46a" opacity="0.40"/><rect x="0" y="7" width="7" height="1" fill="#f4eddf"/><rect x="0" y="8" width="8" height="1" fill="#f4eddf"/><rect x="0" y="9" width="2" height="1" fill="#f4eddf"/><rect x="6" y="9" width="2" height="1" fill="#f4eddf"/><rect x="0" y="10" width="2" height="1" fill="#f4eddf"/><rect x="6" y="10" width="2" height="1" fill="#f4eddf"/><rect x="0" y="11" width="2" height="1" fill="#f4eddf"/><rect x="6" y="11" width="2" height="1" fill="#f4eddf"/><rect x="0" y="12" width="8" height="1" fill="#f4eddf"/><rect x="0" y="13" width="7" height="1" fill="#f4eddf"/><rect x="0" y="14" width="2" height="1" fill="#f4eddf"/><rect x="4" y="14" width="2" height="1" fill="#f4eddf"/><rect x="0" y="15" width="2" height="1" fill="#f4eddf"/><rect x="5" y="15" width="2" height="1" fill="#f4eddf"/><rect x="0" y="16" width="2" height="1" fill="#f4eddf"/><rect x="6" y="16" width="2" height="1" fill="#f4eddf"/><rect x="0" y="17" width="2" height="1" fill="#f4eddf"/><rect x="6" y="17" width="2" height="1" fill="#f4eddf"/><rect x="0" y="18" width="2" height="1" fill="#f4eddf"/><rect x="7" y="18" width="2" height="1" fill="#f4eddf"/><rect x="0" y="19" width="2" height="1" fill="#f4eddf"/><rect x="7" y="19" width="2" height="1" fill="#f4eddf"/><rect x="12" y="7" width="6" height="1" fill="#f4eddf"/><rect x="11" y="8" width="8" height="1" fill="#f4eddf"/><rect x="11" y="9" width="2" height="1" fill="#f4eddf"/><rect x="17" y="9" width="2" height="1" fill="#f4eddf"/><rect x="11" y="10" width="2" height="1" fill="#f4eddf"/><rect x="17" y="10" width="2" height="1" fill="#f4eddf"/><rect x="11" y="11" width="2" height="1" fill="#f4eddf"/><rect x="17" y="11" width="2" height="1" fill="#f4eddf"/><rect x="11" y="12" width="2" height="1" fill="#f4eddf"/><rect x="17" y="12" width="2" height="1" fill="#f4eddf"/><rect x="11" y="13" width="2" height="1" fill="#f4eddf"/><rect x="17" y="13" width="2" height="1" fill="#f4eddf"/><rect x="11" y="14" width="2" height="1" fill="#f4eddf"/><rect x="17" y="14" width="2" height="1" fill="#f4eddf"/><rect x="11" y="15" width="2" height="1" fill="#f4eddf"/><rect x="17" y="15" width="2" height="1" fill="#f4eddf"/><rect x="11" y="16" width="2" height="1" fill="#f4eddf"/><rect x="17" y="16" width="2" height="1" fill="#f4eddf"/><rect x="11" y="17" width="2" height="1" fill="#f4eddf"/><rect x="17" y="17" width="2" height="1" fill="#f4eddf"/><rect x="11" y="18" width="8" height="1" fill="#f4eddf"/><rect x="12" y="19" width="6" height="1" fill="#f4eddf"/><rect x="22" y="7" width="2" height="1" fill="#f4eddf"/><rect x="22" y="8" width="2" height="1" fill="#f4eddf"/><rect x="22" y="9" width="2" height="1" fill="#f4eddf"/><rect x="22" y="10" width="2" height="1" fill="#f4eddf"/><rect x="22" y="11" width="2" height="1" fill="#f4eddf"/><rect x="22" y="12" width="2" height="1" fill="#f4eddf"/><rect x="22" y="13" width="2" height="1" fill="#f4eddf"/><rect x="22" y="14" width="2" height="1" fill="#f4eddf"/><rect x="22" y="15" width="2" height="1" fill="#f4eddf"/><rect x="22" y="16" width="2" height="1" fill="#f4eddf"/><rect x="22" y="17" width="2" height="1" fill="#f4eddf"/><rect x="22" y="18" width="8" height="1" fill="#f4eddf"/><rect x="22" y="19" width="8" height="1" fill="#f4eddf"/><rect x="33" y="7" width="9" height="1" fill="#f4eddf"/><rect x="33" y="8" width="9" height="1" fill="#f4eddf"/><rect x="33" y="9" width="2" height="1" fill="#f4eddf"/><rect x="33" y="10" width="2" height="1" fill="#f4eddf"/><rect x="33" y="11" width="2" height="1" fill="#f4eddf"/><rect x="33" y="12" width="7" height="1" fill="#f4eddf"/><rect x="33" y="13" width="7" height="1" fill="#f4eddf"/><rect x="33" y="14" width="2" height="1" fill="#f4eddf"/><rect x="33" y="15" width="2" height="1" fill="#f4eddf"/><rect x="33" y="16" width="2" height="1" fill="#f4eddf"/><rect x="33" y="17" width="2" height="1" fill="#f4eddf"/><rect x="33" y="18" width="9" height="1" fill="#f4eddf"/><rect x="33" y="19" width="9" height="1" fill="#f4eddf"/><rect x="44" y="7" width="9" height="1" fill="#8b6cff"/><rect x="44" y="8" width="9" height="1" fill="#8b6cff"/><rect x="44" y="9" width="2" height="1" fill="#8b6cff"/><rect x="44" y="10" width="2" height="1" fill="#8b6cff"/><rect x="44" y="11" width="2" height="1" fill="#8b6cff"/><rect x="44" y="12" width="7" height="1" fill="#8b6cff"/><rect x="44" y="13" width="7" height="1" fill="#8b6cff"/><rect x="44" y="14" width="2" height="1" fill="#8b6cff"/><rect x="44" y="15" width="2" height="1" fill="#8b6cff"/><rect x="44" y="16" width="2" height="1" fill="#8b6cff"/><rect x="44" y="17" width="2" height="1" fill="#8b6cff"/><rect x="44" y="18" width="2" height="1" fill="#8b6cff"/><rect x="44" y="19" width="2" height="1" fill="#8b6cff"/><rect x="55" y="7" width="9" height="1" fill="#8b6cff"/><rect x="55" y="8" width="9" height="1" fill="#8b6cff"/><rect x="55" y="9" width="2" height="1" fill="#8b6cff"/><rect x="55" y="10" width="2" height="1" fill="#8b6cff"/><rect x="55" y="11" width="2" height="1" fill="#8b6cff"/><rect x="55" y="12" width="7" height="1" fill="#8b6cff"/><rect x="55" y="13" width="7" height="1" fill="#8b6cff"/><rect x="55" y="14" width="2" height="1" fill="#8b6cff"/><rect x="55" y="15" width="2" height="1" fill="#8b6cff"/><rect x="55" y="16" width="2" height="1" fill="#8b6cff"/><rect x="55" y="17" width="2" height="1" fill="#8b6cff"/><rect x="55" y="18" width="9" height="1" fill="#8b6cff"/><rect x="55" y="19" width="9" height="1" fill="#8b6cff"/><rect x="66" y="7" width="9" height="1" fill="#8b6cff"/><rect x="66" y="8" width="9" height="1" fill="#8b6cff"/><rect x="66" y="9" width="2" height="1" fill="#8b6cff"/><rect x="66" y="10" width="2" height="1" fill="#8b6cff"/><rect x="66" y="11" width="2" height="1" fill="#8b6cff"/><rect x="66" y="12" width="7" height="1" fill="#8b6cff"/><rect x="66" y="13" width="7" height="1" fill="#8b6cff"/><rect x="66" y="14" width="2" height="1" fill="#8b6cff"/><rect x="66" y="15" width="2" height="1" fill="#8b6cff"/><rect x="66" y="16" width="2" height="1" fill="#8b6cff"/><rect x="66" y="17" width="2" height="1" fill="#8b6cff"/><rect x="66" y="18" width="9" height="1" fill="#8b6cff"/><rect x="66" y="19" width="9" height="1" fill="#8b6cff"/><rect x="77" y="7" width="6" height="1" fill="#8b6cff"/><rect x="77" y="8" width="7" height="1" fill="#8b6cff"/><rect x="77" y="9" width="2" height="1" fill="#8b6cff"/><rect x="83" y="9" width="2" height="1" fill="#8b6cff"/><rect x="77" y="10" width="2" height="1" fill="#8b6cff"/><rect x="84" y="10" width="2" height="1" fill="#8b6cff"/><rect x="77" y="11" width="2" height="1" fill="#8b6cff"/><rect x="84" y="11" width="2" height="1" fill="#8b6cff"/><rect x="77" y="12" width="2" height="1" fill="#8b6cff"/><rect x="84" y="12" width="2" height="1" fill="#8b6cff"/><rect x="77" y="13" width="2" height="1" fill="#8b6cff"/><rect x="84" y="13" width="2" height="1" fill="#8b6cff"/><rect x="77" y="14" width="2" height="1" fill="#8b6cff"/><rect x="84" y="14" width="2" height="1" fill="#8b6cff"/><rect x="77" y="15" width="2" height="1" fill="#8b6cff"/><rect x="84" y="15" width="2" height="1" fill="#8b6cff"/><rect x="77" y="16" width="2" height="1" fill="#8b6cff"/><rect x="84" y="16" width="2" height="1" fill="#8b6cff"/><rect x="77" y="17" width="2" height="1" fill="#8b6cff"/><rect x="83" y="17" width="2" height="1" fill="#8b6cff"/><rect x="77" y="18" width="7" height="1" fill="#8b6cff"/><rect x="77" y="19" width="6" height="1" fill="#8b6cff"/><rect x="0" y="22" width="86" height="2" fill="#e9c46a"/><rect x="0" y="25" width="86" height="1" fill="#e9c46a" opacity="0.40"/></svg></h1>
       <span class="tagline">Transport, logistics, mobility &amp; aviation<br>Senior operations</span>
     </div>
@@ -485,8 +570,16 @@
 
 <div class="controls">
   <div class="wrap">
-    <div class="control-row">
+    <!-- Always visible: search, and on a phone the button that reveals the rest. -->
+    <div class="control-row primary">
       <input type="search" id="q" placeholder="Search title or company&hellip;" autocomplete="off">
+      <button class="filters-btn" id="filtersBtn" aria-expanded="false" aria-controls="controlExtra">
+        Filters<span class="badge" id="filterCount" hidden>0</span>
+        <span class="caret">&#9660;</span>
+      </button>
+    </div>
+    <!-- Collapsed on a phone, always open on a wider screen. -->
+    <div class="control-row extra" id="controlExtra">
       <select id="size">
         <option value="">All sizes</option>
         <option value="enterprise">Enterprise (5,000+)</option>
@@ -810,10 +903,13 @@ function render() {
   const shown = sortJobs(visible());
   const host = document.getElementById("results");
 
+  // The explanatory clause is hidden on a phone: it is permanently on screen inside
+  // the sticky bar, and two wrapped lines of guidance is not worth 25px of every
+  // scroll. The action itself stays.
   document.getElementById("countNote").innerHTML =
-    `Showing <strong>${shown.length}</strong> of ${feed.jobs.length} UK or remote roles.` +
+    `<strong>${shown.length}</strong> of ${feed.jobs.length}<span class="note-long"> UK or remote roles</span>.` +
     (ui.priority
-      ? ` <button id="loosen">Include the wider scope</button> to see what the title filter rejected.`
+      ? ` <button id="loosen">Include the wider scope</button><span class="note-long"> to see what the title filter rejected.</span>`
       : ` <button id="tighten">Matched roles only</button>.`);
 
   if (!shown.length) {
@@ -856,13 +952,50 @@ function wireCountNote() {
    -------------------------------------------------------------------------- */
 function setToggle(name, value) {
   ui[name] = value;
+  syncFilterBadge();
   const map = { priority: "t-priority", hot: "t-hot", recent: "t-recent",
                 starred: "t-star", showDismissed: "t-dismissed" };
   document.getElementById(map[name]).classList.toggle("on", value);
   render();
 }
 
+/** Number of filters differing from the default view. Shown on the Filters button so
+ *  a collapsed panel never hides the fact that results are being narrowed. */
+function activeFilterCount() {
+  let n = 0;
+  if (ui.size) n++;
+  if (ui.sector) n++;
+  if (ui.company) n++;
+  if (ui.hot) n++;
+  if (ui.recent) n++;
+  if (ui.starred) n++;
+  if (ui.showDismissed) n++;
+  if (!ui.priority) n++;           // the wider scope is itself a deviation
+  if (ui.sort !== "new") n++;
+  return n;
+}
+
+function syncFilterBadge() {
+  const badge = document.getElementById("filterCount");
+  const n = activeFilterCount();
+  badge.textContent = String(n);
+  badge.hidden = n === 0;
+}
+
 function wire() {
+  const controls = document.querySelector(".controls");
+  const btn = document.getElementById("filtersBtn");
+  btn.addEventListener("click", () => {
+    const open = controls.classList.toggle("open");
+    btn.setAttribute("aria-expanded", String(open));
+  });
+
+  // Typing in search on a phone should not leave the panel covering the results.
+  document.getElementById("q").addEventListener("focus", () => {
+    controls.classList.remove("open");
+    btn.setAttribute("aria-expanded", "false");
+  });
+
   const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 
   document.getElementById("q").addEventListener("input", debounce(e => {
@@ -872,7 +1005,7 @@ function wire() {
   [["size", "size"], ["sector", "sector"], ["company", "company"], ["sort", "sort"]]
     .forEach(([id, key]) => {
       document.getElementById(id).addEventListener("change", e => {
-        ui[key] = e.target.value; render();
+        ui[key] = e.target.value; syncFilterBadge(); render();
       });
     });
 
@@ -906,6 +1039,78 @@ function wire() {
 }
 
 /* --------------------------------------------------------------------------
+   The goose's idle animations.
+
+   Every 20 seconds she does one small thing. The interval is deliberately long: a
+   mascot that moves constantly becomes something you have to look past, whereas one
+   that moves rarely is a small reward for happening to glance at the right moment.
+   Vohra's "fun toys" principle, at the smallest possible scale.
+
+   Sequences are lists of [frame, milliseconds]. The waddle is CSS instead, because it
+   is a position change rather than a frame change.
+   -------------------------------------------------------------------------- */
+const GOOSE_IDLE_MS = 20000;
+
+const GOOSE_ACTS = [
+  // A single blink. The commonest, because it is the least distracting.
+  [["blink", 140]],
+  [["blink", 130], ["idle", 120], ["blink", 130]],
+  // A look at the ground and back up.
+  [["peck", 340], ["idle", 160], ["peck", 300]],
+  // A longer look, as though she found something.
+  [["peck", 900]],
+  "waddle",
+  // Waddle, then check what she stepped on.
+  "waddle-peck",
+];
+
+let gooseBusy = false;
+
+function playGooseAct(act) {
+  const el = document.getElementById("goose");
+  if (!el || gooseBusy) return;
+  gooseBusy = true;
+
+  const done = () => { el.dataset.frame = "idle"; el.classList.remove("waddle"); gooseBusy = false; };
+
+  if (act === "waddle" || act === "waddle-peck") {
+    el.classList.add("waddle");
+    setTimeout(() => {
+      el.classList.remove("waddle");
+      if (act === "waddle-peck") {
+        el.dataset.frame = "peck";
+        setTimeout(done, 380);
+      } else { done(); }
+    }, 760);
+    return;
+  }
+
+  // Walk the [frame, ms] pairs in sequence.
+  let i = 0;
+  const step = () => {
+    if (i >= act.length) { done(); return; }
+    const [frame, ms] = act[i++];
+    el.dataset.frame = frame;
+    setTimeout(step, ms);
+  };
+  step();
+}
+
+function startGoose() {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) return;
+  setInterval(() => {
+    // No point animating a tab nobody is looking at, and on a phone it is battery
+    // spent for nothing.
+    if (document.hidden) return;
+    playGooseAct(GOOSE_ACTS[Math.floor(Math.random() * GOOSE_ACTS.length)]);
+  }, GOOSE_IDLE_MS);
+
+  // She blinks once shortly after load, so the first visit shows she is alive.
+  setTimeout(() => { if (!document.hidden) playGooseAct(GOOSE_ACTS[0]); }, 2600);
+}
+
+/* --------------------------------------------------------------------------
    Boot
    -------------------------------------------------------------------------- */
 async function boot() {
@@ -931,7 +1136,9 @@ async function boot() {
   renderBanner();
   populateSelects();
   wire();
+  syncFilterBadge();
   render();
+  startGoose();
 
   document.getElementById("footNote").innerHTML =
     `${feed.employers_queried} employers queried &middot;

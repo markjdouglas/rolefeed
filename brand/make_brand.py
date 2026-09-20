@@ -83,6 +83,59 @@ GOOSE = pad([
 ])
 
 # ---------------------------------------------------------------------------
+# Animation frames.
+#
+# Kept to discrete frames rather than CSS transforms on the artwork, because a
+# fractional transform resamples the pixels and the blocks go soft. A frame swap keeps
+# every pixel on the grid. Three frames is enough: pixel-art idles are read as motion
+# from very little.
+# ---------------------------------------------------------------------------
+
+def blink_frame(base: list[str]) -> list[str]:
+    """Eye closed: the 2x2 dark block becomes a single dark line."""
+    out = list(base)
+    for i, row in enumerate(out):
+        if "EE" in row:
+            # Upper half of the eye becomes body colour, lower half stays dark, which
+            # reads as a lid coming down rather than the eye simply vanishing.
+            out[i] = row.replace("EE", "CC") if i == 4 else row.replace("EE", "OO")
+    return out
+
+
+# Head down, neck folded — she is having a look at the ground. Written out rather than
+# derived, because shifting the head programmatically also shifts the beak and the
+# outline joins, and the joins are what make or break it.
+PECK = pad([
+    "",
+    "",
+    "",
+    "..............OOOOOO",
+    ".............OHHHCCCO",
+    "............OHCCCCCCO",
+    "............OCCCCCCCO",
+    "............OCCEECCCOBBB",
+    "............OCCEECCCBBBBB",
+    "............OCCCCCCCOBBB",
+    ".............OCCCCCCO",
+    "......OOOOOOOCCCCCCOO",
+    "....OOSSCCCCCCCCCCO",
+    "...OSSSCCCCCCCCCCCCO",
+    "..OSSCCCCCCCCCCCCCCO",
+    "..OSCCCCCCCCCCCCCCCO",
+    ".OSCCCCCSSSSCCCCCCCO",
+    ".OSCCCCSSSSSSCCCCCCO",
+    ".OSSCCCSSSSSCCCCCCO",
+    "..OSSCCCSSSCCCCCCO",
+    "...KKSSCCCCCCCCKK",
+    ".....KKKCCCCCKK",
+    "........OBBOBBO",
+    ".......OBBBOBBBO",
+    "......OBDDBOBDDBO",
+    ".......OOOO.OOOO",
+])
+
+
+# ---------------------------------------------------------------------------
 # Deco capitals, 9 x 13. Deliberately heavy: 2px verticals, 2px horizontals, a high
 # waist, square terminals. Meant to shout.
 # ---------------------------------------------------------------------------
@@ -176,6 +229,24 @@ def wordmark_svg(word: str = "ROLEFEED", split: int = 4) -> str:
     )
 
 
+def animated_goose_svg() -> str:
+    """All three frames in one SVG, as groups the page shows one at a time.
+
+    One file and one request; the page sets data-frame on the wrapper and CSS decides
+    which group is visible. No JavaScript touches the artwork itself.
+    """
+    frames = {"idle": GOOSE, "blink": blink_frame(GOOSE), "peck": PECK}
+    groups = "".join(
+        f'<g class="gf gf-{name}">{rects(grid, ox=1, oy=0)}</g>'
+        for name, grid in frames.items()
+    )
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 27" '
+        'shape-rendering="crispEdges" role="img" aria-label="RoleFeed goose">'
+        + groups + "</svg>"
+    )
+
+
 def favicon_uri() -> str:
     """The bare goose, URL-encoded for a data: href."""
     svg = mascot_svg(plinth=False).replace(
@@ -190,6 +261,7 @@ if __name__ == "__main__":
     out = pathlib.Path(__file__).parent
     (out / "mascot.svg").write_text(mascot_svg() + "\n")
     (out / "goose-bare.svg").write_text(mascot_svg(plinth=False) + "\n")
+    (out / "goose-anim.svg").write_text(animated_goose_svg() + "\n")
     (out / "wordmark.svg").write_text(wordmark_svg() + "\n")
     (out / "favicon.txt").write_text(favicon_uri() + "\n")
     widths = {len(r) for r in GOOSE}
