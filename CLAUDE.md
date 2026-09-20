@@ -5,8 +5,9 @@ Read this at the start of every session. It is the standing brief.
 ## What this is
 
 A scheduled job-listings collector. It queries public applicant tracking system (ATS)
-endpoints for a curated list of employers, filters for roles Mark would actually apply
-for, and writes them to a Google Sheet that doubles as the interface.
+endpoints for a curated list of 169 transport, logistics, mobility and aviation
+employers, filters for senior operations roles, groups them by company size, and writes
+them to a Google Sheet that doubles as the interface.
 
 Two goals, in order:
 1. **Educational.** This is a learning project.
@@ -25,6 +26,13 @@ Two goals, in order:
 - Do not agree reflexively. If a decision is wrong, say so and explain the mechanism.
 - Never invent an API response shape. Probe the endpoint and read what comes back.
 
+## Priority
+
+The build matters more than the matching criteria. Mark has said explicitly: the main
+hypothesis is whether this approach is viable, tested by pulling the data and getting an
+Alpha standing up. Criteria are cheap to change later. Do not spend budget perfecting
+filters or chasing the last few employer tokens while Phases 1 and 2 are unbuilt.
+
 ## Hard constraints
 
 - **Total build budget: 5 hours.** Scope is cut to fit, not extended.
@@ -39,23 +47,27 @@ Two goals, in order:
 - JSON-LD / schema.org JobPosting parsing is **explicitly parked** at Mark's request.
   Do not add it without being asked.
 
-## Search criteria
+## Scope
 
-**Titles to match** — operations leadership and small-org general management:
-Director of Operations, Operations Director, Head of Operations, VP Operations,
-Director of Business Operations, COO, Chief Operating Officer, General Manager,
-Managing Director.
+**Sectors in**: ride-hail, micromobility, last-mile delivery, freight and forwarding,
+fulfilment and warehousing, EV charging, fleet and telematics, public transport, aviation
+and space, autonomous vehicles. Sector-agnostic within that — the transferable capability
+is marketplace supply, network operations and infrastructure programmes.
 
-**Titles to exclude** — these share keywords but are the wrong job:
-anything containing Engineer, Engineering, Developer, Sales, Account, Marketing,
-Warehouse, Driver, Retail Store, Restaurant, Nurse, Clinical, Security Operations,
-Network Operations, DevOps, SRE, Trading Operations, Intern, Apprentice, Graduate.
+**Out**: govtech, policy, charity, fintech, generic SaaS. Employers under ~50 people.
 
-**Geography**: London, or UK-wide remote. Exclude non-UK locations unless the posting
-is explicitly remote and UK-eligible.
+**Never targets** — previous employers: Uber, Gett, Glue Home, Ontruck, ParkBee, Otto Car,
+POSTX, Apolitical, Abercrombie & Fitch.
 
-**Seniority floor**: director level and above. A "Operations Manager" with no director
-scope is noise.
+**Company size** is tagged on every employer and every posting, and results print largest
+bucket first. Mark prefers established companies and is not interested in startups.
+
+**Geography**: London, or UK-wide remote.
+
+**Seniority floor**: director level and above. "Operations Manager" is noise.
+
+See SPEC.md for the full title include and exclude rules. They are provisional and
+expected to be tuned once real volume is visible — do not treat them as settled.
 
 ## Architecture
 
@@ -83,30 +95,46 @@ All four core adapters are public and need no authentication.
 | Ashby | `https://api.ashbyhq.com/posting-api/job-board/{token}` |
 | SmartRecruiters | `https://api.smartrecruiters.com/v1/companies/{token}/postings?limit=100` |
 
-Unverified candidates, in rough priority order if coverage proves thin: Workable,
-Recruitee, Personio, Teamtailor, Pinpoint, Applied, Breezy HR, Polymer.
+Two things learned the hard way, both now handled — do not regress them:
+- Tokens are untidy. ShipBob is `shipbobinc`, Aurora Innovation is `aurorainnovation`,
+  Neuron Mobility is `neuron`. discover.py generates variants.
+- Greenhouse runs a separate EU estate at `boards-api.eu.greenhouse.io`. Try both hosts.
 
-**Workday** is how most large employers hire. It has no public API; its career sites
-call `POST /wday/cxs/{tenant}/{site}/jobs`. Undocumented, so it will break without
-notice. Only add it with a loud failure alarm, and not before the four core adapters
-are stable.
+**Workday is the fifth adapter** and the only route to enterprise employers. No public
+API — it calls the endpoint the career site's own front end uses. Tenant, instance and
+site cannot be guessed, so those employers are hand-configured via `add_workday.py` from
+a careers URL. It is undocumented and will break without notice, so a drop to zero roles
+is suspected breakage, not an empty board.
+
+Unsupported and not worth fighting: SuccessFactors, Taleo, iCIMS, Cornerstone, Bullhorn.
+If a careers URL matches none of the five, note it and move on.
 
 ## Phase plan
 
-- **Phase 0** (90 min) — `discover.py` + `fetch.py`. Prints matching roles to the
-  terminal. Purpose: prove the hypothesis before building infrastructure. If it surfaces
-  nothing worth applying for, stop here.
+- **Phase 0** (90 min) — `discover.py` + `fetch.py`. Prints matching roles grouped by
+  company size. Purpose: prove the data is there. **Second pass ready to run.**
 - **Phase 1** — Google Cloud service account, `sheets.py`, rows land in the Sheet.
-- **Phase 2** — GitHub Actions workflow, secrets, first automated run.
-- **Phase 3** — Dedup key, `first_seen` timestamps, scoring, staleness alarm.
-- **Phase 4** — Employer list to ~120. Sheet formatting.
+- **Phase 2** — GitHub Actions workflow, secrets, first automated run. With Phase 1,
+  this is the Alpha, and it is the priority.
+- **Phase 3** — `first_seen` / `last_seen`, scoring, staleness alarm.
+- **Phase 4** — Workday employers configured. Employer list corrected.
 
 ## Conventions
 
-- Python 3.14 (Homebrew, at `/opt/homebrew/bin/python3`). Use a virtual environment.
+- Python 3.14 (Homebrew, at `/opt/homebrew/bin/python3`). Create the venv with that
+  explicit path — plain `python3` resolves to Apple's 3.9.6 because macOS `path_helper`
+  puts `/usr/bin` ahead of `/opt/homebrew/bin`.
 - Dependencies pinned in `requirements.txt`.
 - Every adapter is a function with the same signature returning the same dict shape.
   One adapter failing must never stop the run.
 - Be polite to endpoints: a short delay between requests, a real User-Agent, and
   retry-with-backoff on 429 or 5xx.
 - Commit messages: imperative mood, one line, explain why not what.
+
+## Environment facts worth not rediscovering
+
+- Neither the cloud sandbox nor the Cowork desktop Linux VM can reach ATS endpoints; both
+  have restricted egress. Mark's own terminal can. Run `discover.py` and `fetch.py` there.
+- git identity is the `markjdouglas@users.noreply.github.com` alias, deliberately, to keep
+  his address off a public repo.
+- GitHub account is `markjdouglas`; repo is `markjdouglas/rolefeed`, public.

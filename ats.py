@@ -15,6 +15,7 @@ All four endpoints below are public and require no API key.
 
 from __future__ import annotations
 
+import re
 import time
 from typing import Any
 
@@ -76,11 +77,20 @@ def _posting(
 # ---------------------------------------------------------------------------
 
 def fetch_greenhouse(token: str, company: str | None = None) -> list[dict]:
-    url = f"https://boards-api.greenhouse.io/v1/boards/{token}/jobs"
-    response = _get(url, params={"content": "false"})
-    if response.status_code != 200:
+    # Greenhouse runs a separate EU-hosted estate for customers with data-residency
+    # requirements, on its own API host. European employers frequently live there and
+    # return 404 on the US host, so try both before concluding a token is wrong.
+    hosts = ("boards-api.greenhouse.io", "boards-api.eu.greenhouse.io")
+    payload = None
+    for host in hosts:
+        response = _get(f"https://{host}/v1/boards/{token}/jobs", params={"content": "false"})
+        if response.status_code == 200:
+            candidate = response.json()
+            if candidate.get("jobs"):
+                payload = candidate
+                break
+    if payload is None:
         return []
-    payload = response.json()
     return [
         _posting(
             company=company or token,
@@ -189,8 +199,106 @@ def fetch_smartrecruiters(token: str, company: str | None = None) -> list[dict]:
     return postings
 
 
+# ---------------------------------------------------------------------------
+# Workday
+#
+# How most enterprise employers hire — airlines, airports, rail and bus operators,
+# parcel majors, car rental groups. There is no public API and no documentation. What
+# exists is the endpoint the career site's own front end calls, which returns clean JSON:
+#
+#   POST https://{tenant}.{wd}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/jobs
+#
+# Three consequences worth understanding before relying on it:
+#   1. It is undocumented, so it can change shape without notice. Treat a sudden drop to
+#      zero roles as suspected breakage, not as an employer with no vacancies.
+#   2. Tenant, Workday instance number and site name cannot be guessed reliably, so these
+#      employers are configured by hand from their careers URL. Use add_workday.py.
+#   3. It paginates in pages of 20, so a large employer costs several requests.
+# ---------------------------------------------------------------------------
+
+WORKDAY_URL = re.compile(
+    r"https://(?P<tenant>[\w-]+)\.(?P<instance>wd\d+)\.myworkdayjobs\.com"
+    r"/(?:[\w-]+/)?(?P<site>[\w-]+)"
+)
+
+
+def parse_workday_url(url: str) -> dict | None:
+    """Turn a Workday careers URL into the config the adapter needs.
+
+    Accepts either the human career site URL or the CXS endpoint:
+      https://iag.wd3.myworkdayjobs.com/en-US/IAG_Careers
+      https://iag.wd3.myworkdayjobs.com/IAG_Careers
+    """
+    match = WORKDAY_URL.match(url.strip())
+    if not match:
+        return None
+    parts = match.groupdict()
+    # A locale segment such as en-US is optional in the URL; the regex skips it, but if
+    # the site group captured the locale itself the URL had no site, which is unusable.
+    if re.fullmatch(r"[a-z]{2}-[A-Z]{2}", parts["site"]):
+        return None
+    return parts
+
+
+def fetch_workday(config: dict | str, company: str | None = None) -> list[dict]:
+    """Fetch a Workday board. `config` is the dict from parse_workday_url, or that URL."""
+    if isinstance(config, str):
+        parsed = parse_workday_url(config)
+        if not parsed:
+            return []
+        config = parsed
+
+    tenant = config["tenant"]
+    instance = config["instance"]
+    site = config["site"]
+    base = f"https://{tenant}.{instance}.myworkdayjobs.com"
+    endpoint = f"{base}/wday/cxs/{tenant}/{site}/jobs"
+
+    postings: list[dict] = []
+    offset = 0
+    page = 20
+    while offset < 400:  # cap: no employer needs more than 400 roles pulled per run
+        response = requests.post(
+            endpoint,
+            headers={**HEADERS, "Content-Type": "application/json"},
+            json={"appliedFacets": {}, "limit": page, "offset": offset, "searchText": ""},
+            timeout=TIMEOUT,
+        )
+        if response.status_code != 200:
+            break
+        payload = response.json()
+        batch = payload.get("jobPostings", [])
+        if not batch:
+            break
+        for job in batch:
+            external = job.get("externalPath", "")
+            # bulletFields usually carries the employer's own requisition id.
+            bullets = job.get("bulletFields") or []
+            postings.append(
+                _posting(
+                    company=company or tenant,
+                    ats="workday",
+                    external_id=bullets[0] if bullets else external,
+                    title=job.get("title", ""),
+                    location=job.get("locationsText", ""),
+                    url=f"{base}/en-US/{site}{external}",
+                    posted_at=job.get("postedOn"),
+                )
+            )
+        if len(batch) < page:
+            break
+        offset += page
+        time.sleep(PAUSE)
+
+    return postings
+
+
 # The registry every other script uses. Add a new adapter here and it is picked up
 # by both discover.py and fetch.py with no further wiring.
+#
+# Workday is excluded from this registry deliberately: it cannot be probed by guessing a
+# token, so discover.py must not try it. It is called directly by fetch.py for employers
+# that carry a `workday_url`.
 ADAPTERS = {
     "greenhouse": fetch_greenhouse,
     "lever": fetch_lever,

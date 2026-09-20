@@ -1,185 +1,224 @@
-# RoleFeed employer list — the core asset of this project.
+# RoleFeed employer list — transportation, logistics, mobility and aviation.
 #
-# Each entry is an organisation Mark would plausibly take an operations leadership role
-# at. The `slug` is a CANDIDATE board token, guessed from the organisation's name.
-# It has NOT been verified. Run `python discover.py` to probe each slug against the
-# four public ATS endpoints and write the verified results to companies.resolved.yaml.
+# Scope (19/09/2026): technology and operations in moving people and goods. Sector-agnostic
+# within that — the transferable skill is marketplace supply, network operations and
+# infrastructure programmes, not any one vertical.
 #
-# Most guesses will be wrong. That is expected and fine — discovery is cheap, and the
-# ones that miss get corrected by hand from the organisation's careers page URL.
+# EXCLUDED — previous employers, not targets:
+#   Uber, Gett, Glue Home, Ontruck, ParkBee, Otto Car, POSTX, Apolitical, Abercrombie & Fitch.
 #
-# To correct one by hand: open the careers page, look at the URL. If it contains
-# boards.greenhouse.io/acme then the token is `acme` and the ats is `greenhouse`.
-# Same pattern for jobs.lever.co/acme, jobs.ashbyhq.com/acme, and
-# jobs.smartrecruiters.com/Acme.
+# `size` buckets, so results can be read by company type. Anything estimated under 50
+# people is off the list entirely.
+#   enterprise  5,000+        incumbents, groups, national operators
+#   large       1,000–5,000   established operators and listed tech
+#   mid         250–1,000     scaled private companies
+#   scaleup     50–250        smallest bucket retained
+# Headcounts are approximate and drawn from general knowledge, not verified per employer.
 #
-# Add `ats:` and a corrected `slug:` to pin an entry and skip probing for it.
+# `ats` + `slug` pinned = verified, probed once. Unpinned = discover.py tries variants.
+# `ats: workday` needs a `workday_url` — see add_workday.py. Most enterprise employers
+# run Workday, SuccessFactors, Taleo or iCIMS, none of which the four public adapters
+# reach, so expect them to stay unresolved until Workday support lands.
 
 companies:
 
-  # ---------------------------------------------------------------------------
-  # Govtech, public-sector digital and delivery consultancies
-  # Closest adjacency to Apolitical. Ops roles here value public-sector fluency.
-  # ---------------------------------------------------------------------------
-  - { name: Public Digital, slug: publicdigital, sector: govtech }
-  - { name: TPXimpact, slug: tpximpact, sector: govtech }
-  - { name: Made Tech, slug: madetech, sector: govtech }
-  - { name: dxw, slug: dxw, sector: govtech }
-  - { name: Softwire, slug: softwire, sector: govtech }
-  - { name: Kainos, slug: kainos, sector: govtech }
-  - { name: Civica, slug: civica, sector: govtech }
-  - { name: Netcompany, slug: netcompany, sector: govtech }
-  - { name: Faculty, slug: faculty, sector: govtech }
-  - { name: Behavioural Insights Team, slug: behaviouralinsightsteam, sector: govtech }
-  - { name: Nesta, slug: nesta, sector: govtech }
-  - { name: Centre for Public Impact, slug: centreforpublicimpact, sector: govtech }
-  - { name: Polimapper, slug: polimapper, sector: govtech }
-  - { name: Unboxed, slug: unboxed, sector: govtech }
-  - { name: Notbinary, slug: notbinary, sector: govtech }
+  # ===========================================================================
+  # ENTERPRISE — aviation groups, airlines and airports
+  # IAG subsidiaries are listed separately because each hires on its own board.
+  # ===========================================================================
+  - { name: IAG, slug: iag, sector: aviation, size: enterprise, ats: workday, workday_url: TODO }
+  - { name: British Airways, slug: britishairways, sector: aviation, size: enterprise, ats: workday, workday_url: TODO }
+  - { name: IAG Cargo, slug: iagcargo, sector: freight, size: large }
+  - { name: IAG Loyalty, slug: iagloyalty, sector: aviation, size: large }
+  - { name: Aer Lingus, slug: aerlingus, sector: aviation, size: enterprise }
+  - { name: Iberia, slug: iberia, sector: aviation, size: enterprise }
+  - { name: Vueling, slug: vueling, sector: aviation, size: large }
+  - { name: easyJet, slug: easyjet, sector: aviation, size: enterprise }
+  - { name: Ryanair, slug: ryanair, sector: aviation, size: enterprise }
+  - { name: Jet2, slug: jet2, sector: aviation, size: enterprise }
+  - { name: Virgin Atlantic, slug: virginatlantic, sector: aviation, size: enterprise }
+  - { name: TUI Group, slug: tui, sector: aviation, size: enterprise }
+  - { name: Wizz Air, slug: wizzair, sector: aviation, size: enterprise }
+  - { name: Heathrow Airport, slug: heathrow, sector: aviation, size: enterprise }
+  - { name: Gatwick Airport, slug: gatwickairport, sector: aviation, size: large }
+  - { name: Manchester Airports Group, slug: manchesterairportsgroup, sector: aviation, size: enterprise }
+  - { name: Menzies Aviation, slug: menziesaviation, sector: aviation, size: enterprise }
+  - { name: Swissport, slug: swissport, sector: aviation, size: enterprise }
+  - { name: dnata, slug: dnata, sector: aviation, size: enterprise }
+  - { name: Signature Aviation, slug: signatureaviation, sector: aviation, size: large }
 
-  # ---------------------------------------------------------------------------
-  # Think tanks and policy institutes
-  # Westminster-based, and Mark works in Westminster. Ops director roles here are
-  # often titled Director of Operations or Chief Operating Officer at small headcount.
-  # ---------------------------------------------------------------------------
-  - { name: Institute for Government, slug: instituteforgovernment, sector: policy }
-  - { name: Tony Blair Institute, slug: tonyblairinstitute, sector: policy }
-  - { name: Onward, slug: ukonward, sector: policy }
-  - { name: Policy Exchange, slug: policyexchange, sector: policy }
-  - { name: Centre for Policy Studies, slug: centreforpolicystudies, sector: policy }
-  - { name: Demos, slug: demos, sector: policy }
-  - { name: IPPR, slug: ippr, sector: policy }
-  - { name: Resolution Foundation, slug: resolutionfoundation, sector: policy }
-  - { name: Social Market Foundation, slug: socialmarketfoundation, sector: policy }
-  - { name: Centre for Cities, slug: centreforcities, sector: policy }
-  - { name: Britain Remade, slug: britainremade, sector: policy }
-  - { name: UK Day One, slug: ukdayone, sector: policy }
-  - { name: Reform, slug: reformthinktank, sector: policy }
-  - { name: New Local, slug: newlocal, sector: policy }
-  - { name: Chatham House, slug: chathamhouse, sector: policy }
-  - { name: RUSI, slug: rusi, sector: policy }
-  - { name: IISS, slug: iiss, sector: policy }
-  - { name: Ada Lovelace Institute, slug: adalovelaceinstitute, sector: policy }
+  # ===========================================================================
+  # ENTERPRISE — parcel, freight forwarding and contract logistics
+  # Closest enterprise analogue to the Ontruck and Flexport problem space.
+  # ===========================================================================
+  - { name: DHL, slug: dhl, sector: freight, size: enterprise }
+  - { name: FedEx, slug: fedex, sector: freight, size: enterprise }
+  - { name: UPS, slug: ups, sector: freight, size: enterprise }
+  - { name: Royal Mail, slug: royalmail, sector: lastmile, size: enterprise }
+  - { name: Evri, slug: evri, sector: lastmile, size: enterprise }
+  - { name: DPD UK, slug: dpd, sector: lastmile, size: enterprise }
+  - { name: Yodel, slug: yodel, sector: lastmile, size: enterprise }
+  - { name: XPO Logistics, slug: xpologistics, sector: freight, size: enterprise }
+  - { name: GXO Logistics, slug: gxologistics, sector: fulfilment, size: enterprise }
+  - { name: Wincanton, slug: wincanton, sector: fulfilment, size: enterprise }
+  - { name: Kuehne+Nagel, slug: kuehnenagel, sector: freight, size: enterprise }
+  - { name: DSV, slug: dsv, sector: freight, size: enterprise }
+  - { name: Maersk, slug: maersk, sector: freight, size: enterprise }
+  - { name: Geodis, slug: geodis, sector: freight, size: enterprise }
+  - { name: CEVA Logistics, slug: cevalogistics, sector: freight, size: enterprise }
+  - { name: Ryder, slug: ryder, sector: fleet, size: enterprise }
 
-  # ---------------------------------------------------------------------------
-  # Mission-driven scale-ups: education, health, social impact
-  # ---------------------------------------------------------------------------
-  - { name: Multiverse, slug: multiverse, sector: mission }
-  - { name: Beam, slug: beam, sector: mission }
-  - { name: Cera, slug: cera, sector: mission }
-  - { name: Elder, slug: elder, sector: mission }
-  - { name: Peppy, slug: peppyhealth, sector: mission }
-  - { name: Thriva, slug: thriva, sector: mission }
-  - { name: Lindus Health, slug: lindushealth, sector: mission }
-  - { name: Huma, slug: huma, sector: mission }
-  - { name: Ufonia, slug: ufonia, sector: mission }
-  - { name: Zinc, slug: zinc, sector: mission }
-  - { name: Founders Pledge, slug: founderspledge, sector: mission }
-  - { name: Impetus, slug: impetus, sector: mission }
-  - { name: Big Society Capital, slug: bigsocietycapital, sector: mission }
+  # ===========================================================================
+  # ENTERPRISE — rail, bus and public transport operators
+  # ===========================================================================
+  - { name: Network Rail, slug: networkrail, sector: publictransport, size: enterprise }
+  - { name: FirstGroup, slug: firstgroup, sector: publictransport, size: enterprise }
+  - { name: Go-Ahead Group, slug: goahead, sector: publictransport, size: enterprise }
+  - { name: Stagecoach, slug: stagecoach, sector: publictransport, size: enterprise }
+  - { name: Mobico Group, slug: mobico, sector: publictransport, size: enterprise }
+  - { name: Arriva, slug: arriva, sector: publictransport, size: enterprise }
+  - { name: Transport for London, slug: transportforlondon, sector: publictransport, size: enterprise }
+  - { name: Alstom, slug: alstom, sector: publictransport, size: enterprise }
+  - { name: Siemens Mobility, slug: siemensmobility, sector: publictransport, size: enterprise }
+  - { name: Hitachi Rail, slug: hitachirail, sector: publictransport, size: enterprise }
 
-  # ---------------------------------------------------------------------------
-  # Fintech and UK tech with substantial operations functions
-  # These have the largest ops orgs and the most director-level ops headcount.
-  # ---------------------------------------------------------------------------
-  - { name: Monzo, slug: monzo, sector: fintech }
-  - { name: Starling Bank, slug: starlingbank, sector: fintech }
-  - { name: Wise, slug: wise, sector: fintech }
-  - { name: Revolut, slug: revolut, sector: fintech }
-  - { name: Zopa, slug: zopa, sector: fintech }
-  - { name: Marshmallow, slug: marshmallow, sector: fintech }
-  - { name: Tide, slug: tide, sector: fintech }
-  - { name: ClearScore, slug: clearscore, sector: fintech }
-  - { name: Cleo, slug: cleo, sector: fintech }
-  - { name: Plum, slug: plum, sector: fintech }
-  - { name: Freetrade, slug: freetrade, sector: fintech }
-  - { name: Curve, slug: curve, sector: fintech }
-  - { name: Griffin, slug: griffin, sector: fintech }
-  - { name: Allica Bank, slug: allicabank, sector: fintech }
-  - { name: Yonder, slug: yonder, sector: fintech }
-  - { name: 11FS, slug: 11fs, sector: fintech }
+  # ===========================================================================
+  # ENTERPRISE — automotive, rental, fleet and mobility energy
+  # ===========================================================================
+  - { name: Enterprise Mobility, slug: enterprisemobility, sector: fleet, size: enterprise }
+  - { name: Hertz, slug: hertz, sector: fleet, size: enterprise }
+  - { name: Avis Budget Group, slug: avisbudgetgroup, sector: fleet, size: enterprise }
+  - { name: Europcar Mobility Group, slug: europcarmobilitygroup, sector: fleet, size: enterprise }
+  - { name: Sixt, slug: sixt, sector: fleet, size: enterprise }
+  - { name: Motability Operations, slug: motabilityoperations, sector: fleet, size: large }
+  - { name: JLR, slug: jlr, sector: fleet, size: enterprise }
+  - { name: Tesla, slug: tesla, sector: fleet, size: enterprise }
+  - { name: BYD Europe, slug: bydeurope, sector: fleet, size: enterprise }
+  - { name: Stellantis, slug: stellantis, sector: fleet, size: enterprise }
+  - { name: bp pulse, slug: bppulse, sector: charging, size: enterprise }
+  - { name: Shell Recharge, slug: shellrecharge, sector: charging, size: enterprise }
+  - { name: Ocado Group, slug: ocadogroup, sector: fulfilment, size: enterprise }
 
-  # ---------------------------------------------------------------------------
-  # Climate, energy and mobility
-  # Mark ran electrification work at Uber and integrated bp pulse. Direct relevance.
-  # ---------------------------------------------------------------------------
-  - { name: Octopus Energy, slug: octopusenergy, sector: climate }
-  - { name: Kraken Technologies, slug: krakentechnologies, sector: climate }
-  - { name: OVO Energy, slug: ovoenergy, sector: climate }
-  - { name: Field, slug: fieldenergy, sector: climate }
-  - { name: Modo Energy, slug: modoenergy, sector: climate }
-  - { name: Ripple Energy, slug: rippleenergy, sector: climate }
-  - { name: Sylvera, slug: sylvera, sector: climate }
-  - { name: Isometric, slug: isometric, sector: climate }
-  - { name: CUR8, slug: cur8, sector: climate }
-  - { name: Supercritical, slug: supercritical, sector: climate }
-  - { name: Carbon Re, slug: carbonre, sector: climate }
-  - { name: Zeigo, slug: zeigo, sector: climate }
-  - { name: Rio, slug: rio, sector: climate }
+  # ===========================================================================
+  # LARGE — scaled marketplaces and delivery platforms
+  # The Gett and marketplace supply argument at its largest credible scale.
+  # ===========================================================================
+  - { name: Deliveroo, slug: deliveroo, sector: lastmile, size: enterprise, ats: ashby }
+  - { name: Just Eat Takeaway, slug: justeattakeaway, sector: lastmile, size: enterprise }
+  - { name: Delivery Hero, slug: deliveryhero, sector: lastmile, size: enterprise }
+  - { name: Wolt, slug: wolt, sector: lastmile, size: enterprise }
+  - { name: Bolt, slug: bolt, sector: ridehail, size: enterprise }
+  - { name: Lyft, slug: lyft, sector: ridehail, size: enterprise }
+  - { name: Grab, slug: grab, sector: ridehail, size: enterprise }
+  - { name: FREE NOW, slug: freenow, sector: ridehail, size: large }
+  - { name: Careem, slug: careem, sector: ridehail, size: large }
+  - { name: Getir, slug: getir, sector: lastmile, size: large }
+  - { name: Flexport, slug: flexport, sector: freight, size: large, ats: greenhouse }
+  - { name: Samsara, slug: samsara, sector: fleet, size: large }
+  - { name: Motive, slug: motive, sector: fleet, size: large }
+  - { name: Geotab, slug: geotab, sector: fleet, size: large }
+  - { name: Trainline, slug: trainline, sector: publictransport, size: large }
+  - { name: Auto Trader, slug: autotrader, sector: fleet, size: large }
+  - { name: Descartes Systems, slug: descartes, sector: fulfilment, size: large }
+  - { name: project44, slug: project44, sector: freight, size: large }
+  - { name: Transporeon, slug: transporeon, sector: freight, size: large }
+  - { name: Sennder, slug: sennder, sector: freight, size: large }
+  - { name: ShipBob, slug: shipbobinc, sector: fulfilment, size: large, ats: greenhouse }
+  - { name: Rocket Lab, slug: rocketlab, sector: aviation, size: large, ats: greenhouse }
+  - { name: Joby Aviation, slug: jobyaviation, sector: aviation, size: large }
+  - { name: Archer Aviation, slug: archeraviation, sector: aviation, size: large }
+  - { name: Beta Technologies, slug: betatechnologies, sector: aviation, size: large }
+  - { name: Aurora Innovation, slug: aurorainnovation, sector: autonomy, size: large, ats: greenhouse }
+  - { name: Zoox, slug: zoox, sector: autonomy, size: large }
+  - { name: Applied Intuition, slug: appliedintuition, sector: autonomy, size: large }
+  - { name: AutoStore, slug: autostore, sector: fulfilment, size: large }
+  - { name: Exotec, slug: exotec, sector: fulfilment, size: large }
+  - { name: Locus Robotics, slug: locusrobotics, sector: fulfilment, size: large }
+  - { name: Stuart, slug: stuart, sector: lastmile, size: large }
+  - { name: Zipcar, slug: zipcar, sector: ridehail, size: large }
+  - { name: Turo, slug: turo, sector: ridehail, size: large }
+  - { name: Addison Lee, slug: addisonlee, sector: ridehail, size: large }
+  - { name: Lime, slug: lime, sector: micromobility, size: large }
+  - { name: TIER, slug: tier, sector: micromobility, size: large }
+  - { name: Cirium, slug: cirium, sector: aviation, size: large }
+  - { name: INRIX, slug: inrix, sector: fleet, size: mid }
 
-  # ---------------------------------------------------------------------------
-  # Defence, aerospace and space
-  # Aligned to stated interests. Ops roles here are programme-heavy.
-  # ---------------------------------------------------------------------------
-  - { name: Helsing, slug: helsing, sector: defence }
-  - { name: Anduril, slug: anduril, sector: defence }
-  - { name: Tekever, slug: tekever, sector: defence }
-  - { name: QinetiQ, slug: qinetiq, sector: defence }
-  - { name: Space Forge, slug: spaceforge, sector: defence }
-  - { name: Orbex, slug: orbex, sector: defence }
-  - { name: Skyrora, slug: skyrora, sector: defence }
-  - { name: Oxford Space Systems, slug: oxfordspacesystems, sector: defence }
-  - { name: Advai, slug: advai, sector: defence }
-  - { name: Improbable, slug: improbable, sector: defence }
+  # ===========================================================================
+  # MID — 250 to 1,000 people. Scaled private companies, Director of Operations
+  # is genuinely a Director-sized job here. Strongest level fit.
+  # ===========================================================================
+  - { name: Wayve, slug: wayve, sector: autonomy, size: mid, ats: greenhouse }
+  - { name: Zego, slug: zego, sector: fleet, size: mid }
+  - { name: Motorway, slug: motorway, sector: fleet, size: mid, ats: ashby }
+  - { name: Carwow, slug: carwow, sector: fleet, size: mid }
+  - { name: Cinch, slug: cinch, sector: fleet, size: mid }
+  - { name: Heycar, slug: heycar, sector: fleet, size: mid }
+  - { name: Huboo, slug: huboo, sector: fulfilment, size: mid }
+  - { name: Zencargo, slug: zencargo, sector: freight, size: mid }
+  - { name: Forto, slug: forto, sector: freight, size: mid }
+  - { name: FourKites, slug: fourkites, sector: freight, size: mid }
+  - { name: Stord, slug: stord, sector: fulfilment, size: mid }
+  - { name: Pod Point, slug: podpoint, sector: charging, size: mid }
+  - { name: InstaVolt, slug: instavolt, sector: charging, size: mid }
+  - { name: GRIDSERVE, slug: gridserve, sector: charging, size: mid }
+  - { name: Connected Kerb, slug: connectedkerb, sector: charging, size: mid }
+  - { name: Zenobe, slug: zenobe, sector: charging, size: mid }
+  - { name: Fastned, slug: fastned, sector: charging, size: mid }
+  - { name: Voi, slug: voi, sector: micromobility, size: mid }
+  - { name: Dott, slug: dott, sector: micromobility, size: mid }
+  - { name: Zeelo, slug: zeelo, sector: publictransport, size: mid }
+  - { name: Optibus, slug: optibus, sector: publictransport, size: mid }
+  - { name: Via, slug: via, sector: publictransport, size: mid }
+  - { name: Swvl, slug: swvl, sector: publictransport, size: mid }
+  - { name: ZeroAvia, slug: zeroavia, sector: aviation, size: mid }
+  - { name: Vertical Aerospace, slug: verticalaerospace, sector: aviation, size: mid }
+  - { name: Astroscale, slug: astroscale, sector: aviation, size: mid }
+  - { name: Isar Aerospace, slug: isaraerospace, sector: aviation, size: mid }
+  - { name: Dexory, slug: dexory, sector: fulfilment, size: mid, ats: greenhouse }
+  - { name: Oxa, slug: oxa, sector: autonomy, size: mid }
+  - { name: Nuro, slug: nuro, sector: autonomy, size: mid }
+  - { name: Zoomo, slug: zoomo, sector: micromobility, size: mid }
+  - { name: Neuron Mobility, slug: neuron, sector: micromobility, size: mid, ats: greenhouse }
+  - { name: Sorted, slug: sorted, sector: fulfilment, size: mid }
+  - { name: Slimstock, slug: slimstock, sector: fulfilment, size: mid }
+  - { name: Power Dot, slug: powerdot, sector: charging, size: mid, ats: greenhouse }
+  - { name: InCharge Energy, slug: inchargeenergy, sector: charging, size: mid, ats: greenhouse }
+  - { name: Skyports, slug: skyports, sector: aviation, size: mid }
+  - { name: Altitude Angel, slug: altitudeangel, sector: aviation, size: mid }
+  - { name: Wheely, slug: wheely, sector: ridehail, size: mid }
+  - { name: Cabify, slug: cabify, sector: ridehail, size: mid }
+  - { name: Getaround, slug: getaround, sector: ridehail, size: mid }
 
-  # ---------------------------------------------------------------------------
-  # AI, robotics and physical AI
-  # Aligned to stated interests. Fast-scaling, ops-hungry.
-  # ---------------------------------------------------------------------------
-  - { name: Wayve, slug: wayve, sector: ai }
-  - { name: Synthesia, slug: synthesia, sector: ai }
-  - { name: ElevenLabs, slug: elevenlabs, sector: ai }
-  - { name: PolyAI, slug: polyai, sector: ai }
-  - { name: Quantexa, slug: quantexa, sector: ai }
-  - { name: Tractable, slug: tractable, sector: ai }
-  - { name: Isomorphic Labs, slug: isomorphiclabs, sector: ai }
-  - { name: Basecamp Research, slug: basecampresearch, sector: ai }
-  - { name: Cusp AI, slug: cuspai, sector: ai }
-  - { name: Nscale, slug: nscale, sector: ai }
-  - { name: Dexory, slug: dexory, sector: ai }
-  - { name: Automata, slug: automata, sector: ai }
-  - { name: Oxa, slug: oxa, sector: ai }
-  - { name: Humanoid, slug: humanoid, sector: ai }
-  - { name: Signal AI, slug: signalai, sector: ai }
-
-  # ---------------------------------------------------------------------------
-  # Charities, foundations and funders
-  # Director of Operations and COO roles are common and often well-paid at the larger end.
-  # ---------------------------------------------------------------------------
-  - { name: Wellcome Trust, slug: wellcome, sector: charity }
-  - { name: Nuffield Foundation, slug: nuffieldfoundation, sector: charity }
-  - { name: Esmee Fairbairn Foundation, slug: esmeefairbairn, sector: charity }
-  - { name: Comic Relief, slug: comicrelief, sector: charity }
-  - { name: Shelter, slug: shelter, sector: charity }
-  - { name: Crisis, slug: crisis, sector: charity }
-  - { name: Centrepoint, slug: centrepoint, sector: charity }
-  - { name: Citizens Advice, slug: citizensadvice, sector: charity }
-  - { name: Trussell, slug: trussell, sector: charity }
-  - { name: Impact on Urban Health, slug: impactonurbanhealth, sector: charity }
-  - { name: Access Foundation, slug: accessfoundation, sector: charity }
-  - { name: Joseph Rowntree Foundation, slug: jrf, sector: charity }
-
-  # ---------------------------------------------------------------------------
-  # Marketplaces, logistics and mobility
-  # Mark's background: Gett business travel, Glue Home partnerships, Uber.
-  # ---------------------------------------------------------------------------
-  - { name: Bolt, slug: bolt, sector: mobility }
-  - { name: Zeelo, slug: zeelo, sector: mobility }
-  - { name: Zipcar, slug: zipcar, sector: mobility }
-  - { name: Motorway, slug: motorway, sector: mobility }
-  - { name: Cazoo, slug: cazoo, sector: mobility }
-  - { name: Flexport, slug: flexport, sector: mobility }
-  - { name: Zencargo, slug: zencargo, sector: mobility }
-  - { name: Beacon, slug: beacon, sector: mobility }
-  - { name: Packfleet, slug: packfleet, sector: mobility }
-  - { name: Gophr, slug: gophr, sector: mobility }
+  # ===========================================================================
+  # SCALEUP — 50 to 250 people. Smallest bucket kept. Below this, excluded.
+  # ===========================================================================
+  - { name: HIVED, slug: hived, sector: lastmile, size: scaleup }
+  - { name: Packfleet, slug: packfleet, sector: lastmile, size: scaleup }
+  - { name: Gophr, slug: gophr, sector: lastmile, size: scaleup }
+  - { name: Beryl, slug: beryl, sector: micromobility, size: scaleup }
+  - { name: Forest, slug: forest, sector: micromobility, size: scaleup }
+  - { name: HumanForest, slug: humanforest, sector: micromobility, size: scaleup }
+  - { name: Beacon, slug: beacon, sector: freight, size: scaleup }
+  - { name: cargo.one, slug: cargoone, sector: freight, size: scaleup }
+  - { name: Zeus Labs, slug: zeuslabs, sector: freight, size: scaleup }
+  - { name: Nuvocargo, slug: nuvocargo, sector: freight, size: scaleup }
+  - { name: Freightify, slug: freightify, sector: freight, size: scaleup }
+  - { name: char.gy, slug: chargy, sector: charging, size: scaleup }
+  - { name: Believ, slug: believ, sector: charging, size: scaleup }
+  - { name: Osprey Charging, slug: ospreycharging, sector: charging, size: scaleup }
+  - { name: Zapmap, slug: zapmap, sector: charging, size: scaleup }
+  - { name: Lightfoot, slug: lightfoot, sector: fleet, size: scaleup }
+  - { name: Fleetio, slug: fleetio, sector: fleet, size: scaleup }
+  - { name: Bumper, slug: bumper, sector: fleet, size: scaleup }
+  - { name: Vianova, slug: vianova, sector: fleet, size: scaleup }
+  - { name: Scurri, slug: scurri, sector: fulfilment, size: scaleup }
+  - { name: Nimble Robotics, slug: nimblerobotics, sector: fulfilment, size: scaleup }
+  - { name: Passenger, slug: passenger, sector: publictransport, size: scaleup }
+  - { name: Padam Mobility, slug: padammobility, sector: publictransport, size: scaleup }
+  - { name: Orbex, slug: orbex, sector: aviation, size: scaleup }
+  - { name: Space Forge, slug: spaceforge, sector: aviation, size: scaleup }
+  - { name: The Exploration Company, slug: explorationcompany, sector: aviation, size: scaleup }
+  - { name: D-Orbit, slug: dorbit, sector: aviation, size: scaleup }
+  - { name: Waabi, slug: waabi, sector: autonomy, size: scaleup }
+  - { name: Nauto, slug: nauto, sector: autonomy, size: scaleup }
+  - { name: Helm.ai, slug: helmai, sector: autonomy, size: scaleup }
