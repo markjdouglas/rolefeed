@@ -61,12 +61,10 @@
   }
   .bar-wrap {
     max-width: var(--max); margin: 0 auto; padding: 7px var(--gutter);
-    min-height: 54px;
+    min-height: 60px;
     display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
   .nav { margin-left: auto; flex: 0 0 auto; }
-  .bar-wrap .build { margin-left: 14px; flex: 0 0 auto; display: flex; align-items: center; gap: 9px; }
-  .alpha, .ver { display: inline-flex; align-items: center; height: 20px; }
   @media (max-width: 860px) { .bar-wrap { flex-wrap: wrap; } .nav { margin-left: 0; } }
 
   .nav { display: flex; gap: 8px; flex-wrap: nowrap; margin: 0; }
@@ -150,18 +148,32 @@
      slot at the same height, which is what keeps the nav on identical pixels across
      all four pages — the bar's height is fixed, so what sits to the left of the nav
      can differ without moving it. */
-  .brandlink {
-    font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--cream); text-decoration: none; flex: 0 0 auto;
+  /* The same artwork as the feed, from one shared file, in a slot of the same fixed
+     width — so the tabs sit on identical pixels on all four pages and the logo is the
+     home button everywhere. */
+  :root { --brand-w: 220px; }
+  .brand { flex: 0 0 var(--brand-w); display: flex; align-items: center; text-decoration: none; }
+  .brand img { height: 46px; width: auto; image-rendering: pixelated; display: block; }
+  .bar-wrap .build {
+    margin-left: 14px; flex: 0 0 116px;
+    display: flex; align-items: center; justify-content: flex-end; gap: 8px;
   }
-  .brandlink:hover { text-decoration: none; color: var(--purple-bright); }
+  .alpha, .ver {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 22px; box-sizing: border-box;
+  }
+  .alpha { padding: 0 8px; box-shadow: 2px 2px 0 var(--shadow); }
+  .ver { min-width: 46px; border-bottom: 0; color: var(--cream-dim); }
+  .rel ul { margin: 0; padding-left: 18px; max-width: 80ch; }
+  .rel li { margin-bottom: 5px; color: var(--cream-dim); }
+  .rel li strong { color: var(--cream); font-weight: 600; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="bar-wrap">
-    <a class="brandlink" href="index.html">RoleFeed</a>
+    <a class="brand" href="index.html" aria-label="RoleFeed — home"><img src="brand/lockup.svg" alt="RoleFeed"></a>
     <nav class="nav" aria-label="Pages">
       <a class="tab" href="index.html">Feed</a>
       <a class="tab" href="coverage.html">Coverage</a>
@@ -170,7 +182,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.2</a>
+      <a class="ver" href="changelog.html">v0.4.3</a>
     </span>
   </div>
 </div>
@@ -182,143 +194,84 @@
 </header>
 
 <main class="wrap">
+
   <div class="rel current">
-    <h2>v0.4.2 <span class="tag now">current</span></h2>
-    <div class="date">21/09/2026</div>
+    <h2>21 September 2026 <span class="tag now">current</span></h2>
+    <div class="date">v0.4.0 &rarr; v0.4.3</div>
     <ul>
-      <li>Coverage page added: all 211 employers, reachable or not, by size band and by system.</li>
-      <li>Feed now defaults to the full in-scope set. Stats lead with roles assessed, then in scope, then matched.</li>
-      <li>Every role shows why it matched: seniority tier, which geography gate passed, and whether the date came from the employer.</li>
-      <li>Navigation moved to a top bar, in an identical position on all four pages.</li>
-      <li>Product brief and version history widened to the feed's 1,180px column, with the same gutters.</li>
-      <li>Product brief cut by roughly 40%; heading sizes made hierarchical.</li>
-      <li>Banner pluralisation fixed &mdash; &ldquo;1 employers unavailable&rdquo;.</li>
-      <li><strong>Header compacted.</strong> The brand lockup moved into the top bar, so
-        three stacked bands became one. Pixel scale halved from 2.6 to 1.6, header
-        padding 22px to 10px, meter 7px to 4px.</li>
-      <li><strong>Nine stat cards became one 34px strip</strong> &mdash; values beside
-        labels rather than above them. The cards cost about 130 vertical pixels and
-        pushed the first role below the fold on a 13-inch screen.</li>
-      <li><strong>One control height, padding and type size</strong> for tabs, selects,
-        sort and toggles. They had been 36px, 38px and 34px, with 2px, 0 and 2px
-        shadows and two border widths, sitting on the same rows.</li>
-      <li>Search, selects, sort and toggles share one wrapping row above 640px, down
-        from three rows.</li>
-      <li>A single 2px boundary now separates the controls from the content, replacing
-        four weak separators that read as drift.</li>
-      <li><strong>Fixed the empty band under the top bar.</strong> The bar allowed
-        wrapping, so the ALPHA badge and version dropped onto a line of their own as
-        soon as brand, tagline and nav filled the row &mdash; a 54px bar rendering at
-        190px. The bar no longer wraps above 860px and the tagline truncates instead.</li>
-      <li><strong>Wider tonal range.</strong> Four near-identical purples were doing
-        every structural job: background #14102b, surface #1a1733 and control face
-        #221e3d sat within a few points of each other, so nothing read as in front of
-        or behind anything else. The floor drops to #100d22, surfaces lift apart, and
-        cream rules go from 13% to 17% with bright rules from 26% to 36%.</li>
-      <li><strong>A visual grammar: controls are raised, data is recessed.</strong> The
-        stats strip now sits on its own darker tone (#0a0818) with an inset shadow
-        rather than floating on a surface four points from the background, which is why
-        it had no discernible edge.</li>
-      <li><strong>A fourth accent hue.</strong> Teal joins purple, amber and hot orange,
-        one hue per meaning: teal is volume and coverage, purple is what to act on, hot
-        is 24 hours, amber is 48, muted is reference. The stats row reads as ranked
-        information rather than nine identical figures.</li>
-      <li>Section headers gained a brighter rule and a gold plinth &mdash; they had been
-        a 2px rule at 11% cream, less contrast than the whitespace around them, so the
-        size groups ran together.</li>
-      <li><strong>&ldquo;Matched only&rdquo; restored as the default.</strong> Turning it
-        off to make the funnel visible was the wrong fix &mdash; the feed opened on a
-        data-science role. The funnel belongs in the stats strip, which is where it now
-        is.</li>
-      <li><strong>Title exclusions extended</strong> to finance, financial, legal,
-        payroll, procurement, talent and HR operations. Those were only excluded when
-        followed by manager, director or lead, so &ldquo;Finance Operations Lead&rdquo;
-        passed the domain test on the word &ldquo;operations&rdquo; and was caught by
-        the mid-senior tier. Verified against 17 titles.</li>
-      <li>Fixed a duplicated line in the publish loop that appended every role to the
-        feed twice. 1,128 published roles were 564 real ones. It threw no error and the
-        totals looked plausible, which is why it survived a run.</li>
-      <li>The geography verdict is now stored on each role. It was computed and
-        discarded, so every role shipped with no location classification and the page
-        could not distinguish a UK role from &ldquo;remote, region unstated&rdquo;.</li>
-      <li>SmartRecruiters paging verified in production: Sixt 100 to about 510 roles,
-        Delivery Hero 100 to about 990, Grab 100 to about 420. Total supply 3,698 to
-        about 5,500.</li>
+      <li><strong>Teamtailor added as a sixth adapter.</strong> Eight employers including
+        GXO, Maersk, Geodis and Europcar. It alone moved enterprise reachability from 15%
+        to 22%.</li>
+      <li><strong>Discovery re-run across 211 employers:</strong> 62 resolved (29%, from
+        22%), 5,541 roles assessed, 564 in scope, 7 matched.</li>
+      <li><strong>SmartRecruiters paging fixed.</strong> Sixt, Delivery Hero and Grab were
+        each capped at exactly 100 postings. Total supply rose from 3,698 to about 5,500.</li>
+      <li><strong>Recency now uses the employer's publication date</strong> where the
+        source provides a trustworthy one. Greenhouse's <code>updated_at</code> is not
+        one, which is why the 24h, 48h and 7d counts had been identical.</li>
+      <li><strong>Seniority split into exec, director and mid-senior.</strong> Title
+        exclusions extended to finance, legal, payroll, procurement, talent and HR
+        operations.</li>
+      <li><strong>Two silent data defects fixed:</strong> a duplicated line published every
+        role twice, and the geography verdict was computed then discarded.</li>
+      <li><strong>Coverage page added</strong> &mdash; all 211 employers, reachable or not,
+        by size band and system. <strong>Product brief rewritten</strong> as a PRD with a
+        stop decision.</li>
+      <li><strong>Interface:</strong> shared lockup and a fixed navigation bar across all
+        pages, one control height throughout, filters on one row, stats as a strip, a wider
+        tonal range with a fourth accent hue, crawler exclusion and scheme-checked links.</li>
+      <li><strong>The feed now says what the last collection changed</strong> &mdash; new
+        and closed counts, or &ldquo;no change last run&rdquo;, because a run that changes
+        nothing is evidence the market is still, not that the collector is broken.</li>
+      <li>Tagline replaced. The two-line sector list truncated at every width and said
+        nothing the page did not already show.</li>
+      <li>Collection moved from :00 to :37 after firing 11&ndash;17 minutes late on 14 of
+        14 runs.</li>
+    </ul>
+    <div class="note">Reasoning for these changes is in the product brief. This page
+      records what changed, not why.</div>
+  </div>
+
+  <div class="rel">
+    <h2>20 September 2026</h2>
+    <div class="date">v0.2.0 &rarr; v0.3.0</div>
+    <ul>
+      <li><strong>The web interface</strong> &mdash; segmented by employer size, faceted
+        filters, shortlist, dismiss. One file, no framework, no build step.</li>
+      <li><strong>Deployed on Cloudflare Pages</strong> from a private repository. GitHub
+        Pro proved unnecessary.</li>
+      <li><strong>Scheduled collection every two hours</strong> via GitHub Actions, with a
+        state merge so <code>first_seen</code> survives and roles missing twice are treated
+        as closed.</li>
+      <li><strong>Geography restricted to the UK or remote within GMT &plusmn;3</strong>,
+        with an impostor guard for London Ontario and similar.</li>
+      <li>Hot filter for roles under 24 hours old; live countdown to the next collection.</li>
+      <li>Mobile Safari: filters collapsed from over half the viewport to 86px, 16px inputs,
+        safe-area insets, <code>dvh</code> units.</li>
+      <li><code>/site</code> found in the stock Python <code>.gitignore</code>, silently
+        excluding the entire application.</li>
     </ul>
   </div>
 
   <div class="rel">
-    <h2>v0.4.1</h2>
-    <div class="date">21/09/2026</div>
+    <h2>19 September 2026</h2>
+    <div class="date">v0.1.0</div>
     <ul>
-      <li>Board discovery re-run: 62 of 211 employers resolved (29%, from 22%), 3,918 open roles, 23.3 minutes.</li>
-      <li>Reachability by size: enterprise 22%, large 51%, mid 35%, scaleup 18%, startup 17%.</li>
-      <li>31% of reachable enterprise employers are on Greenhouse, Lever or Ashby, against 80% large, 89% mid, 89% scaleup, 100% startup.</li>
-      <li>SmartRecruiters paging added. Sixt, Delivery Hero and Grab were each capped at exactly 100 postings.</li>
-      <li>Job URLs restricted to http and https. Escaping alone does not stop a <code>javascript:</code> link.</li>
-      <li><code>noindex</code> and <code>robots.txt</code> added. Neither is access control.</li>
-      <li>Checkerboard moved to the page gutters; at 9% alpha it had been sitting behind body text.</li>
-      <li>Cron moved from :00 to :37 after firing 11&ndash;17 minutes late on 14 of 14 runs.</li>
-      <li>CLAUDE.md, README.md and SPEC.md corrected. All three still described a Google Sheet as the interface.</li>
-      <li>Goose interval 7s to 5s.</li>
-    </ul>
-  </div>
-
-  <div class="rel">
-    <h2>v0.4.0</h2>
-    <div class="date">21/09/2026</div>
-    <ul>
-      <li>Teamtailor added as a sixth adapter: 8 employers, including GXO, Maersk, Geodis and Europcar.</li>
-      <li>Recency uses the employer's publication date where the source provides one. Greenhouse's <code>updated_at</code> is not one &mdash; it moves on any edit, which is why the 24h, 48h and 7d counts had been identical.</li>
-      <li>Workday relative dates parsed (&ldquo;Posted 3 Days Ago&rdquo;).</li>
-      <li>Seniority split into exec, director and mid-senior. Verified against 39 sample titles.</li>
-      <li>Employer list 169 to 211, with a startup band added.</li>
-      <li>British Airways assessed and recorded as uncovered: no machine-readable feed, and <code>robots.txt</code> disallows the search path.</li>
-      <li>Goose gained three frames and 15 weighted acts.</li>
-    </ul>
-  </div>
-
-  <div class="rel">
-    <h2>v0.3.0</h2>
-    <div class="date">20/09/2026</div>
-    <ul>
-      <li>Geography restricted to the UK, or remote within GMT &plusmn;3. Impostor guard rejects London Ontario, Birmingham Alabama and Manchester New Hampshire.</li>
-      <li>Hot filter for roles under 24 hours old.</li>
-      <li>Live countdown to the next collection on a 24-block meter, to the second.</li>
-      <li>Mobile filters collapsed from over half the viewport to 86px.</li>
-      <li>Mobile Safari: 16px inputs, safe-area insets, <code>dvh</code> units, 44px touch targets.</li>
-    </ul>
-  </div>
-
-  <div class="rel">
-    <h2>v0.2.0</h2>
-    <div class="date">20/09/2026</div>
-    <ul>
-      <li>Web interface: segmented by employer size, faceted filters, shortlist, dismiss. One file, no framework, no build step.</li>
-      <li>Deployed on Cloudflare Pages from a private repository. GitHub Pro proved unnecessary.</li>
-      <li>State merge so <code>first_seen</code> survives each run. Roles missing twice are treated as closed.</li>
-      <li>Scheduled collection every two hours via GitHub Actions, committing only on change.</li>
-      <li><code>/site</code> found in the stock Python <code>.gitignore</code>, silently excluding the entire application.</li>
-    </ul>
-  </div>
-
-  <div class="rel">
-    <h2>v0.1.0</h2>
-    <div class="date">19/09/2026</div>
-    <ul>
-      <li>First collector: Greenhouse, Lever, Ashby and SmartRecruiters. All keyless.</li>
-      <li>Board-token discovery by variant generation. Greenhouse's separate EU host added.</li>
+      <li><strong>First collector</strong> &mdash; Greenhouse, Lever, Ashby and
+        SmartRecruiters, all keyless.</li>
+      <li><strong>Board-token discovery</strong> by variant generation; Greenhouse's separate
+        EU host added. First pass resolved 25% of employers.</li>
       <li>Workday adapter, hand-configured per employer from a careers URL.</li>
-      <li>First pass resolved 25% of employers.</li>
+      <li>British Airways assessed and recorded as uncovered: no machine-readable feed, and
+        <code>robots.txt</code> disallows the search path.</li>
     </ul>
   </div>
 
 </main>
 
 <footer class="wrap">
-  Versioning is major.minor.patch, bumped by hand. Still 0.x: the data contract is not
-  stable and the matching rules are being tuned. Reasoning for each change lives in the
-  product brief.
+  Versioning is major.minor.patch, bumped by hand. Still 0.x, and it will stay there: the
+  product brief records a decision to stop developing this as a job-search tool.
 </footer>
 
 </body>
