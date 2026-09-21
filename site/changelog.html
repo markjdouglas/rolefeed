@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14102b">
+<meta name="color-scheme" content="dark">
+<title>RoleFeed — version history</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='0' fill='%2314102b'/%3E%3Crect x='7' y='8' width='18' height='3' fill='%238b6cff'/%3E%3Crect x='7' y='15' width='13' height='3' fill='%23f4eddf'/%3E%3Crect x='7' y='22' width='8' height='3' fill='%23ffb84d'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #14102b; --surface: #1a1733; --surface-2: #221e3d;
+    --border: rgba(244,237,223,.13); --border-bright: rgba(244,237,223,.26);
+    --rule: rgba(244,237,223,.09);
+    --purple: #8b6cff; --purple-bright: #a98bff; --gold: #e9c46a;
+    --cream: #f4eddf; --cream-dim: #cfc6b8; --muted: #9d9483;
+    --hot: #ff6a3d; --green: #5ad1a0;
+    --shadow: #0c0919; --bevel: rgba(244,237,223,.09);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+  body {
+    margin: 0; background: var(--bg); color: var(--cream);
+    font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      linear-gradient(45deg, var(--bevel) 25%, transparent 25%, transparent 75%, var(--bevel) 75%),
+      linear-gradient(45deg, var(--bevel) 25%, transparent 25%, transparent 75%, var(--bevel) 75%);
+    background-size: 8px 8px; background-position: 0 0, 4px 4px;
+    padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right);
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  a { color: var(--purple-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  header { border-top: 3px solid var(--gold); border-bottom: 2px solid var(--rule); padding: 22px 0; }
+  .top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  h1 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+  .alpha {
+    background: var(--hot); color: #1a1533; font-size: 10px; font-weight: 750;
+    letter-spacing: .14em; padding: 3px 7px; box-shadow: 3px 3px 0 var(--shadow);
+  }
+  .back { margin-left: auto; font-size: 13px; }
+
+  main { padding: 26px 0 70px; }
+
+  .rel {
+    background: var(--surface); border: 2px solid var(--border);
+    box-shadow: 4px 4px 0 var(--shadow), inset 1px 1px 0 var(--bevel);
+    padding: 16px 18px; margin-bottom: 18px;
+  }
+  .rel.current { border-color: var(--border-bright); }
+  .rel h2 {
+    margin: 0 0 3px; font-size: 15px; font-weight: 650;
+    font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 9px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+    padding: 2px 6px; border: 1px solid var(--border); color: var(--muted);
+  }
+  .tag.now { border-color: var(--green); color: var(--green); }
+  .date { color: var(--muted); font-size: 12px; margin-bottom: 11px; }
+  .rel ul { margin: 0; padding-left: 19px; }
+  .rel li { margin-bottom: 6px; color: var(--cream-dim); }
+  .rel li strong { color: var(--cream); font-weight: 600; }
+  .note {
+    margin-top: 11px; padding-top: 10px; border-top: 1px solid var(--rule);
+    font-size: 13px; color: var(--muted);
+  }
+  footer { border-top: 2px solid var(--rule); padding: 16px 0 40px; color: var(--muted); font-size: 12px; }
+  @media (max-width: 640px) { .back { margin-left: 0; flex-basis: 100%; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap top">
+    <h1>RoleFeed &mdash; version history</h1>
+    <span class="alpha">ALPHA</span>
+    <a class="back" href="index.html">&larr; back to the feed</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="rel current">
+    <h2>v0.4.0 <span class="tag now">current</span></h2>
+    <div class="date">21 September 2026</div>
+    <ul>
+      <li><strong>Teamtailor added as a sixth adapter.</strong> Its career sites publish an
+        open JSON feed carrying a full schema.org JobPosting — real publication dates and
+        structured addresses. Previously written off as closed without being tested, which
+        was wrong. Unlocks IAG Cargo and a large slice of UK and Nordic employers.</li>
+      <li><strong>Recency now uses the employer's publication date</strong> where the source
+        provides a trustworthy one. Greenhouse exposes only <code>updated_at</code>, which
+        moves whenever anyone edits a posting, so those roles still fall back to first-seen.
+        This is why the hot, 48-hour and 7-day counts previously returned identical numbers.</li>
+      <li><strong>Workday's relative dates parsed.</strong> "Posted 3 Days Ago" becomes an
+        approximate timestamp, which is far better than nothing for a 24-hour window.</li>
+      <li><strong>Seniority classified into three tiers</strong> — exec, director, mid-senior —
+        rather than a single accept-or-reject rule. Title inflation runs opposite to company
+        size, so one threshold could never fit both a 30-person startup and Deliveroo.
+        Verified against 39 sample titles.</li>
+      <li><strong>Employer list expanded to 211</strong>, adding adjacent businesses and
+        startups above roughly ten people, with a new startup size bucket.</li>
+      <li><strong>The goose gained three frames</strong> — wing flap, look up, foot stamp —
+        and now performs one of fifteen weighted acts every seven seconds.</li>
+      <li>Hard offset shadows, bevelled surfaces, a faint tiled background and press states
+        that push buttons into their own shadow.</li>
+      <li>This page.</li>
+    </ul>
+    <div class="note">
+      Known gaps: British Airways publishes no machine-readable feed and disallows its
+      search endpoint in <code>robots.txt</code>, so it cannot be covered. SuccessFactors,
+      Taleo and iCIMS remain unsupported, which is most of the enterprise bucket.
+    </div>
+  </div>
+
+  <div class="rel">
+    <h2>v0.3.0</h2>
+    <div class="date">20 September 2026</div>
+    <ul>
+      <li><strong>Geography tightened to the UK, or remote within GMT ±3.</strong> A Berlin
+        office role is neither. An impostor guard rejects London Ontario, Birmingham Alabama
+        and Manchester New Hampshire before the UK pattern can match them.</li>
+      <li><strong>Hot filter</strong> for roles under 24 hours old, with its own colour so it
+        reads as a distinct urgency level rather than a gradient.</li>
+      <li><strong>Live countdown</strong> to the next collection, to the second, on a
+        24-block segmented meter. It says "due", never promises — GitHub queues scheduled
+        workflows and runs them late under load.</li>
+      <li><strong>Mobile filters collapsed behind a disclosure.</strong> They had been a
+        sticky block occupying over half the viewport; now 86 pixels.</li>
+      <li>Mobile Safari: 16px inputs to stop focus-zoom, safe-area insets, tinted toolbars,
+        <code>dvh</code> units, and 44px touch targets.</li>
+      <li>Goose and wordmark put on a shared pixel grid.</li>
+    </ul>
+  </div>
+
+  <div class="rel">
+    <h2>v0.2.0</h2>
+    <div class="date">20 September 2026</div>
+    <ul>
+      <li><strong>The web interface.</strong> Segmented by employer size, faceted filtering,
+        shortlist and dismiss, staleness detection. One file, no framework, no build step.</li>
+      <li><strong>Deployed on Cloudflare Pages</strong> from a private repository, rebuilding
+        on every commit. GitHub Pro proved unnecessary — Cloudflare serves private repos free.</li>
+      <li><strong>State tracking.</strong> Each run merges into the previous feed so
+        <code>first_seen</code> survives; roles missing twice are treated as closed.</li>
+      <li><strong>Scheduled collection</strong> every two hours via GitHub Actions, committing
+        only on change.</li>
+      <li>Pixel goose and art-deco wordmark, generated as SVG from a single Python file.</li>
+      <li>Found <code>/site</code> in the stock Python <code>.gitignore</code>, which had been
+        silently excluding the entire deployed application.</li>
+    </ul>
+  </div>
+
+  <div class="rel">
+    <h2>v0.1.0</h2>
+    <div class="date">19 September 2026</div>
+    <ul>
+      <li><strong>First working collector.</strong> Greenhouse, Lever, Ashby and
+        SmartRecruiters, all keyless.</li>
+      <li><strong>Board-token discovery.</strong> Real tokens are untidy — ShipBob is
+        <code>shipbobinc</code>, Neuron Mobility is <code>neuron</code> — so the prober
+        generates variants. Greenhouse also runs a separate EU API host that the first pass
+        never tried.</li>
+      <li>Workday adapter, hand-configured per employer from a careers URL, since tenant and
+        site names cannot be guessed.</li>
+      <li>Scope set to transport, logistics, mobility and aviation. Previous employers
+        excluded by design.</li>
+    </ul>
+    <div class="note">
+      First pass resolved 25% of employers. The causes were guessable token shapes and the
+      unqueried EU Greenhouse host, not absent coverage.
+    </div>
+  </div>
+
+</main>
+
+<footer class="wrap">
+  Versioning is major.minor.patch, bumped by hand. Still 0.x: the data contract is not
+  stable and the matching rules are being actively tuned.
+</footer>
+
+</body>
+</html>

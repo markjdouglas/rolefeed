@@ -29,12 +29,13 @@ from state import FEED, load_previous, merge, write_feed
 RESOLVED = "companies.resolved.yaml"
 
 # Company size buckets, largest first — results are grouped and ordered by these.
-SIZE_ORDER = ("enterprise", "large", "mid", "scaleup")
+SIZE_ORDER = ("enterprise", "large", "mid", "scaleup", "startup")
 SIZE_LABELS = {
     "enterprise": "ENTERPRISE  (5,000+)",
     "large": "LARGE  (1,000-5,000)",
     "mid": "MID  (250-1,000)",
     "scaleup": "SCALEUP  (50-250)",
+    "startup": "STARTUP  (10-50)",
 }
 
 
@@ -42,57 +43,115 @@ SIZE_LABELS = {
 # Matching rules. These are the product. Everything else is plumbing.
 # ---------------------------------------------------------------------------
 
-# Titles worth looking at. Ops leadership plus small-org general management.
-TITLE_INCLUDE = re.compile(
+# Titles, classified into three tiers rather than accepted or rejected.
+#
+# Title inflation runs opposite to company size: "Head of Operations" at a 30-person
+# startup is a hands-on job, while at Deliveroo it runs a department. A single
+# accept/reject rule cannot express that, so each posting gets a tier and the UI
+# filters on it. This also fixed the yield problem — 4 matches from 319 was the
+# filter, not the market.
+
+TIER_EXEC = re.compile(
     r"""
     \b(
-      # Core operations leadership
-        (director|head|vp|vice\s+president)[\s,]+(of\s+)?
-        (global\s+|business\s+|commercial\s+|central\s+)?operations
-      # Bare "Operations Director/Lead", but NOT when a qualifier in front makes it a
-      # different job. Without this guard, "Finance Operations Lead" and "People
-      # Operations Lead" both match.
-      | (?<!finance\s)(?<!people\s)(?<!revenue\s)(?<!sales\s)(?<!talent\s)
-        (?<!business\s)(?<!security\s)(?<!technical\s)(?<!clinical\s)
-        \boperations\s+(director|lead(er)?)
-      | (chief\s+operating\s+officer|coo)
-      | (general\s+manager|managing\s+director|country\s+manager)
-      | (director|head)[\s,]+(of\s+)?strategy\s+(and|&)\s+operations
-
-      # Mobility and marketplace phrasing for the same job — the Gett role verbatim
-      | (director|head|vp)[\s,]+(of\s+)?
-        (marketplace|supply|driver|courier|rider|fleet|partner|city|regional|
-         market|network|delivery|logistics|charging)\s+operations
-      | (marketplace|supply|fleet|partner|network)\s+operations\s+(director|lead)
-
-      # Launch, expansion and market-building — the Otto Car and Uber city work
-      | (director|head|vp)[\s,]+(of\s+)?(expansion|launch|new\s+markets?|
-         market\s+development|city\s+operations)
-      | (regional|city|market)\s+(director|general\s+manager|lead)
-
-      # Partner and programme leadership with an infrastructure flavour
-      | (director|head)[\s,]+(of\s+)?(strategic\s+)?partnerships
+        chief\s+\w+\s+officer | coo\b | cfo\b | cco\b
+      | (vp|vice\s+president)[\s,]+(of\s+)?\w+
+      | managing\s+director | general\s+manager | country\s+(manager|lead|director)
+      | (svp|evp)\b
     )\b
     """,
     re.IGNORECASE | re.VERBOSE,
 )
 
-# Titles that contain the right words but are the wrong job. Checked after the include,
-# so anything matching here is dropped even if the include matched.
+TIER_DIRECTOR = re.compile(
+    r"""
+    \b(
+        director | head[\s,]+of | (^|\s)head\b
+      | (global|group|regional|market|city)\s+(lead|manager)
+    )\b
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+
+TIER_MID = re.compile(
+    r"""
+    \b(
+        senior\s+(manager|lead|programme|program|project)
+      | (lead|principal|staff)\s+\w+
+      | \w+\s+lead\b | manager\b | \blead\b
+    )\b
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+
+# The domain has to be right whatever the tier. This is the "is it an operations job"
+# test, kept separate from the "how senior is it" test.
+DOMAIN = re.compile(
+    r"""
+    \b(
+        operations | operational | ops\b
+      | marketplace | supply | logistics | fulfil?ment | freight | fleet
+      | courier | rider | driver\s+(experience|supply) | dispatch
+      | expansion | launch | new\s+markets? | market\s+development
+      | partnerships? | commercial | programme|program\s+management
+      | charging | network | depot | hub | last\s+mile | city | regional | region
+      | chief\s+operating\s+officer | coo\b
+      | general\s+manager | managing\s+director | country\s+manager
+      | strategy\s+(and|&)\s+operations | business\s+operations
+    )\b
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+
+# Wrong job despite the right words. Checked before anything else.
 TITLE_EXCLUDE = re.compile(
     r"""
     \b(
-        engineer(ing)? | developer | devops | sre | platform
-      | security\s+operations | network\s+operations | it\s+operations
-      | trading\s+operations | clinical | nurse | nursing
-      | sales | account\s+(executive|manager) | marketing | recruit
-      | warehouse | driver | retail\s+store | restaurant | kitchen
-      | intern | apprentice | graduate | placement
-      | assistant | coordinator | administrator | executive\s+assistant
+        engineer(ing)? | developer | devops | sre | architect | scientist | analyst
+      | security\s+operations | network\s+engineer | it\s+operations | infrastructure
+      | trading\s+operations | clinical | nurse | nursing | pharmac
+      | account\s+(executive|manager) | sales\s+(rep|development|manager|director)
+      | marketing | recruit(er|ment) | talent\s+(acquisition|partner)
+      | people\s+operations | hr\b | finance\s+(manager|director|lead)
+      | sales\s+operations | revenue\s+operations | marketing\s+operations
+      | warehouse\s+(operative|associate) | picker | packer
+      # Courier, rider and driver are the jobs being managed — unless the title is
+      # about managing them, which the lookahead allows through.
+      | (driver|rider|courier)(?!\s+(operations|experience|supply|network|strategy|
+         acquisition|engagement|partnerships?))\b
+      | retail\s+store | restaurant | kitchen | barista
+      | intern(ship)? | apprentice | graduate | placement | trainee
+      | assistant | coordinator | administrator | receptionist | advisor
+      | customer\s+(service|support)\s+(agent|advisor|representative)
     )\b
     """,
     re.IGNORECASE | re.VERBOSE,
 )
+
+
+def title_tier(title: str) -> str | None:
+    """Return 'exec', 'director', 'mid', or None if this is not an operations role.
+
+    Order matters: exclusions first, then the domain test, then seniority from the top
+    down so "VP Operations" is exec rather than being caught by the mid-tier pattern.
+    """
+    if not title or TITLE_EXCLUDE.search(title):
+        return None
+    if not DOMAIN.search(title):
+        return None
+    if TIER_EXEC.search(title):
+        return "exec"
+    if TIER_DIRECTOR.search(title):
+        return "director"
+    if TIER_MID.search(title):
+        return "mid"
+    return None
+
+
+def matches_title(title: str) -> bool:
+    """Kept for the tests and the terminal view: any tier counts as a match."""
+    return title_tier(title) is not None
+
 
 # ---------------------------------------------------------------------------
 # Geography. Two ways in, and only two:
@@ -106,7 +165,7 @@ TITLE_EXCLUDE = re.compile(
 
 UK = re.compile(
     r"\b(london|united\s+kingdom|u\.k\.|uk|england|scotland|wales|"
-    r"northern\s+ireland|britain|manchester|birmingham|leeds|bristol|glasgow|"
+    r"northern\s+ireland|britain|gb\b|manchester|birmingham|leeds|bristol|glasgow|"
     r"edinburgh|cardiff|belfast|cambridge|oxford|reading|hatfield|milton\s+keynes)\b",
     re.IGNORECASE,
 )
@@ -121,6 +180,7 @@ TZ_OK = re.compile(
     r"""
     \b(
         emea | europe | european | eu\b | uk\b | gmt | bst | cet | cest | wet | eet
+      | ie\b | de\b | fr\b | es\b | pt\b | nl\b | be\b | se\b | dk\b | no\b | fi\b
       | ireland | dublin | portugal | lisbon | spain | madrid | barcelona
       | france | paris | germany | berlin | munich | netherlands | amsterdam
       | belgium | brussels | luxembourg | switzerland | zurich | geneva
@@ -319,8 +379,16 @@ def main() -> int:
         ok, reason = location_verdict(posting["location"])
         if not ok:
             continue
-        posting["geo"] = reason
-        posting["priority"] = matches_title(posting["title"])
+        tier = title_tier(posting["title"])
+        if tier is None:
+            posting["tier"] = None
+            posting["priority"] = False
+        else:
+            posting["tier"] = tier
+            # "Priority" is the shortlist-worthy set: leadership scope, not every
+            # operations role. Mid-tier stays in the feed and gets its own filter.
+            posting["priority"] = tier in ("exec", "director")
+        in_scope.append(posting)
         in_scope.append(posting)
 
     published = in_scope
