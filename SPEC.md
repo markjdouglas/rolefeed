@@ -37,7 +37,7 @@ fleet and telematics, public transport, aviation and space, autonomous vehicles.
 Sector-agnostic within that boundary. The transferable capability is marketplace supply,
 network operations and infrastructure programmes, not any one vertical.
 
-**Out**: govtech, policy, charity, generic SaaS, fintech. Employers under roughly 50
+**Out**: govtech, policy, charity, generic SaaS, fintech. Employers under roughly ten
 people. Previous employers: Uber, Gett, Glue Home, Ontruck, ParkBee, Otto Car, POSTX,
 Apolitical, Abercrombie & Fitch.
 
@@ -48,8 +48,13 @@ printed first for that reason.
 
 Not to be added without a decision to change this spec:
 
-- Any custom web front end. The Google Sheet is the interface.
-- A database. Sheets is the store.
+- A framework or a build step. The front end is one hand-written static file, by
+  decision: it deploys as static assets, costs nothing, and stays legible to a
+  non-engineer. No React, no Next.js, no bundler.
+- A database. The committed `site/data/jobs.json` is the store, and `git diff` is the
+  history. Workers KV only if per-device sync is wanted.
+- Google Sheets. It was the original plan for the interface and was dropped once the
+  static page proved both cheaper and better.
 - LinkedIn, Indeed, or any paid aggregator.
 - Automated applications. RoleFeed surfaces; Mark applies.
 - JSON-LD / schema.org parsing. Parked at Mark's request.
@@ -102,8 +107,13 @@ expects these to be tuned once real volume is visible.
 3. **Location** — London, UK-wide, or genuinely remote. Guards against "London, Ontario",
    "New London" and remote roles pinned to another continent.
 
-Verified against 23 sample titles with no failures. "Operations Manager" is excluded as
-one rung below target.
+Verified against 39 sample titles with no failures.
+
+Seniority resolves to one of three tiers rather than a single accept-or-reject rule,
+because title inflation runs opposite to company size: a 30-person scaleup calls the job
+Head of Operations and Deliveroo calls the same scope Senior Manager. "Operations
+Manager" at a large employer is therefore mid-senior rather than noise, and is tagged
+as such instead of being discarded.
 
 ## Failure modes designed against
 
@@ -125,12 +135,15 @@ one rung below target.
 | Phase | Budget | Deliverable |
 |---|---|---|
 | 0 | 90 min | `discover.py` + `fetch.py` printing to terminal. Hypothesis tested. |
-| 1 | 45 min | Google Cloud service account, `sheets.py`, rows in the Sheet. |
-| 2 | 45 min | `.github/workflows/collect.yml`, secrets, first scheduled run. |
-| 3 | 60 min | `first_seen` / `last_seen`, dedup persistence, scoring, staleness alarm. |
-| 4 | 60 min | Workday employers configured. Employer list corrected. Sheet formatting. |
+| 1 | 45 min | Static front end and Cloudflare Pages deployment. Replaced the Sheet. |
+| 2 | 45 min | `.github/workflows/collect.yml`, first scheduled run. |
+| 3 | 60 min | `first_seen` / `last_seen`, dedup persistence, staleness detection. |
+| 4 | 60 min | Teamtailor adapter, trustworthy publication dates, seniority tiers. |
+| — | open | Cloudflare Access, Workday employers, Workers KV for cross-device state. |
 
-Total five hours. Phases 1 and 2 are the Alpha and matter more than source coverage.
+Phases 0 to 4 are done and deployed as v0.4.0. Phase 1 diverged from plan: the Google
+Sheet was dropped for a static page, which removed a Google Cloud service account, a
+set of credentials and an entire dependency from the design.
 
 ## Open questions
 

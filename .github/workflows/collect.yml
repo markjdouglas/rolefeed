@@ -16,10 +16,12 @@ name: Collect roles
 
 on:
   schedule:
-    # Every two hours, on the hour, UTC. GitHub queues scheduled workflows and runs them
-    # late under load — often 5 to 15 minutes, occasionally more. The page treats the
-    # next run as "due at", never as a promise.
-    - cron: "0 */2 * * *"
+    # Every two hours at 37 minutes past, UTC. Deliberately NOT on the hour: `0 * * * *`
+    # is the most common cron expression on GitHub, so the shared scheduler queue is
+    # deepest then. Measured over 14 runs, an on-the-hour schedule fired 11-17 minutes
+    # late, every time. An unpopular minute should shorten that. GitHub still guarantees
+    # nothing about scheduled start times, which is why the UI says "due", never "in".
+    - cron: "37 */2 * * *"
   # Run on demand from the Actions tab. Free, and it means no refresh button and no
   # token-holding proxy.
   workflow_dispatch:

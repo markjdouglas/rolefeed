@@ -1,0 +1,5 @@
+# RoleFeed is a personal tool, not a public site. Nothing here should be indexed.
+# This is a request, not a control: a crawler that ignores it is unaffected, and so is
+# anyone who has the URL. Cloudflare Access is the control.
+User-agent: *
+Disallow: /

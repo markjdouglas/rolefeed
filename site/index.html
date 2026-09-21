@@ -8,6 +8,10 @@
 <!-- Tints Safari's toolbars to match the page instead of leaving a white band. -->
 <meta name="theme-color" content="#14102b">
 <meta name="color-scheme" content="dark">
+<!-- URL-only access is obscurity, not security, and the likeliest way it leaks is
+     a search engine. This does not stop anyone with the link; it stops the link
+     becoming public by accident. Cloudflare Access is the actual control. -->
+<meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>RoleFeed</title>
@@ -45,6 +49,10 @@
     --hot:           #ff6a3d;   /* posted in the last 24h — hotter than amber */
     --shadow:        #0c0919;   /* hard offset shadow — no blur, ever */
     --bevel:         rgba(244, 237, 223, 0.09);  /* top-left inner highlight */
+    /* The floor tile. Its own token, not --bevel: the bevel sits on a solid card
+       edge where 9% alpha reads as a highlight, but the same value spread across
+       the whole page reads as noise behind text. Halved, and on a coarser grid. */
+    --tile:          rgba(244, 237, 223, 0.045);
     --amber-dim:     #6b4a17;
     --green:         #5ad1a0;
     --red:           #ff7a7a;
@@ -61,19 +69,26 @@
   html {
     -webkit-text-size-adjust: 100%;   /* stop Safari inflating text on rotate */
     background: var(--bg);            /* colours the overscroll rubber-band area */
+    /* The floor tile lives HERE, not on body, and the reason is painting order.
+       CSS paints a stacking context in a fixed sequence: the context element's own
+       background first, then negative z-index descendants, then the backgrounds of
+       in-flow non-positioned boxes. body is in-flow and unpositioned, so its
+       background paints AFTER a z-index:-1 pseudo-element. Putting the tile on body
+       and the solid panel in body::before therefore drew the tile straight back over
+       the panel. On html, the tile paints first and the panel covers it. */
+    background-image:
+      linear-gradient(45deg, var(--tile) 25%, transparent 25%, transparent 75%, var(--tile) 75%),
+      linear-gradient(45deg, var(--tile) 25%, transparent 25%, transparent 75%, var(--tile) 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 8px 8px;
+    background-attachment: fixed;     /* the floor does not scroll with the content */
   }
 
   body {
     margin: 0;
-    background: var(--bg);
-    /* A 4px checkerboard at very low alpha. Two overlapping gradients, no image.
-       This is the isometric-floor-tile trick from 2000s pixel interfaces: too faint
-       to notice as a pattern, but it stops large dark areas reading as flat void. */
-    background-image:
-      linear-gradient(45deg, var(--bevel) 25%, transparent 25%, transparent 75%, var(--bevel) 75%),
-      linear-gradient(45deg, var(--bevel) 25%, transparent 25%, transparent 75%, var(--bevel) 75%);
-    background-size: 8px 8px;
-    background-position: 0 0, 4px 4px;
+    /* Deliberately transparent: the tile is on html and the solid content column is
+       painted by body::before below. A background here would hide both. */
+    background: transparent;
     /* iOS momentum scrolling, and no grey flash on tap. */
     -webkit-overflow-scrolling: touch;
     -webkit-tap-highlight-color: transparent;
@@ -88,6 +103,50 @@
   }
 
   .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+  /* --------------------------------------------------------------------------
+     Page navigation. Previously the only route off this page was the version
+     number, which read as a label rather than a control — nobody clicks a
+     version number. These are deliberately obvious: a raised box, a gold
+     caret, a border that brightens on hover, and a press state that pushes the
+     tab into its own shadow. Affordance beats discoverability.
+     -------------------------------------------------------------------------- */
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; margin: 15px 0 0; }
+  .tab {
+    display: inline-flex; align-items: center; gap: 7px;
+    min-height: 36px; padding: 0 13px;
+    background: var(--surface-2); color: var(--cream-dim);
+    border: 2px solid var(--border-bright);
+    box-shadow: 3px 3px 0 var(--shadow), inset 1px 1px 0 var(--bevel);
+    font-size: 11px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; text-decoration: none;
+    touch-action: manipulation; cursor: pointer;
+  }
+  .tab::before { content: "\25B8"; color: var(--gold); font-size: 9px; }
+  .tab:hover { color: var(--cream); border-color: var(--cream-dim); }
+  .tab:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 var(--shadow), inset 1px 1px 0 var(--bevel);
+  }
+  .tab.on { background: var(--cream); color: #292827; border-color: var(--cream); }
+  .tab.on::before { color: #8a6a1f; }
+  .tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+
+  /* Habbo floor tiling belongs on the floor, not under the prose. This fixed panel
+     paints solid --bg across the content column, so the checkerboard survives only in
+     the gutters either side and reads as a frame rather than an overlay. Below --max
+     there are no gutters, so the texture disappears entirely — which is the right
+     answer on a phone, where it was pure noise. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 auto 0 50%;
+    transform: translateX(-50%);
+    width: min(100%, var(--max));
+    background: var(--bg);
+    z-index: -1;
+    pointer-events: none;
+  }
 
   a { color: var(--purple-bright); text-decoration: none; }
   a:hover { text-decoration: underline; }
@@ -627,6 +686,12 @@
       </span>
     </div>
 
+    <nav class="nav" aria-label="Pages">
+      <a class="tab on" href="index.html" aria-current="page">Feed</a>
+      <a class="tab" href="prd.html">Product brief</a>
+      <a class="tab" href="changelog.html">Version history</a>
+    </nav>
+
     <div class="stats" id="stats"></div>
 
     <div class="freshness">
@@ -704,7 +769,7 @@
 // Bumped by hand with each change set, and mirrored in changelog.html. Three-part:
 // major.minor.patch. Still 0.x, which is the honest signal — the data contract is not
 // stable and the filters are still being tuned.
-const RF_VERSION = "0.4.0";
+const RF_VERSION = "0.4.1";
 
 const LS_KEY = "rolefeed.annotations.v1";
 const HOUR = 3600 * 1000;
@@ -795,6 +860,21 @@ function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"']/g, c => (
     { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
   ));
+}
+
+/* Escaping and scheme validation are different controls, and esc() only does the first.
+   It stops a value breaking out of an attribute, but href="javascript:..." needs no
+   quotes or angle brackets to be dangerous — one click would run script on this origin.
+   Every job URL here comes from a third party's API, so it is untrusted input by
+   definition. Allow http and https, send anything else nowhere. */
+function safeUrl(u) {
+  try {
+    const parsed = new URL(String(u), location.href);
+    return (parsed.protocol === "https:" || parsed.protocol === "http:")
+      ? parsed.href : "about:blank";
+  } catch {
+    return "about:blank";
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -996,7 +1076,7 @@ function roleCard(job) {
               title="Shortlist">${ann.starred ? "★" : "☆"}</button>
       <button class="btn" data-act="dismiss"
               title="Dismiss">${ann.dismissed ? "Undo" : "Hide"}</button>
-      <a class="btn open" href="${esc(job.url)}" target="_blank" rel="noopener">Open</a>
+      <a class="btn open" href="${esc(safeUrl(job.url))}" target="_blank" rel="noopener noreferrer">Open</a>
     </div>
   </article>`;
 }
@@ -1160,7 +1240,7 @@ function wire() {
    Sequences are lists of [frame, milliseconds]. The waddle is CSS instead, because it
    is a position change rather than a frame change.
    -------------------------------------------------------------------------- */
-const GOOSE_IDLE_MS = 7000;
+const GOOSE_IDLE_MS = 5000;
 
 /* Weighted by how much attention each act draws. At a 7-second cycle the quiet ones
    have to dominate, or the header becomes a fidget. Blinks are listed several times so
