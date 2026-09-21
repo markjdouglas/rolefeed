@@ -213,8 +213,8 @@
     <h2>Summary</h2>
     <p>RoleFeed polls 62 employers' recruitment systems every two hours and filters for
     senior operations roles in transport, logistics, mobility and aviation. The mechanism
-    works: 3,918 live postings, real publication dates, no scraping, nothing to run and
-    nothing to pay. The outcome does not yet: four roles cleared the filter. The cause is
+    works: 5,540 live postings, real publication dates, no scraping, nothing to run and
+    nothing to pay. The outcome does not yet: seven roles cleared the filter. The cause is
     structural rather than a tuning problem, and the next test costs a day.</p>
     <p>Built in roughly five scoped hours, deployed and collecting unattended since, at
     &pound;0 a month on free tiers throughout.</p>
@@ -252,13 +252,16 @@
     <table class="funnel">
       <tr><td>Employers on the list</td><td>211</td><td></td></tr>
       <tr><td>Reachable at all</td><td>62</td><td>29%</td></tr>
-      <tr><td>Open roles visible</td><td>3,918</td><td></td></tr>
-      <tr><td>Passed geography <span class="stale">prev. run</span></td><td>375</td><td>10%</td></tr>
-      <tr class="last"><td>Passed title and seniority <span class="stale">prev. run</span></td><td>4</td><td>0.11%</td></tr>
+      <tr><td>Roles assessed</td><td>5,540</td><td></td></tr>
+      <tr><td>Passed geography</td><td>564</td><td>10%</td></tr>
+      <tr class="last"><td>Passed title and seniority</td><td>7</td><td>0.13%</td></tr>
     </table>
-    <p class="caveat">The last two rows predate both the three-tier seniority rule and the
-    fifteen employers added by the latest discovery run, so they understate. Shown marked
-    rather than omitted.</p>
+    <p class="caveat">Supply rose from 3,698 to 5,540 on one bug fix: SmartRecruiters
+    caps a response at 100 postings and the adapter never asked for a second page, so
+    Sixt, Delivery Hero and Grab were truncated at exactly 100 each. They return 507,
+    989 and 424. The geography rate held at 10% across both corpora, which is
+    reassuring &mdash; a filter whose pass rate moves when the input grows is usually
+    measuring the input rather than the criterion.</p>
 
     <h3>Reachability is not evenly distributed</h3>
     <table class="funnel">
