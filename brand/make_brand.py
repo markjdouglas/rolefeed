@@ -135,6 +135,100 @@ PECK = pad([
 ])
 
 
+# FLAP — one wing lifted away from the body. The wing is the shade block in the idle
+# frame, so lifting it means outlining it and raising it two rows.
+FLAP = pad([
+    "..............OOOOOO",
+    ".............OHHHCCCO",
+    "............OHCCCCCCO",
+    "............OCCCCCCCO",
+    "............OCCEECCCOBBB",
+    "............OCCEECCCBBBBB",
+    "............OCCCCCCCOBBB",
+    ".............OCCCCCCO",
+    ".....OOOO....OCCCCO",
+    "....OSSSSO...OCCCCO",
+    "...OSSSSSSO..OCCCCO",
+    "....OOOOOO.OOCCCCOO",
+    "....OOSSCCCCCCCCCCO",
+    "...OSSSCCCCCCCCCCCCO",
+    "..OSSCCCCCCCCCCCCCCO",
+    "..OSCCCCCCCCCCCCCCCO",
+    ".OSCCCCCCCCCCCCCCCCO",
+    ".OSCCCCCCCCCCCCCCCCO",
+    ".OSSCCCCCCCCCCCCCCO",
+    "..OSSCCCCCCCCCCCCO",
+    "...KKSSCCCCCCCCKK",
+    ".....KKKCCCCCKK",
+    "........OBBOBBO",
+    ".......OBBBOBBBO",
+    "......OBDDBOBDDBO",
+    ".......OOOO.OOOO",
+])
+
+# LOOKUP — head tilted back, beak angled upward. The neck shortens by one row and the
+# beak rises above the eye line, which reads as looking up rather than merely leaning.
+LOOKUP = pad([
+    "..............OOOOOO..BB",
+    ".............OHHHCCCOBBBB",
+    "............OHCCCCCCOBB",
+    "............OCCCCCCCO",
+    "............OCCEECCCO",
+    "............OCCEECCCO",
+    "............OCCCCCCCO",
+    ".............OCCCCCCO",
+    ".............OCCCCO",
+    ".............OCCCCO",
+    ".............OCCCCO",
+    "......OOOOOOOCCCCOO",
+    "....OOSSCCCCCCCCCCO",
+    "...OSSSCCCCCCCCCCCCO",
+    "..OSSCCCCCCCCCCCCCCO",
+    "..OSCCCCCCCCCCCCCCCO",
+    ".OSCCCCCSSSSCCCCCCCO",
+    ".OSCCCCSSSSSSCCCCCCO",
+    ".OSSCCCSSSSSCCCCCCO",
+    "..OSSCCCSSSCCCCCCO",
+    "...KKSSCCCCCCCCKK",
+    ".....KKKCCCCCKK",
+    "........OBBOBBO",
+    ".......OBBBOBBBO",
+    "......OBDDBOBDDBO",
+    ".......OOOO.OOOO",
+])
+
+# STAMP — one foot lifted clear of the ground. Only the feet change, which is all a
+# stamp needs: the eye reads the missing contact point instantly.
+STAMP = pad([
+    "..............OOOOOO",
+    ".............OHHHCCCO",
+    "............OHCCCCCCO",
+    "............OCCCCCCCO",
+    "............OCCEECCCOBBB",
+    "............OCCEECCCBBBBB",
+    "............OCCCCCCCOBBB",
+    ".............OCCCCCCO",
+    ".............OCCCCO",
+    ".............OCCCCO",
+    ".............OCCCCO",
+    "......OOOOOOOCCCCOO",
+    "....OOSSCCCCCCCCCCO",
+    "...OSSSCCCCCCCCCCCCO",
+    "..OSSCCCCCCCCCCCCCCO",
+    "..OSCCCCCCCCCCCCCCCO",
+    ".OSCCCCCSSSSCCCCCCCO",
+    ".OSCCCCSSSSSSCCCCCCO",
+    ".OSSCCCSSSSSCCCCCCO",
+    "..OSSCCCSSSCCCCCCO",
+    "...KKSSCCCCCCCCKK",
+    ".....KKKCCCCCKK",
+    ".......OBBO.OBBO",
+    "......OBBBO.OBBBO",
+    ".....OBDDBO.OOOO",
+    "......OOOO",
+])
+
+
 # ---------------------------------------------------------------------------
 # Deco capitals, 9 x 13. Deliberately heavy: 2px verticals, 2px horizontals, a high
 # waist, square terminals. Meant to shout.
@@ -235,7 +329,14 @@ def animated_goose_svg() -> str:
     One file and one request; the page sets data-frame on the wrapper and CSS decides
     which group is visible. No JavaScript touches the artwork itself.
     """
-    frames = {"idle": GOOSE, "blink": blink_frame(GOOSE), "peck": PECK}
+    frames = {
+        "idle": GOOSE,
+        "blink": blink_frame(GOOSE),
+        "peck": PECK,
+        "flap": FLAP,
+        "lookup": LOOKUP,
+        "stamp": STAMP,
+    }
     groups = "".join(
         f'<g class="gf gf-{name}">{rects(grid, ox=1, oy=0)}</g>'
         for name, grid in frames.items()

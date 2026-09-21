@@ -12,7 +12,8 @@
 #   enterprise  5,000+        incumbents, groups, national operators
 #   large       1,000–5,000   established operators and listed tech
 #   mid         250–1,000     scaled private companies
-#   scaleup     50–250        smallest bucket retained
+#   scaleup     50–250
+#   startup     10–50         added 21/09 — small but past the founding team
 # Headcounts are approximate and drawn from general knowledge, not verified per employer.
 #
 # `ats` + `slug` pinned = verified, probed once. Unpinned = discover.py tries variants.
@@ -28,7 +29,7 @@ companies:
   # ===========================================================================
   - { name: IAG, slug: iag, sector: aviation, size: enterprise, ats: workday, workday_url: TODO }
   - { name: British Airways, slug: britishairways, sector: aviation, size: enterprise, ats: workday, workday_url: TODO }
-  - { name: IAG Cargo, slug: iagcargo, sector: freight, size: large }
+  - { name: IAG Cargo, slug: iagcargo, sector: freight, size: large, ats: teamtailor }
   - { name: IAG Loyalty, slug: iagloyalty, sector: aviation, size: large }
   - { name: Aer Lingus, slug: aerlingus, sector: aviation, size: enterprise }
   - { name: Iberia, slug: iberia, sector: aviation, size: enterprise }
@@ -222,3 +223,71 @@ companies:
   - { name: Waabi, slug: waabi, sector: autonomy, size: scaleup }
   - { name: Nauto, slug: nauto, sector: autonomy, size: scaleup }
   - { name: Helm.ai, slug: helmai, sector: autonomy, size: scaleup }
+
+  # ===========================================================================
+  # Added 21/09/2026 — adjacent businesses and startups above ~10 people.
+  #
+  # Sourced from Seedtable's UK mobility and supply-chain rankings plus sector
+  # knowledge, filtered to Series A and above or an equivalent headcount. "Adjacent"
+  # means the operating problem rhymes even where the vertical differs: a diamond
+  # supply chain and a parcel network are both multi-party logistics with custody
+  # handoffs, and the operations job is close to identical.
+  #
+  # Sizes are estimates. Treat them as grouping, not as data.
+  # ===========================================================================
+
+  # Freight, forwarding and supply-chain software
+  - { name: Nivoda, slug: nivoda, sector: freight, size: mid }
+  - { name: Qargo, slug: qargo, sector: freight, size: scaleup }
+  - { name: Shippeo, slug: shippeo, sector: freight, size: mid }
+  - { name: Einride, slug: einride, sector: freight, size: mid }
+  - { name: Freightos, slug: freightos, sector: freight, size: mid }
+  - { name: Altana, slug: altana, sector: freight, size: scaleup }
+  - { name: Everstream Analytics, slug: everstream, sector: freight, size: scaleup }
+  - { name: Oritain, slug: oritain, sector: freight, size: scaleup }
+  - { name: Mondra, slug: mondra, sector: freight, size: startup }
+  - { name: Ferovinum, slug: ferovinum, sector: freight, size: startup }
+  - { name: Pledge, slug: pledge, sector: freight, size: startup }
+  - { name: Dronamics, slug: dronamics, sector: aviation, size: scaleup }
+
+  # Last mile, parcel networks and pickup
+  - { name: Starship Technologies, slug: starship, sector: lastmile, size: mid }
+  - { name: HubBox, slug: hubbox, sector: lastmile, size: startup }
+  - { name: Doddle, slug: doddle, sector: lastmile, size: scaleup }
+  - { name: Gousto, slug: gousto, sector: fulfilment, size: large }
+  - { name: Bezos.ai, slug: bezosai, sector: fulfilment, size: scaleup }
+  - { name: Fulfilmentcrowd, slug: fulfilmentcrowd, sector: fulfilment, size: scaleup }
+  - { name: 7bridges, slug: 7bridges, sector: fulfilment, size: startup }
+
+  # Mobility platforms and micromobility
+  - { name: Wunder Mobility, slug: wundermobility, sector: ridehail, size: scaleup }
+  - { name: MaaS Global, slug: maasglobal, sector: publictransport, size: startup }
+  - { name: Project 3 Mobility, slug: project3mobility, sector: autonomy, size: scaleup }
+  - { name: Dance, slug: dance, sector: micromobility, size: scaleup }
+  - { name: Zipp Mobility, slug: zippmobility, sector: micromobility, size: startup }
+  - { name: Voi Technology, slug: voitechnology, sector: micromobility, size: mid }
+
+  # EV charging and energy for transport
+  - { name: Ohme, slug: ohme, sector: charging, size: scaleup }
+  - { name: Monta, slug: monta, sector: charging, size: scaleup }
+  - { name: Virta, slug: virta, sector: charging, size: scaleup }
+  - { name: Indra, slug: indra, sector: charging, size: scaleup }
+  - { name: Hubject, slug: hubject, sector: charging, size: scaleup }
+  - { name: Zeti, slug: zeti, sector: charging, size: startup }
+
+  # Fleet, telematics and mobility insurance — adjacent, same operating problem
+  - { name: Flock, slug: flock, sector: fleet, size: startup }
+  - { name: Quartix, slug: quartix, sector: fleet, size: scaleup }
+  - { name: Radius, slug: radius, sector: fleet, size: large }
+  - { name: Webfleet, slug: webfleet, sector: fleet, size: mid }
+  - { name: YourParkingSpace, slug: yourparkingspace, sector: fleet, size: scaleup }
+  - { name: Marshmallow, slug: marshmallow, sector: fleet, size: mid }
+
+  # Aviation and aerospace
+  - { name: Cranfield Aerospace, slug: cranfieldaerospace, sector: aviation, size: startup }
+  - { name: Gama Aviation, slug: gamaaviation, sector: aviation, size: mid }
+  - { name: Britten-Norman, slug: brittennorman, sector: aviation, size: scaleup }
+
+  # Procurement and operations software — adjacent
+  - { name: Omnea, slug: omnea, sector: freight, size: startup }
+  - { name: Orca AI, slug: orcaai, sector: freight, size: startup }

@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import re
 import time
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import requests
@@ -57,8 +58,15 @@ def _posting(
     location: str,
     url: str,
     posted_at: str | None = None,
+    posted_reliable: bool = False,
 ) -> dict:
-    """The one shape every adapter returns. Keep this stable — everything depends on it."""
+    """The one shape every adapter returns. Keep this stable — everything depends on it.
+
+    `posted_reliable` matters more than it looks. Lever, Ashby and SmartRecruiters
+    return a genuine publication date. Greenhouse returns `updated_at`, which moves
+    every time an employer fixes a typo, so a three-month-old role looks brand new.
+    Treating those two as the same field is what made every "new" count identical.
+    """
     return {
         "company": company,
         "ats": ats,
@@ -67,6 +75,7 @@ def _posting(
         "location": (location or "").strip(),
         "url": url,
         "posted_at": posted_at,
+        "posted_reliable": posted_reliable,
     }
 
 
@@ -99,7 +108,10 @@ def fetch_greenhouse(token: str, company: str | None = None) -> list[dict]:
             title=job.get("title", ""),
             location=(job.get("location") or {}).get("name", ""),
             url=job.get("absolute_url", ""),
-            posted_at=job.get("updated_at"),
+            # Greenhouse's board API exposes only updated_at, which changes on any
+            # edit. Kept for reference, but not trusted for recency.
+            posted_at=job.get("first_published") or job.get("updated_at"),
+            posted_reliable=bool(job.get("first_published")),
         )
         for job in payload.get("jobs", [])
     ]
@@ -135,6 +147,7 @@ def fetch_lever(token: str, company: str | None = None) -> list[dict]:
                 location=categories.get("location", ""),
                 url=job.get("hostedUrl", ""),
                 posted_at=posted_at,
+                posted_reliable=posted_at is not None,
             )
         )
     return postings
@@ -160,6 +173,7 @@ def fetch_ashby(token: str, company: str | None = None) -> list[dict]:
             location=job.get("location", ""),
             url=job.get("jobUrl", ""),
             posted_at=job.get("publishedAt"),
+            posted_reliable=bool(job.get("publishedAt")),
         )
         for job in payload.get("jobs", [])
     ]
@@ -194,6 +208,68 @@ def fetch_smartrecruiters(token: str, company: str | None = None) -> list[dict]:
                     "api.smartrecruiters.com/v1/companies", "jobs.smartrecruiters.com"
                 ) or f"https://jobs.smartrecruiters.com/{token}/{job.get('id', '')}",
                 posted_at=job.get("releasedDate"),
+                posted_reliable=bool(job.get("releasedDate")),
+            )
+        )
+    return postings
+
+
+# ---------------------------------------------------------------------------
+# Teamtailor
+#
+# Added after finding it on IAG Cargo, having wrongly written it off as closed. Every
+# Teamtailor career site publishes an open JSON Feed at /jobs.json — no key, no auth —
+# and each item embeds a full schema.org JobPosting with a genuine `datePosted` and a
+# structured address. That makes it the best-quality source of the six.
+#
+# It is also discoverable: sites live at {token}.teamtailor.com even when the employer
+# fronts them with a custom domain, so discover.py can probe it like the others.
+#
+# Common among UK, Nordic and European employers — exactly the segment the original
+# four adapters missed.
+# ---------------------------------------------------------------------------
+
+def fetch_teamtailor(token: str, company: str | None = None) -> list[dict]:
+    # A pinned custom domain wins; otherwise derive the standard subdomain.
+    base = token if token.startswith("http") else f"https://{token}.teamtailor.com"
+    response = _get(f"{base}/jobs.json")
+    if response.status_code != 200:
+        return []
+    try:
+        payload = response.json()
+    except ValueError:
+        return []
+
+    postings = []
+    for item in payload.get("items", []):
+        jp = item.get("_jobposting") or {}
+
+        # Location comes from the embedded JobPosting's address, which is structured
+        # rather than a free-text blob — locality plus ISO country code.
+        location = ""
+        places = jp.get("jobLocation") or []
+        if isinstance(places, dict):
+            places = [places]
+        parts = []
+        for place in places[:2]:
+            addr = (place or {}).get("address") or {}
+            bits = [addr.get("addressLocality"), addr.get("addressCountry")]
+            joined = ", ".join(b for b in bits if b)
+            if joined:
+                parts.append(joined)
+        location = " / ".join(parts)
+
+        posted = jp.get("datePosted") or item.get("date_published")
+        postings.append(
+            _posting(
+                company=company or token,
+                ats="teamtailor",
+                external_id=str((jp.get("identifier") or {}).get("value") or item.get("id", "")),
+                title=item.get("title", ""),
+                location=location,
+                url=item.get("url", ""),
+                posted_at=posted,
+                posted_reliable=bool(posted),
             )
         )
     return postings
@@ -215,6 +291,31 @@ def fetch_smartrecruiters(token: str, company: str | None = None) -> list[dict]:
 #      employers are configured by hand from their careers URL. Use add_workday.py.
 #   3. It paginates in pages of 20, so a large employer costs several requests.
 # ---------------------------------------------------------------------------
+
+WORKDAY_REL = re.compile(r"(\d+)\+?\s+(day|week|month)s?\s+ago", re.IGNORECASE)
+
+
+def workday_posted(text: str | None) -> tuple[str | None, bool]:
+    """Workday returns prose: "Posted 3 Days Ago", "Posted 30+ Days Ago", "Posted Today".
+
+    Converted to an approximate ISO date. Approximate is still far better than nothing
+    for a 24-hour recency window, and "Posted Today" is exact.
+    """
+    if not text:
+        return None, False
+    now = datetime.now(timezone.utc)
+    low = text.lower()
+    if "today" in low:
+        return now.isoformat(timespec="seconds"), True
+    if "yesterday" in low:
+        return (now - timedelta(days=1)).isoformat(timespec="seconds"), True
+    m = WORKDAY_REL.search(low)
+    if not m:
+        return None, False
+    n = int(m.group(1))
+    days = {"day": 1, "week": 7, "month": 30}[m.group(2)] * n
+    return (now - timedelta(days=days)).isoformat(timespec="seconds"), True
+
 
 WORKDAY_URL = re.compile(
     r"https://(?P<tenant>[\w-]+)\.(?P<instance>wd\d+)\.myworkdayjobs\.com"
@@ -282,7 +383,8 @@ def fetch_workday(config: dict | str, company: str | None = None) -> list[dict]:
                     title=job.get("title", ""),
                     location=job.get("locationsText", ""),
                     url=f"{base}/en-US/{site}{external}",
-                    posted_at=job.get("postedOn"),
+                    **dict(zip(("posted_at", "posted_reliable"),
+                               workday_posted(job.get("postedOn")))),
                 )
             )
         if len(batch) < page:
@@ -304,4 +406,5 @@ ADAPTERS = {
     "lever": fetch_lever,
     "ashby": fetch_ashby,
     "smartrecruiters": fetch_smartrecruiters,
+    "teamtailor": fetch_teamtailor,
 }
