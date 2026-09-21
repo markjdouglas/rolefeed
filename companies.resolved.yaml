@@ -10,32 +10,32 @@ companies:
   sector: autonomy
   size: large
   ats: ashby
-  open_roles: 292
+  open_roles: 294
   verify: true
 - name: Samsara
   slug: samsara
   sector: fleet
   size: large
   ats: greenhouse
-  open_roles: 273
-- name: Wolt
-  slug: wolt
-  sector: lastmile
-  size: enterprise
-  ats: greenhouse
-  open_roles: 237
+  open_roles: 269
 - name: Zoox
   slug: zoox
   sector: autonomy
   size: large
   ats: lever
-  open_roles: 237
+  open_roles: 235
+- name: Wolt
+  slug: wolt
+  sector: lastmile
+  size: enterprise
+  ats: greenhouse
+  open_roles: 229
 - name: Flexport
   slug: flexport
   sector: freight
   size: large
   ats: greenhouse
-  open_roles: 199
+  open_roles: 192
 - name: Wayve
   slug: wayve
   sector: autonomy
@@ -53,19 +53,13 @@ companies:
   sector: publictransport
   size: mid
   ats: greenhouse
-  open_roles: 168
+  open_roles: 167
 - name: Nuro
   slug: nuro
   sector: autonomy
   size: mid
   ats: greenhouse
   open_roles: 107
-- name: Isar Aerospace
-  slug: isaraerospace
-  sector: aviation
-  size: mid
-  ats: greenhouse
-  open_roles: 104
 - name: The Exploration Company
   slug: the-exploration-company
   sector: aviation
@@ -79,6 +73,12 @@ companies:
   ats: greenhouse
   open_roles: 101
   verify: true
+- name: Sixt
+  slug: sixt
+  sector: fleet
+  size: enterprise
+  ats: smartrecruiters
+  open_roles: 100
 - name: Delivery Hero
   slug: deliveryhero
   sector: lastmile
@@ -91,18 +91,18 @@ companies:
   size: enterprise
   ats: smartrecruiters
   open_roles: 100
+- name: Geotab
+  slug: geotab
+  sector: fleet
+  size: large
+  ats: greenhouse
+  open_roles: 89
 - name: Waabi
   slug: waabi
   sector: autonomy
   size: scaleup
   ats: lever
   open_roles: 85
-- name: Geotab
-  slug: geotab
-  sector: fleet
-  size: large
-  ats: greenhouse
-  open_roles: 84
 - name: Cabify
   slug: cabify
   sector: ridehail
@@ -114,24 +114,43 @@ companies:
   sector: fulfilment
   size: large
   ats: greenhouse
-  open_roles: 63
+  open_roles: 62
 - name: Ocado Group
   slug: ocadogroup
   sector: fulfilment
   size: enterprise
   ats: greenhouse
-  open_roles: 50
+  open_roles: 52
+- name: Omnea
+  slug: omnea
+  sector: freight
+  size: startup
+  ats: ashby
+  open_roles: 51
+- name: Nivoda
+  slug: nivoda
+  sector: freight
+  size: mid
+  ats: ashby
+  open_roles: 38
+- name: GXO Logistics
+  slug: gxologisticsinc
+  sector: fulfilment
+  size: enterprise
+  ats: teamtailor
+  open_roles: 37
+  verify: true
+- name: project44
+  slug: project44
+  sector: freight
+  size: large
+  ats: greenhouse
+  open_roles: 36
 - name: Nimble Robotics
   slug: nimblerobotics
   sector: fulfilment
   size: scaleup
   ats: greenhouse
-  open_roles: 37
-- name: Carwow
-  slug: carwow
-  sector: fleet
-  size: mid
-  ats: ashby
   open_roles: 36
 - name: FREE NOW
   slug: freenow
@@ -139,60 +158,66 @@ companies:
   size: large
   ats: greenhouse
   open_roles: 35
-- name: project44
-  slug: project44
-  sector: freight
-  size: large
+- name: Carwow
+  slug: carwow
+  sector: fleet
+  size: mid
+  ats: ashby
+  open_roles: 32
+- name: Wheely
+  slug: wheely
+  sector: ridehail
+  size: mid
   ats: greenhouse
-  open_roles: 34
+  open_roles: 32
+- name: Trainline
+  slug: trainline
+  sector: publictransport
+  size: large
+  ats: ashby
+  open_roles: 31
 - name: Zego
   slug: zego
   sector: fleet
   size: mid
   ats: ashby
-  open_roles: 30
+  open_roles: 31
 - name: Dexory
   slug: dexory
   sector: fulfilment
   size: mid
   ats: greenhouse
   open_roles: 30
-- name: Trainline
-  slug: trainline
-  sector: publictransport
-  size: large
-  ats: ashby
-  open_roles: 29
-- name: Wheely
-  slug: wheely
-  sector: ridehail
-  size: mid
-  ats: greenhouse
-  open_roles: 29
 - name: Fleetio
   slug: fleetio
   sector: fleet
   size: scaleup
   ats: greenhouse
-  open_roles: 25
-- name: Careem
-  slug: careem
-  sector: ridehail
-  size: large
+  open_roles: 24
+- name: Ohme
+  slug: ohme
+  sector: charging
+  size: scaleup
   ats: greenhouse
-  open_roles: 20
-- name: Auto Trader
-  slug: autotrader
-  sector: fleet
-  size: large
-  ats: greenhouse
-  open_roles: 19
+  open_roles: 21
 - name: Motorway
   slug: motorway
   sector: fleet
   size: mid
   ats: ashby
-  open_roles: 19
+  open_roles: 20
+- name: Careem
+  slug: careem
+  sector: ridehail
+  size: large
+  ats: greenhouse
+  open_roles: 18
+- name: Auto Trader
+  slug: autotrader
+  sector: fleet
+  size: large
+  ats: greenhouse
+  open_roles: 18
 - name: HIVED
   slug: hived
   sector: lastmile
@@ -216,11 +241,35 @@ companies:
   sector: lastmile
   size: enterprise
   ats: ashby
-  open_roles: 11
+  open_roles: 12
+- name: Marshmallow
+  slug: marshmallow
+  sector: fleet
+  size: mid
+  ats: ashby
+  open_roles: 12
+- name: Maersk
+  slug: maersk
+  sector: freight
+  size: enterprise
+  ats: teamtailor
+  open_roles: 10
+- name: IAG Cargo
+  slug: iagcargo
+  sector: freight
+  size: large
+  ats: teamtailor
+  open_roles: 9
 - name: Vertical Aerospace
   slug: vertical-aerospace
   sector: aviation
   size: mid
+  ats: ashby
+  open_roles: 9
+- name: Flock
+  slug: flock
+  sector: fleet
+  size: startup
   ats: ashby
   open_roles: 9
 - name: Helm.ai
@@ -235,6 +284,12 @@ companies:
   size: mid
   ats: ashby
   open_roles: 7
+- name: Gousto
+  slug: gousto
+  sector: fulfilment
+  size: large
+  ats: smartrecruiters
+  open_roles: 7
 - name: Locus Robotics
   slug: locusrobotics
   sector: fulfilment
@@ -247,12 +302,43 @@ companies:
   size: mid
   ats: greenhouse
   open_roles: 6
-- name: Sixt
-  slug: sixt
+- name: Shippeo
+  slug: shippeo
+  sector: freight
+  size: mid
+  ats: smartrecruiters
+  open_roles: 6
+- name: Vueling
+  slug: vueling
+  sector: aviation
+  size: large
+  ats: teamtailor
+  open_roles: 5
+- name: Geodis
+  slug: geodis
+  sector: freight
+  size: enterprise
+  ats: teamtailor
+  open_roles: 5
+- name: Starship Technologies
+  slug: starship
+  sector: lastmile
+  size: mid
+  ats: teamtailor
+  open_roles: 5
+- name: Europcar Mobility Group
+  slug: europcar
   sector: fleet
   size: enterprise
-  ats: greenhouse
-  open_roles: 2
+  ats: teamtailor
+  open_roles: 4
+  verify: true
+- name: Addison Lee
+  slug: addisonlee
+  sector: ridehail
+  size: large
+  ats: teamtailor
+  open_roles: 3
 - name: Motive
   slug: motive
   sector: fleet
@@ -264,6 +350,12 @@ companies:
   sector: freight
   size: scaleup
   ats: ashby
+  open_roles: 2
+- name: Wunder Mobility
+  slug: wundermobility
+  sector: ridehail
+  size: scaleup
+  ats: smartrecruiters
   open_roles: 2
 - name: Mobico Group
   slug: mobico
@@ -286,10 +378,10 @@ companies:
   open_roles: 1
   verify: true
 unresolved:
-- name: Addison Lee
-  slug: addisonlee
-  sector: ridehail
-  size: large
+- name: 7bridges
+  slug: 7bridges
+  sector: fulfilment
+  size: startup
   open_roles: 0
 - name: Aer Lingus
   slug: aerlingus
@@ -300,6 +392,11 @@ unresolved:
   slug: alstom
   sector: publictransport
   size: enterprise
+  open_roles: 0
+- name: Altana
+  slug: altana
+  sector: freight
+  size: scaleup
   open_roles: 0
 - name: Altitude Angel
   slug: altitudeangel
@@ -347,6 +444,11 @@ unresolved:
   sector: micromobility
   size: scaleup
   open_roles: 0
+- name: Bezos.ai
+  slug: bezosai
+  sector: fulfilment
+  size: scaleup
+  open_roles: 0
 - name: Bolt
   slug: bolt
   sector: ridehail
@@ -360,6 +462,11 @@ unresolved:
   workday_url: TODO
   open_roles: 0
   needs_config: true
+- name: Britten-Norman
+  slug: brittennorman
+  sector: aviation
+  size: scaleup
+  open_roles: 0
 - name: Bumper
   slug: bumper
   sector: fleet
@@ -385,6 +492,11 @@ unresolved:
   sector: charging
   size: mid
   open_roles: 0
+- name: Cranfield Aerospace
+  slug: cranfieldaerospace
+  sector: aviation
+  size: startup
+  open_roles: 0
 - name: D-Orbit
   slug: dorbit
   sector: aviation
@@ -405,14 +517,34 @@ unresolved:
   sector: freight
   size: enterprise
   open_roles: 0
+- name: Dance
+  slug: dance
+  sector: micromobility
+  size: scaleup
+  open_roles: 0
 - name: Descartes Systems
   slug: descartes
   sector: fulfilment
   size: large
   open_roles: 0
+- name: Doddle
+  slug: doddle
+  sector: lastmile
+  size: scaleup
+  open_roles: 0
 - name: Dott
   slug: dott
   sector: micromobility
+  size: mid
+  open_roles: 0
+- name: Dronamics
+  slug: dronamics
+  sector: aviation
+  size: scaleup
+  open_roles: 0
+- name: Einride
+  slug: einride
+  sector: freight
   size: mid
   open_roles: 0
 - name: Enterprise Mobility
@@ -420,10 +552,10 @@ unresolved:
   sector: fleet
   size: enterprise
   open_roles: 0
-- name: Europcar Mobility Group
-  slug: europcarmobilitygroup
-  sector: fleet
-  size: enterprise
+- name: Everstream Analytics
+  slug: everstream
+  sector: freight
+  size: scaleup
   open_roles: 0
 - name: Evri
   slug: evri
@@ -445,6 +577,11 @@ unresolved:
   sector: freight
   size: enterprise
   open_roles: 0
+- name: Ferovinum
+  slug: ferovinum
+  sector: freight
+  size: startup
+  open_roles: 0
 - name: FirstGroup
   slug: firstgroup
   sector: publictransport
@@ -460,25 +597,30 @@ unresolved:
   sector: freight
   size: scaleup
   open_roles: 0
+- name: Freightos
+  slug: freightos
+  sector: freight
+  size: mid
+  open_roles: 0
+- name: Fulfilmentcrowd
+  slug: fulfilmentcrowd
+  sector: fulfilment
+  size: scaleup
+  open_roles: 0
 - name: GRIDSERVE
   slug: gridserve
   sector: charging
   size: mid
   open_roles: 0
-- name: GXO Logistics
-  slug: gxologistics
-  sector: fulfilment
-  size: enterprise
+- name: Gama Aviation
+  slug: gamaaviation
+  sector: aviation
+  size: mid
   open_roles: 0
 - name: Gatwick Airport
   slug: gatwickairport
   sector: aviation
   size: large
-  open_roles: 0
-- name: Geodis
-  slug: geodis
-  sector: freight
-  size: enterprise
   open_roles: 0
 - name: Getaround
   slug: getaround
@@ -520,6 +662,16 @@ unresolved:
   sector: publictransport
   size: enterprise
   open_roles: 0
+- name: HubBox
+  slug: hubbox
+  sector: lastmile
+  size: startup
+  open_roles: 0
+- name: Hubject
+  slug: hubject
+  sector: charging
+  size: scaleup
+  open_roles: 0
 - name: Huboo
   slug: huboo
   sector: fulfilment
@@ -538,11 +690,6 @@ unresolved:
   workday_url: TODO
   open_roles: 0
   needs_config: true
-- name: IAG Cargo
-  slug: iagcargo
-  sector: freight
-  size: large
-  open_roles: 0
 - name: IAG Loyalty
   slug: iagloyalty
   sector: aviation
@@ -558,9 +705,19 @@ unresolved:
   sector: aviation
   size: enterprise
   open_roles: 0
+- name: Indra
+  slug: indra
+  sector: charging
+  size: scaleup
+  open_roles: 0
 - name: InstaVolt
   slug: instavolt
   sector: charging
+  size: mid
+  open_roles: 0
+- name: Isar Aerospace
+  slug: isaraerospace
+  sector: aviation
   size: mid
   open_roles: 0
 - name: JLR
@@ -598,10 +755,10 @@ unresolved:
   sector: micromobility
   size: large
   open_roles: 0
-- name: Maersk
-  slug: maersk
-  sector: freight
-  size: enterprise
+- name: MaaS Global
+  slug: maasglobal
+  sector: publictransport
+  size: startup
   open_roles: 0
 - name: Manchester Airports Group
   slug: manchesterairportsgroup
@@ -612,6 +769,16 @@ unresolved:
   slug: menziesaviation
   sector: aviation
   size: enterprise
+  open_roles: 0
+- name: Mondra
+  slug: mondra
+  sector: freight
+  size: startup
+  open_roles: 0
+- name: Monta
+  slug: monta
+  sector: charging
+  size: scaleup
   open_roles: 0
 - name: Motability Operations
   slug: motabilityoperations
@@ -649,6 +816,16 @@ unresolved:
   sector: aviation
   size: scaleup
   open_roles: 0
+- name: Orca AI
+  slug: orcaai
+  sector: freight
+  size: startup
+  open_roles: 0
+- name: Oritain
+  slug: oritain
+  sector: freight
+  size: scaleup
+  open_roles: 0
 - name: Osprey Charging
   slug: ospreycharging
   sector: charging
@@ -674,10 +851,35 @@ unresolved:
   sector: publictransport
   size: scaleup
   open_roles: 0
+- name: Pledge
+  slug: pledge
+  sector: freight
+  size: startup
+  open_roles: 0
 - name: Pod Point
   slug: podpoint
   sector: charging
   size: mid
+  open_roles: 0
+- name: Project 3 Mobility
+  slug: project3mobility
+  sector: autonomy
+  size: scaleup
+  open_roles: 0
+- name: Qargo
+  slug: qargo
+  sector: freight
+  size: scaleup
+  open_roles: 0
+- name: Quartix
+  slug: quartix
+  sector: fleet
+  size: scaleup
+  open_roles: 0
+- name: Radius
+  slug: radius
+  sector: fleet
+  size: large
   open_roles: 0
 - name: Royal Mail
   slug: royalmail
@@ -814,15 +1016,25 @@ unresolved:
   sector: aviation
   size: enterprise
   open_roles: 0
+- name: Virta
+  slug: virta
+  sector: charging
+  size: scaleup
+  open_roles: 0
 - name: Voi
   slug: voi
   sector: micromobility
   size: mid
   open_roles: 0
-- name: Vueling
-  slug: vueling
-  sector: aviation
-  size: large
+- name: Voi Technology
+  slug: voitechnology
+  sector: micromobility
+  size: mid
+  open_roles: 0
+- name: Webfleet
+  slug: webfleet
+  sector: fleet
+  size: mid
   open_roles: 0
 - name: Wincanton
   slug: wincanton
@@ -843,6 +1055,11 @@ unresolved:
   slug: yodel
   sector: lastmile
   size: enterprise
+  open_roles: 0
+- name: YourParkingSpace
+  slug: yourparkingspace
+  sector: fleet
+  size: scaleup
   open_roles: 0
 - name: Zapmap
   slug: zapmap
@@ -869,6 +1086,11 @@ unresolved:
   sector: aviation
   size: mid
   open_roles: 0
+- name: Zeti
+  slug: zeti
+  sector: charging
+  size: startup
+  open_roles: 0
 - name: Zeus Labs
   slug: zeuslabs
   sector: freight
@@ -878,6 +1100,11 @@ unresolved:
   slug: zipcar
   sector: ridehail
   size: large
+  open_roles: 0
+- name: Zipp Mobility
+  slug: zippmobility
+  sector: micromobility
+  size: startup
   open_roles: 0
 - name: Zoomo
   slug: zoomo

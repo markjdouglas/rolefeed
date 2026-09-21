@@ -185,13 +185,40 @@ def fetch_ashby(token: str, company: str | None = None) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 def fetch_smartrecruiters(token: str, company: str | None = None) -> list[dict]:
+    """SmartRecruiters caps a single response at 100 postings and expects you to page.
+
+    This was silently losing roles. Sixt, Delivery Hero and Grab each reported exactly
+    100 — the cap, not their true count. An employer landing precisely on a page
+    boundary is the signature of un-paged collection, so treat any adapter returning a
+    suspiciously round number as unpaged until proven otherwise.
+
+    The response carries `totalFound`, so we page on `offset` until we have them all.
+    PAGE_CAP stops a misreported total turning into an unbounded loop against an API
+    nobody is charging us for.
+    """
     url = f"https://api.smartrecruiters.com/v1/companies/{token}/postings"
-    response = _get(url, params={"limit": 100})
-    if response.status_code != 200:
+    PAGE_CAP = 12
+    raw_jobs: list[dict] = []
+    offset = 0
+    for _ in range(PAGE_CAP):
+        response = _get(url, params={"limit": 100, "offset": offset})
+        if response.status_code != 200:
+            break
+        payload = response.json()
+        batch = payload.get("content") or []
+        raw_jobs.extend(batch)
+        total = payload.get("totalFound")
+        offset += len(batch)
+        # Stop on a short page, an exhausted total, or an empty page. Any one of the
+        # three is sufficient; relying on `totalFound` alone trusts the server too much.
+        if len(batch) < 100 or not batch:
+            break
+        if isinstance(total, int) and offset >= total:
+            break
+    if not raw_jobs:
         return []
-    payload = response.json()
     postings = []
-    for job in payload.get("content", []):
+    for job in raw_jobs:
         loc = job.get("location") or {}
         city = loc.get("city") or ""
         country = loc.get("country") or ""
