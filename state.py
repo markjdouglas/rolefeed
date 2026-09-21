@@ -164,6 +164,7 @@ def write_feed(
     employers_total: int | None = None,
     failures: list[str] | None = None,
     total_roles_seen: int,
+    coverage: list[dict] | None = None,
     path: pathlib.Path = FEED,
 ) -> dict:
     """Write the published feed, including the metadata the page's header needs."""
@@ -194,6 +195,13 @@ def write_feed(
         # How much of the feed carries a real publication date rather than a fallback.
         # Worth surfacing: a low number means the recency figures are soft.
         "dated_from_source": sum(1 for j in jobs if j.get("date_basis") == "posted"),
+        # Every employer on the list, reachable or not, with the system it was reached
+        # through. Publishing the unreachable pile matters more than it looks: an
+        # employer that is silently absent is indistinguishable from an employer with
+        # no vacancies, and 149 of 211 absent is the difference between "the market is
+        # quiet" and "we cannot see most of the market". Without this the feed's own
+        # coverage is an unmeasured assumption.
+        "coverage": coverage or [],
         "jobs": jobs,
     }
     path.parent.mkdir(parents=True, exist_ok=True)

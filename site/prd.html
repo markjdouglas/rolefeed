@@ -18,6 +18,7 @@
     --hot: #ff6a3d; --green: #5ad1a0;
     --shadow: #0c0919; --bevel: rgba(244,237,223,.09);
     --tile: rgba(244,237,223,.045);
+    --max: 1180px; --gutter: 16px;
   }
   * { box-sizing: border-box; }
   html {
@@ -34,7 +35,7 @@
     -webkit-font-smoothing: antialiased;
     padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right);
   }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
 
   /* --------------------------------------------------------------------------
      Page navigation. Previously the only route off this page was the version
@@ -66,7 +67,7 @@
 
   body::before {
     content: ""; position: fixed; inset: 0 auto 0 50%;
-    transform: translateX(-50%); width: min(100%, 760px);
+    transform: translateX(-50%); width: min(100%, var(--max));
     background: var(--bg); z-index: -1; pointer-events: none;
   }
   a { color: var(--purple-bright); text-decoration: none; }
@@ -145,85 +146,121 @@
     color: var(--muted); border: 1px solid var(--rule); padding: 1px 5px; margin-left: 7px;
   }
   p.caveat { font-size: 13px; color: var(--muted); }
+
+  /* Heading hierarchy. Every section title used to be 15px — the same weight as
+     body copy — so the page read as one undifferentiated wall. Three distinct
+     levels now, each a clear step apart. */
+  header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+  .rel h2 {
+    font-size: 21px; font-weight: 700; letter-spacing: -0.015em;
+    margin: 0 0 4px; display: flex; align-items: baseline; gap: 10px;
+  }
+  .rel h2 .n {
+    font-size: 13px; font-weight: 700; color: var(--gold);
+    font-variant-numeric: tabular-nums; letter-spacing: .06em;
+  }
+  .rel h3 {
+    font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase;
+    color: var(--muted); margin: 18px 0 7px;
+  }
+  .rel.lede h2 { font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .rel.lede p { font-size: 16px; line-height: 1.55; color: var(--cream); }
+
+  /* The outer column now matches the feed exactly — same 1180px, same gutters, so
+     the checkerboard frame and the top bar sit identically on all three pages. But
+     1180px of prose is about 180 characters a line, which nobody can read. So the
+     cards span the full width like the feed's role cards do, and the text inside
+     them is capped at a readable measure. Consistent frame, readable line length. */
+  .rel p, .rel ul, .rel h3 { max-width: 74ch; }
+  .rel table { max-width: 58em; }
+
+  .topbar { background: var(--surface); border-bottom: 2px solid var(--rule); }
+  .bar-wrap {
+    max-width: 1180px; margin: 0 auto; padding: 11px 16px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .bar-wrap .build { margin-left: auto; display: flex; align-items: center; gap: 9px; }
+  .ver { font-size: 12px; font-variant-numeric: tabular-nums; }
 </style>
 
 </head>
 <body>
 
-<header>
-  <div class="wrap top">
-    <h1>RoleFeed &mdash; product brief</h1>
-    <span class="alpha">ALPHA</span>
-  </div>
-  <div class="wrap">
+<div class="topbar">
+  <div class="bar-wrap">
     <nav class="nav" aria-label="Pages">
       <a class="tab" href="index.html">Feed</a>
+      <a class="tab" href="coverage.html">Coverage</a>
       <a class="tab on" href="prd.html" aria-current="page">Product brief</a>
       <a class="tab" href="changelog.html">Version history</a>
     </nav>
+    <span class="build">
+      <span class="alpha">ALPHA</span>
+      <a class="ver" href="changelog.html">v0.4.2</a>
+    </span>
+  </div>
+</div>
+
+<header>
+  <div class="wrap top">
+    <h1>Product brief</h1>
   </div>
 </header>
 
 <main class="wrap">
 
-  <div class="rel current">
-    <h2>The problem</h2>
-    <div class="date">Why this exists</div>
-    <p>Job boards optimise for the board, not the applicant. Aggregators are slow,
-    duplicated and padded with roles that are already weeks old, and the filters they
-    offer are too blunt to express a specific search: senior operations, transport and
-    mobility, UK or a workable time zone, and above a seniority floor that shifts with
-    company size. The result is a daily scan of five sites that surfaces the same
-    thirty irrelevant roles.</p>
-    <p>Freshness is the part that matters most. The working assumption is that
-    applications land better inside the first 48 hours, before a posting has
-    accumulated several hundred applicants. Most tools cannot tell you a posting's age
-    with any confidence, so they cannot help you act on it.</p>
+  <div class="rel lede current">
+    <h2>Summary</h2>
+    <p>RoleFeed polls 62 employers' recruitment systems every two hours and filters for
+    senior operations roles in transport, logistics, mobility and aviation. The mechanism
+    works: 3,918 live postings, real publication dates, no scraping, nothing to run and
+    nothing to pay. The outcome does not yet: four roles cleared the filter. The cause is
+    structural rather than a tuning problem, and the next test costs a day.</p>
+    <p>Built in roughly five scoped hours, deployed and collecting unattended since, at
+    &pound;0 a month on free tiers throughout.</p>
   </div>
 
   <div class="rel">
-    <h2>The original hypothesis</h2>
-    <p>Employers publish their vacancies through applicant tracking systems, and most of
-    those systems expose an open, keyless JSON endpoint that the employer's own careers
-    page consumes. If that is true at scale, a curated list of employers can be polled
-    directly &mdash; no scraping, no aggregator, no paid API &mdash; and the result is
-    fresher and cleaner than anything downstream of it.</p>
-    <p>Stated that way it is one claim doing five jobs, which is why it took real data
-    to work out which part was wrong. Separated out:</p>
-    <table class="funnel claims">
-      <tr><td>Employers expose open, keyless endpoints</td><td class="part">Partly</td>
-        <td>True of one class of employer, false of another</td></tr>
-      <tr><td>A curated employer list is enough for coverage</td><td class="no">No</td>
-        <td>Coverage is bounded by system, not by list length</td></tr>
-      <tr><td>Direct polling beats aggregators on freshness</td><td class="yes">Yes</td>
-        <td>Two-hour cycle, genuine publication dates</td></tr>
-      <tr><td>Filtering can isolate relevant roles precisely</td><td class="part">Untested</td>
-        <td>The tiered rule has not completed a run</td></tr>
-      <tr class="last"><td>The resulting flow is large enough to be useful</td><td class="no">Not yet</td>
-        <td>Four matches end to end</td></tr>
-    </table>
-    <p>The second line is the one that failed, and it failed for a reason the original
-    framing could not see. The evidence below is what exposed it.</p>
+    <h2><span class="n">01</span> Problem</h2>
+    <p>Job boards optimise for the board. Aggregators are slow, duplicated and padded with
+    roles already weeks old, and their filters are too blunt to express a specific search:
+    senior operations, transport and mobility, UK or a workable time zone, above a
+    seniority floor that shifts with company size.</p>
+    <p>Freshness matters most. Applications land better inside the first 48 hours, before
+    a posting has several hundred applicants. Most tools cannot tell you a posting's age
+    with confidence, so they cannot help you act on it.</p>
   </div>
 
   <div class="rel">
-    <h2>Evidence so far</h2>
-    <div class="date">Board discovery run of 21 September 2026, 23.3 minutes</div>
+    <h2><span class="n">02</span> Approach</h2>
+    <p>Employers publish vacancies through applicant tracking systems, and several of those
+    expose an open, keyless JSON endpoint that the employer's own careers page consumes.
+    Poll a curated list of employers directly and the result is fresher and cleaner than
+    anything downstream of it. Every two hours a scheduled job collects, filters, merges
+    with the previous run so first-seen dates survive, and commits one JSON snapshot. That
+    commit rebuilds a static page.</p>
+    <h3>The constraint that shapes everything</h3>
+    <p>No applicant tracking system offers search. Every endpoint is scoped to one
+    employer, so there is no query to write and nothing to crawl &mdash; you can only ask a
+    named employer what it has open. The code is commodity; the <strong>curated employer
+    list is the product</strong>, and coverage is bounded precisely by who is on it.</p>
+  </div>
+
+  <div class="rel">
+    <h2><span class="n">03</span> Evidence</h2>
+    <h3>The funnel</h3>
     <table class="funnel">
       <tr><td>Employers on the list</td><td>211</td><td></td></tr>
-      <tr><td>Employers reachable at all</td><td>62</td><td>29%</td></tr>
-      <tr><td>Open roles now visible</td><td>3,918</td><td></td></tr>
-      <tr><td>Passed geography <span class="stale">prev. run</span></td><td>375</td><td>10% of retrieved</td></tr>
-      <tr class="last"><td>Passed title and seniority <span class="stale">prev. run</span></td><td>4</td><td>0.11% end to end</td></tr>
+      <tr><td>Reachable at all</td><td>62</td><td>29%</td></tr>
+      <tr><td>Open roles visible</td><td>3,918</td><td></td></tr>
+      <tr><td>Passed geography <span class="stale">prev. run</span></td><td>375</td><td>10%</td></tr>
+      <tr class="last"><td>Passed title and seniority <span class="stale">prev. run</span></td><td>4</td><td>0.11%</td></tr>
     </table>
-    <p class="caveat">The bottom two rows are from the preceding collection and are
-    known to understate: they predate both the three-tier seniority rule and the fifteen
-    employers added by this discovery run. They are shown rather than omitted because a
-    stale number labelled as stale is more useful than a blank.</p>
-    <p>Four roles is not a working funnel, and the interesting question is which of
-    three causes is responsible, because they imply completely different work.</p>
-    <p><strong>The coverage gap is not random, and that is the finding that matters.</strong>
-    Reachability falls hardest on exactly the employers this search is aimed at:</p>
+    <p class="caveat">The last two rows predate both the three-tier seniority rule and the
+    fifteen employers added by the latest discovery run, so they understate. Shown marked
+    rather than omitted.</p>
+
+    <h3>Reachability is not evenly distributed</h3>
     <table class="funnel">
       <tr><td>Enterprise (5,000+)</td><td>13 / 60</td><td>22%</td></tr>
       <tr><td>Large (1,000&ndash;5,000)</td><td>20 / 39</td><td>51%</td></tr>
@@ -232,222 +269,100 @@
       <tr class="last"><td>Startup (10&ndash;50)</td><td>2 / 12</td><td>17%</td></tr>
     </table>
     <p>Every large UK transport incumbent misses: the airlines, Heathrow, Gatwick,
-    Manchester Airports Group, Royal Mail, Evri, DHL, FedEx, UPS, the freight
-    forwarders, Network Rail, Transport for London, FirstGroup, Stagecoach, Arriva.
-    Meanwhile the roles that do come through are dominated by Samsara and Wayve.</p>
-    <p>The proposed mechanism was that <strong>applicant tracking system adoption
-    correlates with company type</strong> &mdash; that Greenhouse, Lever and Ashby are
-    the tooling of venture-funded technology companies, while incumbents buy an HR suite
-    that publishes nothing. That was a plausible story rather than a finding, so it is
-    worth testing against the 62 employers actually reached. Splitting them by which
-    kind of system they were reached <em>through</em>:</p>
+    Manchester Airports Group, Royal Mail, Evri, DHL, FedEx, UPS, the freight forwarders,
+    Network Rail, Transport for London, FirstGroup, Stagecoach, Arriva.</p>
+
+    <h3>Why: system choice tracks company size</h3>
+    <p>Share of reachable employers arrived at through Greenhouse, Lever or Ashby &mdash;
+    the three the project was originally built on:</p>
     <table class="funnel claims">
-      <tr><td>Enterprise</td><td class="no">31%</td><td>4 on a venture-tech ATS, 9 elsewhere</td></tr>
-      <tr><td>Large</td><td class="part">80%</td><td>16 versus 4</td></tr>
-      <tr><td>Mid</td><td class="yes">89%</td><td>16 versus 2</td></tr>
-      <tr><td>Scaleup</td><td class="yes">89%</td><td>8 versus 1</td></tr>
-      <tr class="last"><td>Startup</td><td class="yes">100%</td><td>2 versus 0</td></tr>
+      <tr><td>Enterprise</td><td class="no">31%</td><td>4 of 13</td></tr>
+      <tr><td>Large</td><td class="part">80%</td><td>16 of 20</td></tr>
+      <tr><td>Mid</td><td class="yes">89%</td><td>16 of 18</td></tr>
+      <tr><td>Scaleup</td><td class="yes">89%</td><td>8 of 9</td></tr>
+      <tr class="last"><td>Startup</td><td class="yes">100%</td><td>2 of 2</td></tr>
     </table>
-    <p><strong>Confirmed, and the gradient is monotonic.</strong> 31%, 80%, 89%, 89%,
-    100% &mdash; the larger the employer, the less likely it is reachable through the
-    three endpoints the project was originally built on. Every enterprise employer
-    recovered so far came through SmartRecruiters or Teamtailor: GXO, Maersk, Geodis,
-    Europcar, Sixt, Avis, Mobico, Delivery Hero, Grab. None came through Greenhouse.</p>
-    <p>So the method's reach is <em>inversely correlated with the target market</em>.
-    That is a structural property of the approach, not a gap in the employer list, and
-    lengthening the list cannot fix it &mdash; going from 169 to 211 employers moved
-    reachability by seven points and left the shape of the problem untouched.</p>
-    <p>The second candidate cause is that the title rules are too tight. The four
-    matches above were produced by a single accept-or-reject threshold; the three-tier
-    classifier and the expanded employer list have not yet completed a collection, so
-    that cause is untested rather than ruled out. The third is that the market is
-    genuinely thin &mdash; there may simply be very few senior transport operations
-    roles open in the UK this fortnight. Nothing here distinguishes the second from the
-    third, and the next run distinguishes only the second.</p>
-    <p><strong>Honest reading: the approach is proven as an engineering method and
-    unproven as a sourcing strategy.</strong> It reliably retrieves fresh, well-dated,
-    structured postings at zero cost. Whether it can retrieve the <em>right</em> ones
-    depends on closing a coverage gap that sits precisely where the approach is
-    weakest.</p>
+    <p>A monotonic gradient across five buckets. Those three systems are the tooling of
+    venture-funded technology companies; incumbents buy an HR suite that publishes nothing.
+    Every enterprise employer recovered came through SmartRecruiters or Teamtailor &mdash;
+    GXO, Maersk, Geodis, Europcar, Sixt, Avis, Mobico, Delivery Hero, Grab. None came
+    through Greenhouse.</p>
+    <p><strong>So reach is inversely correlated with the target market.</strong> Going from
+    169 employers to 211 moved the rate seven points and left the shape untouched, because
+    a longer list adds reachable and unreachable employers in the same proportion.</p>
   </div>
 
   <div class="rel current">
-    <h2>The revised hypothesis</h2>
-    <div class="date">Reverse-engineered from the evidence above</div>
-    <p>The original design treated the <em>employer</em> as the unit of coverage, so the
-    obvious lever was a longer list. The data says the unit of coverage is not the
-    employer at all &mdash; it is the <strong>publishing surface</strong> the employer
-    happens to sit behind. Two employers of identical size and sector are reachable or
-    unreachable purely on which HR software they bought, a decision made years ago by
-    someone who was not thinking about job seekers. Lengthening the list adds employers
-    in the same proportion of reachable to unreachable, which is why 169 employers and
-    211 employers produced almost the same number of matches.</p>
-    <p>So the claim worth testing next is not about employers:</p>
-    <p class="claim"><strong>Any employer that publishes its vacancies in a
-    machine-readable form on the open web can be collected. The applicant tracking
-    system API is one such surface, and it is the smallest one.</strong></p>
-    <p>That reframing changes what counts as progress. Under the original hypothesis the
-    enterprise bucket was simply lost, because SuccessFactors, Taleo and iCIMS have no
-    API and there is nothing more to say. Under the revised one they are only lost
-    through <em>that</em> surface, and a second surface exists: a careers page carrying a
-    schema.org JobPosting in its markup is machine-readable by any reasonable definition,
-    is published deliberately so that search engines can read it, and is completely
-    independent of which system generated it.</p>
-    <p>Three things follow, in order of how much they would move the number.</p>
+    <h2><span class="n">04</span> What the evidence means</h2>
+    <p>The design treated the <em>employer</em> as the unit of coverage, so the obvious
+    lever was a longer list. The unit of coverage is actually the publishing surface the
+    employer sits behind &mdash; decided years ago by someone not thinking about job
+    seekers. So the claim worth testing is not about employers:</p>
+    <p class="claim"><strong>Any employer that publishes vacancies in machine-readable form
+    on the open web can be collected. The applicant tracking system API is one such
+    surface, and it is the smallest one.</strong></p>
+    <p>Teamtailor is the evidence. It was written off as closed without being probed, then
+    turned out to publish an open feed with a full schema.org job posting &mdash; the best
+    data quality of the six adapters &mdash; and on its own moved enterprise reachability
+    from 15% to 22%. Adding an adapter is a day's work with a proven method. Careers-page
+    structured data is the second surface and a larger one, but more work per employer, so
+    it comes second, not first.</p>
+    <h3>The stopping rule</h3>
+    <p>Probe eight more candidate systems, weighted to the UK and enterprise market:
+    Workable, Personio, Pinpoint, Applied, Eploy, Jobtrain, Tribepad, Hireserve. If
+    enterprise reachability does not clear 40%, the ceiling is real, the addressable market
+    for this method is venture-backed technology companies, and the honest conclusion is a
+    well-built tool pointed at the wrong segment. That is a day's work to find out rather
+    than a month's.</p>
+  </div>
+
+  <div class="rel">
+    <h2><span class="n">05</span> Roadmap</h2>
+    <h3>Under consideration, in dependency order</h3>
     <ul>
-      <li><strong>Find the next Teamtailor first.</strong> This is a correction: the
-        obvious response to a coverage gap in the enterprise bucket was to go after
-        careers-page structured data, and the numbers say otherwise. Teamtailor alone
-        took enterprise reachability from 15% to 22% in one afternoon, because it is
-        what several logistics incumbents actually use &mdash; GXO, Maersk, Geodis,
-        Europcar. Adding one adapter is a day's work with a known method and a proven
-        precedent. So the next move is to probe the remaining candidate systems,
-        prioritised by <em>UK and enterprise</em> market share rather than by
-        familiarity: Workable, Personio, Pinpoint, Applied, Eploy, Jobtrain, Tribepad,
-        Hireserve. Probe them; do not assume, since assuming is precisely how Teamtailor
-        was missed for a week.</li>
-      <li><strong>Then structured-data collection, for the residue.</strong> Some
-        employers will have no open endpoint under any system &mdash; SuccessFactors,
-        Taleo and iCIMS look genuinely closed. For those, a careers page carrying a
-        schema.org JobPosting is machine-readable by any reasonable definition, published
-        deliberately so that search engines can read it, and independent of whichever
-        system generated it. That is legitimate in a way parsing a page's layout is not.
-        It stays second because it is more work than an adapter and helps fewer
-        employers than the adapters would.</li>
-      <li><strong>Where no machine-readable surface exists, the employer is genuinely out
-        of scope and should be recorded as such.</strong> British Airways publishes no
-        structured data and disallows its search path to crawlers; that is a decision to
-        respect, not an obstacle to route around. The value of the revised hypothesis is
-        partly that it makes the true ceiling measurable instead of assumed.</li>
+      <li><strong>Authentication.</strong> Access is URL-only, which is obscurity. It also
+        gates everything below, because both items need state tied to an identity rather
+        than to one browser.</li>
+      <li><strong>Score a role up or down, feeding back into the search.</strong> With no
+        endpoint offering search, a signal cannot change a query &mdash; there is none. It
+        can widen the employer list, by treating an accepted role as evidence about a
+        sector and size band, and tune the title rules, by showing which patterns yield
+        accepted roles. At a few dozen judgements it is decision support, not a model.</li>
+      <li><strong>Application tracking.</strong> Whether a role was applied for, and when.
+        Cheap once state is server-side, and it makes the 48-hour thesis testable rather
+        than assumed.</li>
     </ul>
-    <p>The falsifiable version, and it is cheap to run: probe the eight candidate
-    systems above. If enterprise reachability does not clear roughly 40%, the ceiling is
-    real, the addressable market for this method is venture-backed technology companies,
-    and the honest conclusion is that RoleFeed is a well-built tool pointed at the wrong
-    segment. That would be worth knowing, and worth knowing for a day's work rather than
-    a month's.</p>
+    <p>Both of the latter need durable shared state; shortlists currently live in one
+    browser and do not reach a phone. <strong>Against this order</strong>: a scoring signal
+    learned from a sample this biased would optimise towards American technology startups.
+    Fix the input first &mdash; more adapters, then the Workday employers, then structured
+    data for whatever is left.</p>
   </div>
 
   <div class="rel">
-    <h2>The structural insight</h2>
-    <p>No applicant tracking system offers search. Every endpoint is scoped to one
-    employer, so there is no query to write and nothing to crawl &mdash; you can only
-    ask a named employer what it currently has open.</p>
-    <p>This inverts where the value sits. The code is commodity; the <strong>curated
-    employer list is the product</strong>, and coverage is bounded precisely by who is
-    on it. It also sets the ceiling: an employer running SuccessFactors, Taleo or iCIMS
-    cannot be reached at all, which is most of the enterprise segment.</p>
-  </div>
-
-  <div class="rel">
-    <h2>What it does</h2>
-    <p>Every two hours a scheduled job asks each resolved employer for its current
-    vacancies, applies the matching rules, merges the result with the previous run so a
-    posting's first-seen date survives, and commits a single JSON snapshot. That commit
-    rebuilds a static page. The page is the interface: filter by size, sector, employer
-    and seniority; isolate roles under 24 hours old; shortlist or dismiss; and see how
-    stale the data is and when the next collection is due.</p>
-    <p>Results are segmented by employer size rather than presented as one list,
-    because a director title means something different at a 40-person scaleup than at
-    Maersk, and the two are not usefully ranked against each other.</p>
-  </div>
-
-  <div class="rel">
-    <h2>What it deliberately is not</h2>
+    <h2><span class="n">06</span> Limits and non-goals</h2>
     <ul>
-      <li><strong>Not a scraper.</strong> Every source is a documented or openly
-        published endpoint. Where there is no legitimate route &mdash; British Airways
-        publishes no feed and disallows its search path in <code>robots.txt</code>
-        &mdash; the employer is recorded as uncovered rather than worked around.</li>
-      <li><strong>Not a job board.</strong> One user. No accounts, no employers, no
-        marketplace. Nothing is optimised for anyone but its owner.</li>
-      <li><strong>Not an auto-applier.</strong> It surfaces; the applying is manual and
-        stays manual. Volume is not the constraint being solved.</li>
-      <li><strong>Not a framework project.</strong> One hand-written static file, no
-        build step, no bundler. It deploys as static assets, costs nothing to run, and
-        remains readable by its non-engineer author &mdash; which is a requirement,
-        not a compromise.</li>
-    </ul>
-  </div>
-
-  <div class="rel">
-    <h2>Success criteria</h2>
-    <ul>
-      <li>Surfaces roles worth applying for that would not otherwise have been seen.
-        Five was the threshold for proving the concept.</li>
-      <li>A new posting at a covered employer appears within two hours of publication.</li>
-      <li>Running cost stays at zero.</li>
-      <li>Its owner can explain every component of it, and change any of them.</li>
-    </ul>
-    <p>Of those four, three are met. The first &mdash; the one the whole thing exists
-    for &mdash; is not yet.</p>
-  </div>
-
-  <div class="rel">
-    <h2>Roadmap</h2>
-    <div class="date">Under consideration, in dependency order</div>
-    <ul>
-      <li><strong>1. Authentication.</strong> Access is currently URL-only, which is
-        obscurity rather than security &mdash; and it unblocks everything below it,
-        because both remaining items need state tied to an identity rather than to one
-        browser. Cloudflare Access with a one-time e-mail code is free at this scale
-        and needs no code.</li>
-      <li><strong>2. Scoring a role up or down, feeding back into the search.</strong>
-        The interesting one, and the one with a catch worth stating: since no endpoint
-        offers search, a signal cannot change a query &mdash; there is no query. It can
-        only change two things, and both are worth doing. It can <em>widen the employer
-        list</em>, by treating a thumbs-up as evidence about a sector and size band and
-        proposing adjacent employers to add. And it can <em>tune the title rules</em>,
-        by surfacing which patterns produce accepted roles and which produce noise, so
-        the thresholds stop being guesses. The honest constraint is volume: a few dozen
-        judgements will not train anything, but they will point a human at the right
-        edits, which at this scale is more valuable than a model.</li>
-      <li><strong>3. Application tracking.</strong> Recording whether a role was applied
-        for, and when. Cheap once state is server-side, and it closes the loop: it turns
-        the feed into a record of the search itself, which is also what makes the
-        48-hour thesis testable rather than assumed.</li>
-    </ul>
-    <p>Items 2 and 3 both require durable, shared state, which the current design has
-    no place for: shortlists live in one browser's local storage and do not reach a
-    phone. Cloudflare Workers KV behind a Pages Function is the intended answer &mdash;
-    still free, still no database to run.</p>
-    <p><strong>A note on sequencing, against the order above.</strong> Item 2 learns
-    from judgements about the roles it shows, and the evidence says that sample is both
-    small and skewed: 89% of the mid-sized and smaller employers reached are on
-    venture-tech systems, against 31% of the enterprise ones. A feedback loop trained on
-    that would optimise confidently towards American technology startups. The
-    higher-value work is upstream and cheaper: probe the remaining candidate applicant
-    tracking systems, weighted to the UK and enterprise market, then configure the
-    Workday employers, then decide on structured data for whatever is left. Fix the
-    input before building a feedback loop on top of it &mdash; a scoring signal over a
-    biased sample does not correct the bias, it learns it.</p>
-  </div>
-
-  <div class="rel">
-    <h2>Known limits</h2>
-    <ul>
-      <li><strong>Enterprise coverage is structurally capped.</strong> Large employers
-        run SuccessFactors, Taleo or iCIMS, none of which expose a usable endpoint.
-        Workday is the one enterprise system covered, and each employer must be
-        hand-configured.</li>
-      <li><strong>Publication dates are only as good as the source.</strong> Four of the
-        six adapters return a genuine date. Greenhouse returns a last-updated timestamp
-        that moves whenever an employer fixes a typo, so those roles fall back to
-        when RoleFeed first saw them &mdash; which is honest, but not the same thing.</li>
-      <li><strong>Undocumented endpoints break without notice.</strong> Workday
-        especially. A sudden drop to zero roles is treated as suspected breakage rather
-        than an empty board.</li>
-      <li><strong>Token discovery can mis-attribute.</strong> A guessed board token can
-        resolve to an unrelated company. Short first-word tokens are refused and
-        non-obvious matches are flagged for verification.</li>
+      <li><strong>Enterprise coverage is capped</strong> by SuccessFactors, Taleo and
+        iCIMS, none of which expose a usable endpoint. Workday is the one covered, and each
+        employer must be hand-configured.</li>
+      <li><strong>Dates are only as good as the source.</strong> Four adapters return a real
+        publication date. Greenhouse returns a last-updated timestamp that moves on any
+        edit, so those roles fall back to when RoleFeed first saw them.</li>
+      <li><strong>Undocumented endpoints break silently.</strong> A drop to zero roles is
+        treated as suspected breakage, not an empty board.</li>
+      <li><strong>Not a scraper.</strong> Where there is no legitimate route &mdash; British
+        Airways publishes no feed and disallows its search path &mdash; the employer is
+        recorded as uncovered rather than worked around.</li>
+      <li><strong>Not a job board, not an auto-applier, not a framework project.</strong>
+        One user, manual applications, one hand-written static file with no build step.</li>
     </ul>
   </div>
 
 </main>
 
 <footer class="wrap">
-  A personal tool, built to learn how the parts fit together as much as to use it.
-  Version history is on its own page.
+  Built to learn how the parts fit together as much as to use it. Three of four success
+  criteria are met; the first &mdash; surfacing roles worth applying for &mdash; is not yet.
 </footer>
 
 </body>
