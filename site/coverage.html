@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#14102b">
+<meta name="theme-color" content="#100d22">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <title>RoleFeed — version history</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='0' fill='%2314102b'/%3E%3Crect x='7' y='8' width='18' height='3' fill='%238b6cff'/%3E%3Crect x='7' y='15' width='13' height='3' fill='%23f4eddf'/%3E%3Crect x='7' y='22' width='8' height='3' fill='%23ffb84d'/%3E%3C/svg%3E">
 <style>
   :root {
-    --bg: #14102b; --surface: #1a1733; --surface-2: #221e3d;
-    --border: rgba(244,237,223,.13); --border-bright: rgba(244,237,223,.26);
-    --rule: rgba(244,237,223,.09);
+    --bg: #100d22; --surface: #191637; --surface-2: #231f49; --sunken: #0a0818;
+    --border: rgba(244,237,223,.17); --border-bright: rgba(244,237,223,.36);
+    --rule: rgba(244,237,223,.11);
     --purple: #8b6cff; --purple-bright: #a98bff; --gold: #e9c46a;
     --cream: #f4eddf; --cream-dim: #cfc6b8; --muted: #9d9483;
-    --hot: #ff6a3d; --green: #5ad1a0;
-    --shadow: #0c0919; --bevel: rgba(244,237,223,.09);
+    --hot: #ff6a3d; --green: #5ad1a0; --teal: #56cfc2;
+    --shadow: #060412; --bevel: rgba(244,237,223,.09);
     --tile: rgba(244,237,223,.045);
     --max: 1180px; --gutter: 16px;
     --control-h: 34px; --control-px: 12px; --control-fs: 12.5px;
@@ -62,11 +62,14 @@
   .bar-wrap {
     max-width: var(--max); margin: 0 auto; padding: 7px var(--gutter);
     min-height: 54px;
-    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
-  .bar-wrap .build { margin-left: auto; display: flex; align-items: center; gap: 9px; }
+  .nav { margin-left: auto; flex: 0 0 auto; }
+  .bar-wrap .build { margin-left: 14px; flex: 0 0 auto; display: flex; align-items: center; gap: 9px; }
+  .alpha, .ver { display: inline-flex; align-items: center; height: 20px; }
+  @media (max-width: 860px) { .bar-wrap { flex-wrap: wrap; } .nav { margin-left: 0; } }
 
-  .nav { display: flex; gap: 8px; flex-wrap: wrap; margin: 15px 0 0; }
+  .nav { display: flex; gap: 8px; flex-wrap: nowrap; margin: 0; }
   .tab {
     display: inline-flex; align-items: center; gap: 7px;
     min-height: var(--control-h); padding: 0 var(--control-px);
@@ -159,7 +162,7 @@
   table.cov td.r { color: var(--cream); font-weight: 650; }
   .meter-cell { width: 9em; }
   .bar { height: 7px; background: var(--surface-2); border: 1px solid var(--border); }
-  .bar > i { display: block; height: 100%; background: var(--purple); }
+  .bar > i { display: block; height: 100%; background: var(--teal); }
   .bar.low > i { background: var(--hot); }
   .bar.mid > i { background: var(--gold); }
   .miss { margin: 0; padding: 0; list-style: none; columns: 3; column-gap: 26px; }

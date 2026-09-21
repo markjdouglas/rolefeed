@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#14102b">
+<meta name="theme-color" content="#100d22">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <title>RoleFeed — version history</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='0' fill='%2314102b'/%3E%3Crect x='7' y='8' width='18' height='3' fill='%238b6cff'/%3E%3Crect x='7' y='15' width='13' height='3' fill='%23f4eddf'/%3E%3Crect x='7' y='22' width='8' height='3' fill='%23ffb84d'/%3E%3C/svg%3E">
 <style>
   :root {
-    --bg: #14102b; --surface: #1a1733; --surface-2: #221e3d;
-    --border: rgba(244,237,223,.13); --border-bright: rgba(244,237,223,.26);
-    --rule: rgba(244,237,223,.09);
+    --bg: #100d22; --surface: #191637; --surface-2: #231f49; --sunken: #0a0818;
+    --border: rgba(244,237,223,.17); --border-bright: rgba(244,237,223,.36);
+    --rule: rgba(244,237,223,.11);
     --purple: #8b6cff; --purple-bright: #a98bff; --gold: #e9c46a;
     --cream: #f4eddf; --cream-dim: #cfc6b8; --muted: #9d9483;
-    --hot: #ff6a3d; --green: #5ad1a0;
-    --shadow: #0c0919; --bevel: rgba(244,237,223,.09);
+    --hot: #ff6a3d; --green: #5ad1a0; --teal: #56cfc2;
+    --shadow: #060412; --bevel: rgba(244,237,223,.09);
     --tile: rgba(244,237,223,.045);
     --max: 1180px; --gutter: 16px;
     --control-h: 34px; --control-px: 12px; --control-fs: 12.5px;
@@ -62,11 +62,14 @@
   .bar-wrap {
     max-width: var(--max); margin: 0 auto; padding: 7px var(--gutter);
     min-height: 54px;
-    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
-  .bar-wrap .build { margin-left: auto; display: flex; align-items: center; gap: 9px; }
+  .nav { margin-left: auto; flex: 0 0 auto; }
+  .bar-wrap .build { margin-left: 14px; flex: 0 0 auto; display: flex; align-items: center; gap: 9px; }
+  .alpha, .ver { display: inline-flex; align-items: center; height: 20px; }
+  @media (max-width: 860px) { .bar-wrap { flex-wrap: wrap; } .nav { margin-left: 0; } }
 
-  .nav { display: flex; gap: 8px; flex-wrap: wrap; margin: 15px 0 0; }
+  .nav { display: flex; gap: 8px; flex-wrap: nowrap; margin: 0; }
   .tab {
     display: inline-flex; align-items: center; gap: 7px;
     min-height: var(--control-h); padding: 0 var(--control-px);
@@ -203,6 +206,26 @@
         from three rows.</li>
       <li>A single 2px boundary now separates the controls from the content, replacing
         four weak separators that read as drift.</li>
+      <li><strong>Fixed the empty band under the top bar.</strong> The bar allowed
+        wrapping, so the ALPHA badge and version dropped onto a line of their own as
+        soon as brand, tagline and nav filled the row &mdash; a 54px bar rendering at
+        190px. The bar no longer wraps above 860px and the tagline truncates instead.</li>
+      <li><strong>Wider tonal range.</strong> Four near-identical purples were doing
+        every structural job: background #14102b, surface #1a1733 and control face
+        #221e3d sat within a few points of each other, so nothing read as in front of
+        or behind anything else. The floor drops to #100d22, surfaces lift apart, and
+        cream rules go from 13% to 17% with bright rules from 26% to 36%.</li>
+      <li><strong>A visual grammar: controls are raised, data is recessed.</strong> The
+        stats strip now sits on its own darker tone (#0a0818) with an inset shadow
+        rather than floating on a surface four points from the background, which is why
+        it had no discernible edge.</li>
+      <li><strong>A fourth accent hue.</strong> Teal joins purple, amber and hot orange,
+        one hue per meaning: teal is volume and coverage, purple is what to act on, hot
+        is 24 hours, amber is 48, muted is reference. The stats row reads as ranked
+        information rather than nine identical figures.</li>
+      <li>Section headers gained a brighter rule and a gold plinth &mdash; they had been
+        a 2px rule at 11% cream, less contrast than the whitespace around them, so the
+        size groups ran together.</li>
       <li><strong>&ldquo;Matched only&rdquo; restored as the default.</strong> Turning it
         off to make the funnel visible was the wrong fix &mdash; the feed opened on a
         data-science role. The funnel belongs in the stats strip, which is where it now

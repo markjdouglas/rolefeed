@@ -6,7 +6,7 @@
      safe-area insets below then keep content clear of them. -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!-- Tints Safari's toolbars to match the page instead of leaving a white band. -->
-<meta name="theme-color" content="#14102b">
+<meta name="theme-color" content="#100d22">
 <meta name="color-scheme" content="dark">
 <!-- URL-only access is obscurity, not security, and the likeliest way it leaks is
      a search engine. This does not stop anyone with the link; it stops the link
@@ -24,16 +24,18 @@
   :root {
     /* Base. Indigo, unchanged — Superhuman's own base is #1b1938, so this is a
        well-trodden value for a dark canvas. */
-    --bg:            #14102b;
-    --surface:       #1a1733;   /* neutral-warm, not violet-tinted */
-    --surface-2:     #221e3d;
+    --bg:            #100d22;   /* deeper floor, so raised things read as raised */
+    --surface:       #191637;   /* cards and the bar: RAISED */
+    --sunken:        #0a0818;   /* data readouts: RECESSED. The grammar is that
+                                   controls stand up and numbers sink in. */
+    --surface-2:     #231f49;   /* control faces */
 
     /* Separation is CREAM at low alpha, not purple. This single change is what stops
        the page reading as "a purple app": structure becomes neutral, so the accent
        has something to stand against. */
-    --border:        rgba(244, 237, 223, 0.13);
-    --border-bright: rgba(244, 237, 223, 0.26);
-    --rule:          rgba(244, 237, 223, 0.09);
+    --border:        rgba(244, 237, 223, 0.17);
+    --border-bright: rgba(244, 237, 223, 0.36);
+    --rule:          rgba(244, 237, 223, 0.11);
 
     /* Purple now does exactly one job: mark what you should act on or look at.
        Primary button, focus ring, matched chip. Nowhere else. */
@@ -47,7 +49,7 @@
 
     --amber:         #ffb84d;
     --hot:           #ff6a3d;   /* posted in the last 24h — hotter than amber */
-    --shadow:        #0c0919;   /* hard offset shadow — no blur, ever */
+    --shadow:        #060412;   /* hard offset shadow — no blur, ever */
     --bevel:         rgba(244, 237, 223, 0.09);  /* top-left inner highlight */
     /* The floor tile. Its own token, not --bevel: the bevel sits on a solid card
        edge where 9% alpha reads as a highlight, but the same value spread across
@@ -55,6 +57,11 @@
     --tile:          rgba(244, 237, 223, 0.045);
     --amber-dim:     #6b4a17;
     --green:         #5ad1a0;
+    /* A fourth accent hue, so the numbers stop being one undifferentiated block.
+       One hue, one meaning: teal is volume and coverage, purple is what to act on,
+       hot is 24h, amber is 48h, muted is reference. */
+    --teal:          #56cfc2;
+    --teal-dim:      #1d4f4c;
     --red:           #ff7a7a;
 
     /* Pixel art means no rounding. Everything is square. */
@@ -143,11 +150,22 @@
   .bar-wrap {
     max-width: var(--max); margin: 0 auto; padding: 7px var(--gutter);
     min-height: 54px;
-    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    /* nowrap, deliberately. With wrapping on, the ALPHA badge and version were pushed
+       onto a line of their own the moment brand + tagline + nav filled the row, which
+       is what turned a 54px bar into a 190px one with an empty band in it. The tagline
+       is the flexible element and truncates instead. */
+    display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
-  .bar-wrap .build { margin-left: auto; display: flex; align-items: center; gap: 9px; }
+  .nav { margin-left: auto; flex: 0 0 auto; }
+  .bar-wrap .tagline { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 860px) {
+    .bar-wrap { flex-wrap: wrap; }
+    .nav { margin-left: 0; }
+  }
+  .bar-wrap .build { margin-left: 14px; flex: 0 0 auto; display: flex; align-items: center; gap: 9px; }
+  .alpha, .ver { display: inline-flex; align-items: center; height: 20px; }
 
-  .nav { display: flex; gap: 8px; flex-wrap: wrap; margin: 15px 0 0; }
+  .nav { display: flex; gap: 8px; flex-wrap: nowrap; margin: 0; }
   .tab {
     display: inline-flex; align-items: center; gap: 7px;
     min-height: var(--control-h); padding: 0 var(--control-px);
@@ -289,9 +307,12 @@
     display: flex;
     flex-wrap: wrap;
     margin: 8px 0 0;
-    background: var(--surface);
+    /* Recessed rather than raised, and on its own darker tone. Previously it was
+       --surface on --bg, two values four points apart with a 13% border: there was
+       nothing to tell you where the strip began. */
+    background: var(--sunken);
     border: 1px solid var(--border);
-    box-shadow: 2px 2px 0 var(--shadow);
+    box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.5);
   }
   .stat {
     flex: 1 1 auto;
@@ -322,6 +343,10 @@
      reads as noise, and the number is what you are looking at anyway. */
   .stat.accent .n  { color: var(--amber); }
   .stat.hotstat .n { color: var(--hot); }
+  .stat.prime .n   { color: var(--purple-bright); font-size: 17px; }
+  .stat.pool .n    { color: var(--teal); }
+  .stat.prime      { background: rgba(139, 108, 255, 0.07); }
+  .stat.pool       { background: rgba(86, 207, 194, 0.05); }
 
   /* Freshness strip */
   .freshness { margin: 9px 0 0; padding-bottom: 10px; }
@@ -509,13 +534,17 @@
      --------------------------------------------------------------------- */
   main { padding: 22px 0 80px; }
 
-  .bucket { margin-bottom: 26px; }
+  .bucket { margin-bottom: 30px; }
   .bucket-head {
     display: flex; align-items: center; gap: 10px;
     width: 100%;
-    background: none; border: none; padding: 0 0 9px;
+    background: none; border: none; padding: 7px 0 8px;
     color: var(--cream); font: inherit; cursor: pointer;
-    border-bottom: 2px solid var(--rule);
+    /* Was a 2px rule at 11% cream, which is less contrast than the gap around it, so
+       groups ran together. A brighter rule plus a gold plinth under it reads as a
+       divider between sections rather than as decoration inside one. */
+    border-bottom: 2px solid var(--border-bright);
+    box-shadow: 0 2px 0 var(--amber-dim);
     text-align: left;
   }
   .bucket-head h2 {
@@ -526,9 +555,9 @@
   .bucket-head .n {
     margin-left: auto;
     background: var(--surface-2);
-    border: 2px solid var(--border);
+    border: 1px solid var(--border-bright);
     border-radius: 0;
-    padding: 1px 9px;
+    padding: 2px 9px;
     font-size: 12px;
     color: var(--cream-dim);
     font-variant-numeric: tabular-nums;
@@ -566,7 +595,7 @@
      looks like a sprite. */
   .role:hover {
     border-color: var(--border-bright);
-    background: #201a47;
+    background: #262052;
     transform: translate(-1px, -1px);
     box-shadow: 6px 6px 0 var(--shadow), inset 1px 1px 0 var(--bevel);
   }
@@ -977,9 +1006,9 @@ function renderStats() {
   // number at the end of 3,918 -> 375 -> 4 reads as precision. Lead with the work
   // done, not the residue.
   const tiles = [
-    { n: feed.total_roles_seen, l: "Assessed", minor: true },
-    { n: feed.jobs.length,      l: "In scope" },
-    { n: matched,               l: "Matched" },
+    { n: feed.total_roles_seen, l: "Assessed", cls: "minor" },
+    { n: feed.jobs.length,      l: "In scope", cls: "pool" },
+    { n: matched,               l: "Matched",  cls: "prime" },
     { n: hotCount,              l: "Hot \u00b7 24h", hot: true },
     { n: feed.new_last_48h,     l: "New \u00b7 48h", accent: true },
     { n: feed.new_last_7d,      l: "New \u00b7 7d", minor: true },
@@ -989,7 +1018,7 @@ function renderStats() {
     { n: feed.employers_total || feed.employers_queried, l: "Tracked", minor: true },
   ];
   document.getElementById("stats").innerHTML = tiles.map(t => `
-    <div class="stat${t.accent ? " accent" : ""}${t.hot ? " hotstat" : ""}${t.minor ? " minor" : ""}">
+    <div class="stat${t.accent ? " accent" : ""}${t.hot ? " hotstat" : ""}${t.minor ? " minor" : ""}${t.cls ? " " + t.cls : ""}">
       <div class="n">${t.n == null ? "—" : t.n}</div>
       <div class="l">${t.l}</div>
     </div>`).join("");
