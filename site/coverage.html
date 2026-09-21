@@ -61,12 +61,10 @@
   }
   .bar-wrap {
     max-width: var(--max); margin: 0 auto; padding: 7px var(--gutter);
-    min-height: 54px;
+    min-height: 60px;
     display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
   .nav { margin-left: auto; flex: 0 0 auto; }
-  .bar-wrap .build { margin-left: 14px; flex: 0 0 auto; display: flex; align-items: center; gap: 9px; }
-  .alpha, .ver { display: inline-flex; align-items: center; height: 20px; }
   @media (max-width: 860px) { .bar-wrap { flex-wrap: wrap; } .nav { margin-left: 0; } }
 
   .nav { display: flex; gap: 8px; flex-wrap: nowrap; margin: 0; }
@@ -160,11 +158,6 @@
   table.cov td { padding: 7px 0; border-bottom: 1px solid var(--rule); color: var(--cream-dim); }
   table.cov td.k { color: var(--cream); font-weight: 600; }
   table.cov td.r { color: var(--cream); font-weight: 650; }
-  .meter-cell { width: 9em; }
-  .bar { height: 7px; background: var(--surface-2); border: 1px solid var(--border); }
-  .bar > i { display: block; height: 100%; background: var(--teal); }
-  .bar.low > i { background: var(--hot); }
-  .bar.mid > i { background: var(--gold); }
   .miss { margin: 0; padding: 0; list-style: none; columns: 3; column-gap: 26px; }
   .miss li { font-size: 13px; color: var(--cream-dim); padding: 2px 0; break-inside: avoid; }
   .miss li .s { color: var(--muted); font-size: 11px; }
@@ -175,18 +168,52 @@
      slot at the same height, which is what keeps the nav on identical pixels across
      all four pages — the bar's height is fixed, so what sits to the left of the nav
      can differ without moving it. */
-  .brandlink {
-    font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--cream); text-decoration: none; flex: 0 0 auto;
+  /* The same artwork as the feed, from one shared file, in a slot of the same fixed
+     width — so the tabs sit on identical pixels on all four pages and the logo is the
+     home button everywhere. */
+  :root { --brand-w: 220px; }
+  .brand { flex: 0 0 var(--brand-w); display: flex; align-items: center; text-decoration: none; }
+  .brand img { height: 46px; width: auto; image-rendering: pixelated; display: block; }
+  .bar-wrap .build {
+    margin-left: 14px; flex: 0 0 116px;
+    display: flex; align-items: center; justify-content: flex-end; gap: 8px;
   }
-  .brandlink:hover { text-decoration: none; color: var(--purple-bright); }
+  .alpha, .ver {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 22px; box-sizing: border-box;
+  }
+  .alpha { padding: 0 8px; box-shadow: 2px 2px 0 var(--shadow); }
+  .ver { min-width: 46px; border-bottom: 0; color: var(--cream-dim); }
+
+  .verdict {
+    background: rgba(255, 106, 61, 0.09);
+    border: 1px solid var(--hot); border-left: 4px solid var(--hot);
+    box-shadow: 4px 4px 0 var(--shadow); padding: 15px 17px; margin-bottom: 20px;
+  }
+  .verdict .k {
+    font-size: 10px; font-weight: 750; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--hot); display: block; margin-bottom: 7px;
+  }
+  .verdict p { color: var(--cream); font-size: 15.5px; margin: 0; max-width: 74ch; }
+  .big { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--border);
+         background: var(--sunken); box-shadow: inset 0 2px 0 rgba(0,0,0,.5); }
+  .big div { flex: 1 1 120px; padding: 11px 14px; border-right: 1px solid var(--rule); }
+  .big div:last-child { border-right: 0; }
+  .big .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .big .t { font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-top: 3px; }
+  .big .miss .v { color: var(--hot); }
+  .big .got .v { color: var(--teal); }
+  table.cov td.rate { color: var(--cream); font-weight: 650; }
+  table.cov td.rate.low { color: var(--hot); }
+  table.cov tr.tot td { border-bottom: 0; border-top: 2px solid var(--border-bright); color: var(--cream); font-weight: 650; }
+  .reading { font-size: 13px; color: var(--muted); margin-top: 9px; max-width: 74ch; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="bar-wrap">
-    <a class="brandlink" href="index.html">RoleFeed</a>
+    <a class="brand" href="index.html" aria-label="RoleFeed — home"><img src="brand/lockup.svg" alt="RoleFeed"></a>
     <nav class="nav" aria-label="Pages">
       <a class="tab" href="index.html">Feed</a>
       <a class="tab on" href="coverage.html" aria-current="page">Coverage</a>
@@ -195,7 +222,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.2</a>
+      <a class="ver" href="changelog.html">v0.4.3</a>
     </span>
   </div>
 </div>
@@ -207,40 +234,47 @@
 </header>
 
 <main class="wrap">
+
+  <div class="verdict">
+    <span class="k">Why the hypothesis failed</span>
+    <p>This page is the evidence. Two thirds of the employers on the list cannot be
+    reached at all, the shortfall concentrates on the largest ones, and no amount of
+    adding companies changes that &mdash; which is why development stopped. The
+    <a href="prd.html">product brief</a> sets out the decision.</p>
+  </div>
+
   <div class="rel current">
-    <h2>What this feed cannot see</h2>
-    <p>An employer that is silently absent looks exactly like an employer with no
-    vacancies. That is the most dangerous failure mode here, because it reads as a quiet
-    market rather than as a blind spot. This page exists so the blind spot is a measured
-    number rather than an assumption.</p>
+    <h2>What this feed can and cannot see</h2>
     <div id="head"></div>
+    <p class="reading">An employer that is silently absent looks exactly like an employer
+    with no vacancies, which reads as a quiet market rather than a blind spot. Naming the
+    absences is the one thing here that no job board will do for you.</p>
   </div>
 
   <div class="rel">
-    <h2>Reachability by employer size</h2>
+    <h2>By employer size</h2>
     <div id="bysize"></div>
+    <p class="reading" id="sizeread"></p>
   </div>
 
   <div class="rel">
-    <h2>Which systems reach which employers</h2>
-    <p>Share of reachable employers arrived at through Greenhouse, Lever or Ashby &mdash;
-    the three modern, open endpoints the project was first built on.</p>
+    <h2>By the kind of system behind them</h2>
     <div id="byats"></div>
-    <p id="gradient"></p>
+    <p class="reading" id="atsread"></p>
   </div>
 
   <div class="rel">
-    <h2>Unreachable employers</h2>
-    <p>No open endpoint found under any of the six supported systems. Most run
-    SuccessFactors, Taleo or iCIMS; some are on a system not yet probed, which is the
-    cheapest thing left to fix.</p>
+    <h2>The employers that cannot be reached</h2>
+    <p class="reading">No open endpoint under any of the six supported systems. Most run
+    SuccessFactors, Taleo or iCIMS, which publish nothing; some are on a system not yet
+    probed, which is the only cheap thing left to try.</p>
     <div id="missing"></div>
   </div>
+
 </main>
 
 <footer class="wrap">
-  Regenerated with every collection. Coverage is the ceiling on everything the feed can
-  ever show, so it is tracked as a first-class number rather than inferred.
+  Regenerated with every collection, from the same feed the roles come from.
 </footer>
 
 <script>
@@ -251,65 +285,68 @@ const SIZES = [
   ["scaleup",    "Scaleup",    "50\u2013250"],
   ["startup",    "Startup",    "10\u201350"],
 ];
-const VENTURE = new Set(["greenhouse", "lever", "ashby"]);
+const OPEN_THREE = new Set(["greenhouse", "lever", "ashby"]);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
-const cls = p => p < 35 ? "low" : (p < 70 ? "mid" : "");
-
-function bar(p) {
-  return `<div class="bar ${cls(p)}"><i style="width:${p}%"></i></div>`;
-}
+const rateCell = p => '<td class="rate' + (p < 35 ? " low" : "") + '">' + p + '%</td>';
 
 function render(cov) {
   const reached = cov.filter(c => c.ats);
   const missing = cov.filter(c => !c.ats);
+  const roles = reached.reduce((n, c) => n + (c.open_roles || 0), 0);
 
   document.getElementById("head").innerHTML = `
-    <table class="cov"><tbody>
-      <tr><td class="k">Employers tracked</td><td class="r">${cov.length}</td><td></td></tr>
-      <tr><td class="k">Reachable</td><td class="r">${reached.length}</td>
-          <td class="meter-cell">${bar(pct(reached.length, cov.length))}</td></tr>
-      <tr><td class="k">Unreachable</td><td class="r">${missing.length}</td>
-          <td class="r">${pct(missing.length, cov.length)}%</td></tr>
-      <tr><td class="k">Open roles visible</td>
-          <td class="r">${reached.reduce((n, c) => n + (c.open_roles || 0), 0).toLocaleString("en-GB")}</td><td></td></tr>
-    </tbody></table>`;
+    <div class="big">
+      <div><div class="v">${cov.length}</div><div class="t">Employers tracked</div></div>
+      <div class="got"><div class="v">${reached.length}</div><div class="t">Reachable</div></div>
+      <div class="miss"><div class="v">${missing.length}</div><div class="t">Invisible</div></div>
+      <div><div class="v">${pct(reached.length, cov.length)}%</div><div class="t">Coverage</div></div>
+      <div><div class="v">${roles.toLocaleString("en-GB")}</div><div class="t">Roles visible</div></div>
+    </div>`;
+
+  const rows = SIZES.map(([k, label, range]) => {
+    const all = cov.filter(c => c.size === k);
+    const got = all.filter(c => c.ats);
+    return { label, range, got: got.length, all: all.length, p: pct(got.length, all.length),
+             open: got.filter(c => OPEN_THREE.has(c.ats)).length };
+  }).filter(r => r.all);
 
   document.getElementById("bysize").innerHTML = `
     <table class="cov">
-      <thead><tr><th>Band</th><th>Size</th><th class="r">Reached</th><th class="r">Of</th>
-        <th class="r">Rate</th><th></th></tr></thead>
-      <tbody>${SIZES.map(([k, label, range]) => {
-        const all = cov.filter(c => c.size === k);
-        const got = all.filter(c => c.ats);
-        const p = pct(got.length, all.length);
-        return `<tr><td class="k">${label}</td><td>${range}</td>
-          <td class="r">${got.length}</td><td class="r">${all.length}</td>
-          <td class="r">${all.length ? p + "%" : "\u2014"}</td>
-          <td class="meter-cell">${all.length ? bar(p) : ""}</td></tr>`;
-      }).join("")}</tbody></table>`;
+      <thead><tr><th>Band</th><th>Headcount</th><th class="r">Reached</th>
+        <th class="r">Of</th><th class="r">Rate</th></tr></thead>
+      <tbody>${rows.map(r => `<tr>
+        <td class="k">${r.label}</td><td>${r.range}</td>
+        <td class="r">${r.got}</td><td class="r">${r.all}</td>${rateCell(r.p)}</tr>`).join("")}
+        <tr class="tot"><td class="k">All</td><td></td>
+          <td class="r">${reached.length}</td><td class="r">${cov.length}</td>
+          ${rateCell(pct(reached.length, cov.length))}</tr>
+      </tbody></table>`;
 
-  const rows = SIZES.map(([k, label]) => {
-    const got = cov.filter(c => c.size === k && c.ats);
-    const v = got.filter(c => VENTURE.has(c.ats)).length;
-    return { label, v, o: got.length - v, n: got.length, p: pct(v, got.length) };
-  }).filter(r => r.n);
+  const ent = rows.find(r => r.label === "Enterprise");
+  const lrg = rows.find(r => r.label === "Large");
+  document.getElementById("sizeread").textContent =
+    `Enterprise employers are reached ${ent.p}% of the time against ${lrg.p}% for large ones. `
+    + `The gap matters because the enterprise band is the biggest on the list and the one `
+    + `this search most wants.`;
 
   document.getElementById("byats").innerHTML = `
     <table class="cov">
-      <thead><tr><th>Band</th><th class="r">Via the open three</th><th class="r">Elsewhere</th>
-        <th class="r">Share</th><th></th></tr></thead>
-      <tbody>${rows.map(r => `<tr><td class="k">${r.label}</td>
-        <td class="r">${r.v}</td><td class="r">${r.o}</td><td class="r">${r.p}%</td>
-        <td class="meter-cell">${bar(r.p)}</td></tr>`).join("")}</tbody></table>`;
+      <thead><tr><th>Band</th><th class="r">Via Greenhouse, Lever or Ashby</th>
+        <th class="r">Via anything else</th><th class="r">Share</th></tr></thead>
+      <tbody>${rows.map(r => `<tr>
+        <td class="k">${r.label}</td>
+        <td class="r">${r.open}</td><td class="r">${r.got - r.open}</td>
+        ${rateCell(pct(r.open, r.got))}</tr>`).join("")}
+      </tbody></table>`;
 
-  const seq = rows.map(r => r.p + "%").join(", ");
-  const monotonic = rows.every((r, i) => i === 0 || r.p >= rows[i - 1].p);
-  document.getElementById("gradient").innerHTML =
-    `Reading down the bands: <strong>${seq}</strong>. ` + (monotonic
-      ? "Monotonic \u2014 the larger the employer, the less likely it is reachable through those three, so this method's reach runs opposite to the employers it targets."
-      : "Not monotonic on this run, so the relationship is weaker than the earlier reading suggested.");
+  const seq = rows.map(r => pct(r.open, r.got) + "%").join(", ");
+  const mono = rows.every((r, i) => i === 0 || pct(r.open, r.got) >= pct(rows[i-1].open, rows[i-1].got));
+  document.getElementById("atsread").textContent =
+    `Reading down the bands: ${seq}. ` + (mono
+      ? "The larger the employer, the less likely it is reachable through the three open endpoints this was built on. Those three are the tooling of venture-funded technology companies; incumbents buy an HR suite that publishes nothing. So the method's reach runs opposite to the employers it targets."
+      : "Not monotonic on this run, so the relationship is weaker than earlier readings suggested.");
 
   document.getElementById("missing").innerHTML = SIZES.map(([k, label]) => {
     const list = missing.filter(c => c.size === k)
@@ -328,8 +365,8 @@ fetch("data/jobs.json", { cache: "no-store" })
     if (!Array.isArray(cov) || !cov.length) {
       document.querySelector("main").innerHTML =
         `<div class="rel"><div class="empty"><strong>No coverage data in the current feed.</strong>
-         This page reads a block the collector began publishing in v0.4.2, so it fills in
-         after the next scheduled collection. Nothing is broken.</div></div>`;
+         This page reads a block the collector began publishing in v0.4.2, so it fills in after
+         the next scheduled collection. Nothing is broken.</div></div>`;
       return;
     }
     render(cov);

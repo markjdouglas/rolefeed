@@ -179,23 +179,52 @@
   }
   .bar-wrap {
     max-width: var(--max); margin: 0 auto; padding: 7px var(--gutter);
-    min-height: 54px;
+    min-height: 60px;
     display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
   .nav { margin-left: auto; flex: 0 0 auto; }
-  .bar-wrap .build { margin-left: 14px; flex: 0 0 auto; display: flex; align-items: center; gap: 9px; }
-  .alpha, .ver { display: inline-flex; align-items: center; height: 20px; }
   @media (max-width: 860px) { .bar-wrap { flex-wrap: wrap; } .nav { margin-left: 0; } }
   .ver { font-size: 12px; font-variant-numeric: tabular-nums; }
   /* The feed puts its pixel lockup here. These pages use a text mark in the same
      slot at the same height, which is what keeps the nav on identical pixels across
      all four pages — the bar's height is fixed, so what sits to the left of the nav
      can differ without moving it. */
-  .brandlink {
-    font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--cream); text-decoration: none; flex: 0 0 auto;
+  /* The same artwork as the feed, from one shared file, in a slot of the same fixed
+     width — so the tabs sit on identical pixels on all four pages and the logo is the
+     home button everywhere. */
+  :root { --brand-w: 220px; }
+  .brand { flex: 0 0 var(--brand-w); display: flex; align-items: center; text-decoration: none; }
+  .brand img { height: 46px; width: auto; image-rendering: pixelated; display: block; }
+  .bar-wrap .build {
+    margin-left: 14px; flex: 0 0 116px;
+    display: flex; align-items: center; justify-content: flex-end; gap: 8px;
   }
-  .brandlink:hover { text-decoration: none; color: var(--purple-bright); }
+  .alpha, .ver {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 22px; box-sizing: border-box;
+  }
+  .alpha { padding: 0 8px; box-shadow: 2px 2px 0 var(--shadow); }
+  .ver { min-width: 46px; border-bottom: 0; color: var(--cream-dim); }
+
+  .verdict {
+    background: rgba(255, 106, 61, 0.09);
+    border: 1px solid var(--hot);
+    border-left: 4px solid var(--hot);
+    box-shadow: 4px 4px 0 var(--shadow);
+    padding: 15px 17px; margin-bottom: 20px;
+  }
+  .verdict .k {
+    font-size: 10px; font-weight: 750; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--hot); display: block; margin-bottom: 7px;
+  }
+  .verdict p { color: var(--cream); font-size: 15.5px; margin: 0 0 9px; max-width: 74ch; }
+  .verdict p:last-child { margin-bottom: 0; }
+  table.risks td:nth-child(2) { width: auto; text-align: left; padding-left: 14px; font-weight: 400; color: var(--cream-dim); }
+  table.risks td:nth-child(3) { width: 6.5em; text-align: right; font-weight: 700; font-size: 12px; }
+  table.risks td.pass { color: var(--green); }
+  table.risks td.fail { color: var(--hot); }
+  .src { font-size: 12px; color: var(--muted); margin-top: 11px; }
+  .src a { color: var(--muted); border-bottom: 1px dotted var(--border-bright); }
 </style>
 
 </head>
@@ -203,7 +232,7 @@
 
 <div class="topbar">
   <div class="bar-wrap">
-    <a class="brandlink" href="index.html">RoleFeed</a>
+    <a class="brand" href="index.html" aria-label="RoleFeed — home"><img src="brand/lockup.svg" alt="RoleFeed"></a>
     <nav class="nav" aria-label="Pages">
       <a class="tab" href="index.html">Feed</a>
       <a class="tab" href="coverage.html">Coverage</a>
@@ -212,7 +241,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.2</a>
+      <a class="ver" href="changelog.html">v0.4.3</a>
     </span>
   </div>
 </div>
@@ -225,46 +254,98 @@
 
 <main class="wrap">
 
-  <div class="rel lede current">
-    <h2>Summary</h2>
-    <p>RoleFeed polls 62 employers' recruitment systems every two hours and filters for
-    senior operations roles in transport, logistics, mobility and aviation. The mechanism
-    works: around 5,500 live postings, real publication dates, no scraping, nothing to run and
-    nothing to pay. The outcome does not yet: seven roles cleared the filter. The cause is
-    structural rather than a tuning problem, and the next test costs a day.</p>
-    <p>Built in roughly five scoped hours, deployed and collecting unattended since, at
-    &pound;0 a month on free tiers throughout.</p>
+  <div class="verdict">
+    <span class="k">Decision &middot; 21 September 2026</span>
+    <p><strong>Stop.</strong> The hypothesis was tested and is not supported. In its
+    current form RoleFeed is not an effective way to find a role, and it is not superior
+    to LinkedIn on any dimension that decides the outcome.</p>
+    <p>It works as engineering and fails as a product. Seven roles cleared the filter
+    from 211 tracked employers, and every one of the seven was already visible on
+    LinkedIn. Development as a job-search tool stops here. Two uses survive, both
+    narrow, and they are set out below.</p>
   </div>
 
   <div class="rel">
     <h2><span class="n">01</span> Problem</h2>
-    <p>Job boards optimise for the board. Aggregators are slow, duplicated and padded with
-    roles already weeks old, and their filters are too blunt to express a specific search:
-    senior operations, transport and mobility, UK or a workable time zone, above a
-    seniority floor that shifts with company size.</p>
-    <p>Freshness matters most. Applications land better inside the first 48 hours, before
-    a posting has several hundred applicants. Most tools cannot tell you a posting's age
-    with confidence, so they cannot help you act on it.</p>
+    <p>Finding a senior operations role in transport and logistics means checking five
+    sites daily, each returning the same padded results, with filters too blunt to
+    express the actual search: senior operations, transport and mobility, UK or a
+    workable time zone, above a seniority floor that moves with company size.</p>
+    <p>The sharper problem was timing. The working belief was that applications land
+    better inside the first 48 hours, before a posting accumulates several hundred
+    applicants, and that most tools cannot tell you a posting's age with any confidence
+    &mdash; so they cannot help you act on it.</p>
+    <h3>Who it was for</h3>
+    <p>One user. No second user was ever contemplated, which is worth stating because it
+    removes every network effect from the design space and, as it turns out, decides the
+    outcome.</p>
   </div>
 
   <div class="rel">
-    <h2><span class="n">02</span> Approach</h2>
-    <p>Employers publish vacancies through applicant tracking systems, and several of those
-    expose an open, keyless JSON endpoint that the employer's own careers page consumes.
-    Poll a curated list of employers directly and the result is fresher and cleaner than
-    anything downstream of it. Every two hours a scheduled job collects, filters, merges
-    with the previous run so first-seen dates survive, and commits one JSON snapshot. That
-    commit rebuilds a static page.</p>
-    <h3>The constraint that shapes everything</h3>
+    <h2><span class="n">02</span> Goals and non-goals</h2>
+    <h3>Goals</h3>
+    <ul>
+      <li>Surface roles worth applying for that would not otherwise have been seen.</li>
+      <li>Know a posting's true age, so the 48-hour window can be acted on.</li>
+      <li>Learn how the parts fit together &mdash; APIs, git, CI, deployment &mdash; by
+        building and shipping something real.</li>
+    </ul>
+    <h3>Non-goals</h3>
+    <ul>
+      <li>Scraping anything, or any paid aggregator.</li>
+      <li>Automated applications. It surfaces; applying stays manual.</li>
+      <li>A second user, an account system, or anything resembling a marketplace.</li>
+      <li>A framework or a build step. One static file, deployed as assets.</li>
+    </ul>
+  </div>
+
+  <div class="rel">
+    <h2><span class="n">03</span> Success criteria</h2>
+    <p>Set before building, which is the only time they mean anything:</p>
+    <table class="funnel">
+      <tr><td>Five roles worth applying for, not seen elsewhere</td><td class="no">No</td><td>Seven matched, all already on LinkedIn</td></tr>
+      <tr><td>A new posting visible within two hours</td><td class="yes">Yes</td><td>Two-hour cycle, 14 unattended runs</td></tr>
+      <tr><td>Running cost of zero</td><td class="yes">Yes</td><td>&pound;0/month, free tiers throughout</td></tr>
+      <tr class="last"><td>Every component explicable and changeable by its author</td><td class="yes">Yes</td><td>Roughly five hours of build</td></tr>
+    </table>
+    <p>Three of four met. The first is the one the product existed for.</p>
+  </div>
+
+  <div class="rel">
+    <h2><span class="n">04</span> Hypotheses, against the four product risks</h2>
+    <p>Marty Cagan's framing, because it separates "can we build it" from "should we"
+    &mdash; a distinction this project needed and did not apply.</p>
+    <table class="funnel risks">
+      <tr><td>Feasibility</td><td>Can it be built with the time, skills and technology available?</td><td class="pass">Passed</td></tr>
+      <tr><td>Viability</td><td>Does it work for the business &mdash; cost, effort, upkeep?</td><td class="pass">Passed</td></tr>
+      <tr><td>Usability</td><td>Can the user work out how to use it?</td><td class="pass">Passed</td></tr>
+      <tr class="last"><td>Value</td><td>Will anyone choose it over what they already have?</td><td class="fail">Failed</td></tr>
+    </table>
+    <p><strong>Cagan's instruction is to test value and viability risk first.</strong> I
+    tested feasibility first, because building six applicant-tracking-system adapters
+    was the interesting problem. I established that I <em>could</em> build it before
+    asking whether it was worth building. That is the standard builder's error, it cost
+    about five hours here, and at organisational scale it is how a quarter disappears.</p>
+    <p class="src">Risk definitions from
+      <a href="https://www.svpg.com/four-big-risks/">Silicon Valley Product Group, "The Four Big Risks"</a>.</p>
+  </div>
+
+  <div class="rel">
+    <h2><span class="n">05</span> Method</h2>
+    <p>Employers publish vacancies through applicant tracking systems, and several of
+    those expose an open, keyless JSON endpoint that the employer's own careers page
+    consumes. A curated employer list is polled every two hours; results are filtered on
+    geography and seniority, merged with the previous run so first-seen dates survive,
+    and written as one static JSON file that a static page renders.</p>
+    <h3>The constraint that shaped everything</h3>
     <p>No applicant tracking system offers search. Every endpoint is scoped to one
-    employer, so there is no query to write and nothing to crawl &mdash; you can only ask a
-    named employer what it has open. The code is commodity; the <strong>curated employer
-    list is the product</strong>, and coverage is bounded precisely by who is on it.</p>
+    employer, so there is no query to write and nothing to crawl &mdash; you can only ask
+    a named employer what it currently has open. The code is commodity; the curated list
+    is the product, and coverage is bounded by who is on it.</p>
   </div>
 
   <div class="rel">
-    <h2><span class="n">03</span> Evidence</h2>
-    <h3>The funnel</h3>
+    <h2><span class="n">06</span> Results</h2>
     <table class="funnel">
       <tr><td>Employers on the list</td><td>211</td><td></td></tr>
       <tr><td>Reachable at all</td><td>62</td><td>29%</td></tr>
@@ -272,14 +353,7 @@
       <tr><td>Passed geography</td><td>564</td><td>10%</td></tr>
       <tr class="last"><td>Passed title and seniority</td><td>7</td><td>0.13%</td></tr>
     </table>
-    <p class="caveat">Supply rose from 3,698 to 5,540 on one bug fix: SmartRecruiters
-    caps a response at 100 postings and the adapter never asked for a second page, so
-    Sixt, Delivery Hero and Grab were truncated at exactly 100 each. They return roughly
-    510, 990 and 420. The geography rate held at 10% across both corpora, which is
-    reassuring &mdash; a filter whose pass rate moves when the input grows is usually
-    measuring the input rather than the criterion.</p>
-
-    <h3>Reachability is not evenly distributed</h3>
+    <h3>Coverage fails hardest where it matters most</h3>
     <table class="funnel">
       <tr><td>Enterprise (5,000+)</td><td>13 / 60</td><td>22%</td></tr>
       <tr><td>Large (1,000&ndash;5,000)</td><td>20 / 39</td><td>51%</td></tr>
@@ -290,98 +364,116 @@
     <p>Every large UK transport incumbent misses: the airlines, Heathrow, Gatwick,
     Manchester Airports Group, Royal Mail, Evri, DHL, FedEx, UPS, the freight forwarders,
     Network Rail, Transport for London, FirstGroup, Stagecoach, Arriva.</p>
+    <h3>Why, and it is structural</h3>
+    <p>Splitting the 62 reachable employers by the kind of system they were reached
+    through gives a monotonic gradient: 31% of enterprise employers came via Greenhouse,
+    Lever or Ashby, against 80% of large, 89% of mid, 89% of scaleup and 100% of startup.
+    Those three are the tooling of venture-funded technology companies. Incumbents buy an
+    HR suite &mdash; SuccessFactors, Taleo, iCIMS &mdash; that publishes nothing.</p>
+    <p><strong>So the method's reach is inversely correlated with the employers it is
+    aimed at.</strong> Lengthening the list cannot fix that: going from 169 employers to
+    211 moved reachability seven points and left the shape untouched, because a longer
+    list adds reachable and unreachable employers in the same proportion.</p>
+  </div>
 
-    <h3>Why: system choice tracks company size</h3>
-    <p>Share of reachable employers arrived at through Greenhouse, Lever or Ashby &mdash;
-    the three the project was originally built on:</p>
-    <table class="funnel claims">
-      <tr><td>Enterprise</td><td class="no">31%</td><td>4 of 13</td></tr>
-      <tr><td>Large</td><td class="part">80%</td><td>16 of 20</td></tr>
-      <tr><td>Mid</td><td class="yes">89%</td><td>16 of 18</td></tr>
-      <tr><td>Scaleup</td><td class="yes">89%</td><td>8 of 9</td></tr>
-      <tr class="last"><td>Startup</td><td class="yes">100%</td><td>2 of 2</td></tr>
-    </table>
-    <p>A monotonic gradient across five buckets. Those three systems are the tooling of
-    venture-funded technology companies; incumbents buy an HR suite that publishes nothing.
-    Every enterprise employer recovered came through SmartRecruiters or Teamtailor &mdash;
-    GXO, Maersk, Geodis, Europcar, Sixt, Avis, Mobico, Delivery Hero, Grab. None came
-    through Greenhouse.</p>
-    <p><strong>So reach is inversely correlated with the target market.</strong> Going from
-    169 employers to 211 moved the rate seven points and left the shape untouched, because
-    a longer list adds reachable and unreachable employers in the same proportion.</p>
+  <div class="rel">
+    <h2><span class="n">07</span> Benchmark: why LinkedIn wins</h2>
+    <p>This was never benchmarked before building, which is the second process error.
+    LinkedIn had <strong>1.3 billion registered members</strong> as of March 2026, 1.4
+    billion monthly visits, and <strong>$17.8 billion of revenue</strong> in 2025 &mdash;
+    and the material fact is where the revenue comes from: selling access to member data
+    to recruiters. LinkedIn is not a job board. It is a candidate graph sold to the
+    demand side. Five consequences, each fatal on its own.</p>
+    <ul>
+      <li><strong>Coverage runs the wrong way.</strong> RoleFeed reaches 62 of 211
+        employers it chose, bounded by which HR system each bought years ago. Employers
+        <em>push</em> to LinkedIn because it is a distribution channel they pay for. One
+        ceiling is structural; the other does not exist.</li>
+      <li><strong>It is two-sided and this is not.</strong> For a director-level role most
+        of the value is inbound &mdash; being found by a recruiter searching the graph.
+        RoleFeed is a read-only window. It cannot make its user visible to anyone.</li>
+      <li><strong>The roles most wanted are disproportionately unadvertised.</strong>
+        Senior operations posts are filled through recruiters and referrals, which is a
+        social-graph problem. LinkedIn is a social graph. RoleFeed has none and cannot
+        acquire one.</li>
+      <li><strong>Freshness was the differentiator and it is not one.</strong> The bet was
+        a two-hour collection cycle. LinkedIn timestamps postings, sorts by recency and
+        offers one-click apply. Two hours of latency plus a manual application is slower
+        end to end than the thing being beaten.</li>
+      <li><strong>Matching.</strong> Behavioural data across 1.3 billion profiles against
+        regular expressions tuned by hand &mdash; which have produced three
+        classification defects in two days.</li>
+    </ul>
+    <h3>What RoleFeed does do better, stated narrowly</h3>
+    <p>Determinism and auditability. Every role shows which rule matched it, there is no
+    ranking algorithm, no promoted posts and no engagement optimisation, and the coverage
+    page states exactly which employers were <em>not</em> considered. LinkedIn cannot tell
+    you what it chose not to show you. That is a genuine property and it is worth
+    something in a compliance or sourcing context. It does not survive a threefold
+    coverage gap and the absence of a demand side.</p>
+    <p class="src">Figures from
+      <a href="https://en.wikipedia.org/wiki/LinkedIn">Wikipedia, "LinkedIn"</a>, March 2026 and FY2025.</p>
   </div>
 
   <div class="rel current">
-    <h2><span class="n">04</span> What the evidence means</h2>
-    <p>The design treated the <em>employer</em> as the unit of coverage, so the obvious
-    lever was a longer list. The unit of coverage is actually the publishing surface the
-    employer sits behind &mdash; decided years ago by someone not thinking about job
-    seekers. So the claim worth testing is not about employers:</p>
-    <p class="claim"><strong>Any employer that publishes vacancies in machine-readable form
-    on the open web can be collected. The applicant tracking system API is one such
-    surface, and it is the smallest one.</strong></p>
-    <p>Teamtailor is the evidence. It was written off as closed without being probed, then
-    turned out to publish an open feed with a full schema.org job posting &mdash; the best
-    data quality of the six adapters &mdash; and on its own moved enterprise reachability
-    from 15% to 22%. Adding an adapter is a day's work with a proven method. Careers-page
-    structured data is the second surface and a larger one, but more work per employer, so
-    it comes second, not first.</p>
-    <h3>The stopping rule</h3>
-    <p>Probe eight more candidate systems, weighted to the UK and enterprise market:
-    Workable, Personio, Pinpoint, Applied, Eploy, Jobtrain, Tribepad, Hireserve. If
-    enterprise reachability does not clear 40%, the ceiling is real, the addressable market
-    for this method is venture-backed technology companies, and the honest conclusion is a
-    well-built tool pointed at the wrong segment. That is a day's work to find out rather
-    than a month's.</p>
-  </div>
-
-  <div class="rel">
-    <h2><span class="n">05</span> Roadmap</h2>
-    <h3>Under consideration, in dependency order</h3>
+    <h2><span class="n">08</span> Decision and what survives</h2>
+    <p>Persevere, pivot or stop: <strong>stop</strong>, as a job-search tool. The search
+    itself runs through recruiters and LinkedIn, which is where the roles and the people
+    who fill them actually are. Two things survive.</p>
     <ul>
-      <li><strong>Authentication.</strong> Access is URL-only, which is obscurity. It also
-        gates everything below, because both items need state tied to an identity rather
-        than to one browser.</li>
-      <li><strong>Score a role up or down, feeding back into the search.</strong> With no
-        endpoint offering search, a signal cannot change a query &mdash; there is none. It
-        can widen the employer list, by treating an accepted role as evidence about a
-        sector and size band, and tune the title rules, by showing which patterns yield
-        accepted roles. At a few dozen judgements it is decision support, not a model.</li>
-      <li><strong>Application tracking.</strong> Whether a role was applied for, and when.
-        Cheap once state is server-side, and it makes the 48-hour thesis testable rather
-        than assumed.</li>
+      <li><strong>A coverage instrument.</strong> The one thing RoleFeed does that nothing
+        else does is name the 149 employers whose hiring is invisible to it. That is a
+        genuinely useful list and no job board will ever produce it, because no job board
+        has a reason to tell you what it cannot see.</li>
+      <li><strong>A demonstration of method.</strong> A working pipeline, a measured
+        funnel, a falsified hypothesis and a documented stop decision, built in about
+        five hours at no cost.</li>
     </ul>
-    <p>Both of the latter need durable shared state; shortlists currently live in one
-    browser and do not reach a phone. <strong>Against this order</strong>: a scoring signal
-    learned from a sample this biased would optimise towards American technology startups.
-    Fix the input first &mdash; more adapters, then the Workday employers, then structured
-    data for whatever is left.</p>
+    <h3>The pivot worth testing, if any</h3>
+    <p>Invert it. Stop hunting roles and use the unreachable list to find employers whose
+    hiring is invisible, then approach them directly &mdash; a weakness turned into a
+    targeting list, on the argument that an employer no aggregator can see is an employer
+    with less applicant competition. That is a different product with a different
+    hypothesis, and it should be tested on a spreadsheet before anything is built.</p>
   </div>
 
   <div class="rel">
-    <h2><span class="n">06</span> Limits and non-goals</h2>
+    <h2><span class="n">09</span> What I would do differently</h2>
     <ul>
-      <li><strong>Enterprise coverage is capped</strong> by SuccessFactors, Taleo and
-        iCIMS, none of which expose a usable endpoint. Workday is the one covered, and each
-        employer must be hand-configured.</li>
-      <li><strong>Dates are only as good as the source.</strong> Four adapters return a real
-        publication date. Greenhouse returns a last-updated timestamp that moves on any
-        edit, so those roles fall back to when RoleFeed first saw them.</li>
-      <li><strong>Undocumented endpoints break silently.</strong> A drop to zero roles is
-        treated as suspected breakage, not an empty board.</li>
-      <li><strong>Not a scraper.</strong> Where there is no legitimate route &mdash; British
-        Airways publishes no feed and disallows its search path &mdash; the employer is
-        recorded as uncovered rather than worked around.</li>
-      <li><strong>Not a job board, not an auto-applier, not a framework project.</strong>
-        One user, manual applications, one hand-written static file with no build step.</li>
+      <li><strong>Test value first, with no code.</strong> An afternoon checking twenty
+        employers' careers pages by hand would have produced the same seven roles and the
+        same conclusion, without six adapters.</li>
+      <li><strong>Benchmark before building.</strong> "What does LinkedIn already give me
+        here?" is a five-minute question that would have reframed the whole project, and I
+        asked it after the build rather than before.</li>
+      <li><strong>Write the success metric before the first line of code.</strong> "Five
+        roles worth applying for" was set honestly but retrospectively, and a metric
+        defined after the fact cannot kill anything.</li>
+      <li><strong>Separate the learning goal from the utility goal.</strong> Both were
+        real. Conflating them let a failing product feel like a succeeding one, because
+        the learning was going extremely well the whole time. That is the most
+        transferable mistake here, and the easiest one to repeat with a team.</li>
+    </ul>
+  </div>
+
+  <div class="rel">
+    <h2><span class="n">10</span> Open questions</h2>
+    <ul>
+      <li>Would probing eight further systems &mdash; Workable, Personio, Pinpoint,
+        Applied, Eploy, Jobtrain, Tribepad, Hireserve &mdash; clear 40% enterprise
+        reachability? A day's work, and the only remaining test of the original
+        hypothesis.</li>
+      <li>Does the unreachable list have value on its own as a targeting list?</li>
+      <li>Is auditability worth anything to anyone other than its author?</li>
     </ul>
   </div>
 
 </main>
 
 <footer class="wrap">
-  Built to learn how the parts fit together as much as to use it. Three of four success
-  criteria are met; the first &mdash; surfacing roles worth applying for &mdash; is not yet.
+  A tool that answered its own question in the negative, which is the cheapest useful
+  outcome available. Changes are in the version history; what cannot be seen is on the
+  coverage page.
 </footer>
 
 </body>
