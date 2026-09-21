@@ -177,6 +177,14 @@
       <li>Product brief and version history widened to the feed's 1,180px column, with the same gutters.</li>
       <li>Product brief cut by roughly 40%; heading sizes made hierarchical.</li>
       <li>Banner pluralisation fixed &mdash; &ldquo;1 employers unavailable&rdquo;.</li>
+      <li>Fixed a duplicated line in the publish loop that appended every role to the
+        feed twice. 1,128 published roles were 564 real ones. It threw no error and the
+        totals looked plausible, which is why it survived a run.</li>
+      <li>The geography verdict is now stored on each role. It was computed and
+        discarded, so every role shipped with no location classification and the page
+        could not distinguish a UK role from &ldquo;remote, region unstated&rdquo;.</li>
+      <li>SmartRecruiters paging verified in production: Sixt 100 to 507 roles, Delivery
+        Hero 100 to 989, Grab 100 to 424. Total supply 3,698 to 5,540.</li>
     </ul>
   </div>
 

@@ -403,6 +403,10 @@ def main() -> int:
         ok, reason = location_verdict(posting["location"])
         if not ok:
             continue
+        # Keep the verdict, not just the pass/fail. "UK" and "remote, region unstated"
+        # are both accepts, but they are not the same claim, and the difference is what
+        # the page shows and what the reason line explains.
+        posting["geo"] = reason
         tier = title_tier(posting["title"])
         if tier is None:
             posting["tier"] = None
@@ -412,7 +416,6 @@ def main() -> int:
             # "Priority" is the shortlist-worthy set: leadership scope, not every
             # operations role. Mid-tier stays in the feed and gets its own filter.
             posting["priority"] = tier in ("exec", "director")
-        in_scope.append(posting)
         in_scope.append(posting)
 
     published = in_scope
