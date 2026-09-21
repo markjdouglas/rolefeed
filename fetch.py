@@ -349,7 +349,31 @@ def main() -> int:
         return 1
 
     companies = config.get("companies", [])
-    employers_total = len(companies) + len(config.get("unresolved", []))
+    unresolved = config.get("unresolved", [])
+    employers_total = len(companies) + len(unresolved)
+
+    # Build the coverage record before any --size or --sector filter narrows the run,
+    # so the published picture is always the whole employer list rather than whatever
+    # slice this invocation happened to ask for.
+    coverage = [
+        {
+            "name": c.get("name"),
+            "size": c.get("size"),
+            "sector": c.get("sector"),
+            "ats": c.get("ats"),
+            "open_roles": c.get("open_roles", 0),
+        }
+        for c in companies
+    ] + [
+        {
+            "name": c.get("name"),
+            "size": c.get("size"),
+            "sector": c.get("sector"),
+            "ats": None,
+            "open_roles": 0,
+        }
+        for c in unresolved
+    ]
     if args.size:
         companies = [c for c in companies if c.get("size") == args.size]
     if args.sector:
@@ -428,7 +452,8 @@ def main() -> int:
     counts = {b: sum(1 for p in results if p.get("size") == b) for b in SIZE_ORDER}
     print("By size: " + ", ".join(f"{b} {n}" for b, n in counts.items() if n))
     if failures:
-        print(f"\n{len(failures)} employers unavailable: {', '.join(failures[:10])}")
+        word = "employer" if len(failures) == 1 else "employers"
+        print(f"\n{len(failures)} {word} unavailable: {', '.join(failures[:10])}")
         if len(failures) > 10:
             print(f"  ...and {len(failures) - 10} more")
 
@@ -443,6 +468,7 @@ def main() -> int:
             employers_total=employers_total,
             failures=failures,
             total_roles_seen=len(unique),
+            coverage=coverage,
         )
         priority_total = sum(1 for j in jobs if j.get("priority"))
         print(
