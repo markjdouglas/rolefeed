@@ -114,6 +114,11 @@ TITLE_EXCLUDE = re.compile(
       | marketing | recruit(er|ment) | talent\s+(acquisition|partner)
       | people\s+operations | hr\b | finance\s+(manager|director|lead)
       | sales\s+operations | revenue\s+operations | marketing\s+operations
+      # These only ever matched when followed by manager/director/lead, so
+      # "Finance Operations Lead" passed the domain test on the word
+      # "operations" and was then caught by the mid tier. Same shape as the
+      # sales/people/revenue cases above, which were already handled.
+      | (finance|financial|legal|payroll|procurement|talent|hr)\s+operations
       | warehouse\s+(operative|associate) | picker | packer
       # Courier, rider and driver are the jobs being managed — unless the title is
       # about managing them, which the lookahead allows through.
@@ -403,10 +408,6 @@ def main() -> int:
         ok, reason = location_verdict(posting["location"])
         if not ok:
             continue
-        # Keep the verdict, not just the pass/fail. "UK" and "remote, region unstated"
-        # are both accepts, but they are not the same claim, and the difference is what
-        # the page shows and what the reason line explains.
-        posting["geo"] = reason
         tier = title_tier(posting["title"])
         if tier is None:
             posting["tier"] = None
@@ -416,6 +417,7 @@ def main() -> int:
             # "Priority" is the shortlist-worthy set: leadership scope, not every
             # operations role. Mid-tier stays in the feed and gets its own filter.
             posting["priority"] = tier in ("exec", "director")
+        in_scope.append(posting)
         in_scope.append(posting)
 
     published = in_scope

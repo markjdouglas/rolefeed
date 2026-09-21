@@ -19,6 +19,7 @@
     --shadow: #0c0919; --bevel: rgba(244,237,223,.09);
     --tile: rgba(244,237,223,.045);
     --max: 1180px; --gutter: 16px;
+    --control-h: 34px; --control-px: 12px; --control-fs: 12.5px;
   }
   * { box-sizing: border-box; }
   html {
@@ -53,9 +54,14 @@
      so it moved down and left when you changed page. Navigation that moves is
      navigation you have to re-find.
      -------------------------------------------------------------------------- */
-  .topbar { background: var(--surface); border-bottom: 2px solid var(--rule); }
+  .topbar {
+    background: var(--surface);
+    border-top: 3px solid var(--gold);
+    border-bottom: 1px solid var(--border);
+  }
   .bar-wrap {
-    max-width: 1180px; margin: 0 auto; padding: 11px 16px;
+    max-width: var(--max); margin: 0 auto; padding: 7px var(--gutter);
+    min-height: 54px;
     display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
   }
   .bar-wrap .build { margin-left: auto; display: flex; align-items: center; gap: 9px; }
@@ -63,20 +69,17 @@
   .nav { display: flex; gap: 8px; flex-wrap: wrap; margin: 15px 0 0; }
   .tab {
     display: inline-flex; align-items: center; gap: 7px;
-    min-height: 36px; padding: 0 13px;
+    min-height: var(--control-h); padding: 0 var(--control-px);
     background: var(--surface-2); color: var(--cream-dim);
-    border: 2px solid var(--border-bright);
-    box-shadow: 3px 3px 0 var(--shadow), inset 1px 1px 0 var(--bevel);
+    border: 1px solid var(--border-bright);
+    box-shadow: 2px 2px 0 var(--shadow);
     font-size: 11px; font-weight: 700; letter-spacing: .12em;
     text-transform: uppercase; text-decoration: none;
     touch-action: manipulation; cursor: pointer;
   }
   .tab::before { content: "\25B8"; color: var(--gold); font-size: 9px; }
   .tab:hover { color: var(--cream); border-color: var(--cream-dim); }
-  .tab:active {
-    transform: translate(3px, 3px);
-    box-shadow: 0 0 0 var(--shadow), inset 1px 1px 0 var(--bevel);
-  }
+  .tab:active { transform: translate(2px, 2px); box-shadow: none; }
   .tab.on { background: var(--cream); color: #292827; border-color: var(--cream); }
   .tab.on::before { color: #8a6a1f; }
   .tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
@@ -89,7 +92,7 @@
   a { color: var(--purple-bright); text-decoration: none; }
   a:hover { text-decoration: underline; }
 
-  header { border-top: 3px solid var(--gold); border-bottom: 2px solid var(--rule); padding: 22px 0; }
+  header { border-bottom: 1px solid var(--rule); padding: 16px 0; }
   .top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   h1 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
   .alpha {
@@ -140,12 +143,22 @@
   .rel h2 { font-size: 19px; font-weight: 700; letter-spacing: -0.015em; }
   header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
   .rel ul { max-width: 78ch; }
+  /* The feed puts its pixel lockup here. These pages use a text mark in the same
+     slot at the same height, which is what keeps the nav on identical pixels across
+     all four pages — the bar's height is fixed, so what sits to the left of the nav
+     can differ without moving it. */
+  .brandlink {
+    font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--cream); text-decoration: none; flex: 0 0 auto;
+  }
+  .brandlink:hover { text-decoration: none; color: var(--purple-bright); }
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="bar-wrap">
+    <a class="brandlink" href="index.html">RoleFeed</a>
     <nav class="nav" aria-label="Pages">
       <a class="tab" href="index.html">Feed</a>
       <a class="tab" href="coverage.html">Coverage</a>
@@ -177,14 +190,37 @@
       <li>Product brief and version history widened to the feed's 1,180px column, with the same gutters.</li>
       <li>Product brief cut by roughly 40%; heading sizes made hierarchical.</li>
       <li>Banner pluralisation fixed &mdash; &ldquo;1 employers unavailable&rdquo;.</li>
+      <li><strong>Header compacted.</strong> The brand lockup moved into the top bar, so
+        three stacked bands became one. Pixel scale halved from 2.6 to 1.6, header
+        padding 22px to 10px, meter 7px to 4px.</li>
+      <li><strong>Nine stat cards became one 34px strip</strong> &mdash; values beside
+        labels rather than above them. The cards cost about 130 vertical pixels and
+        pushed the first role below the fold on a 13-inch screen.</li>
+      <li><strong>One control height, padding and type size</strong> for tabs, selects,
+        sort and toggles. They had been 36px, 38px and 34px, with 2px, 0 and 2px
+        shadows and two border widths, sitting on the same rows.</li>
+      <li>Search, selects, sort and toggles share one wrapping row above 640px, down
+        from three rows.</li>
+      <li>A single 2px boundary now separates the controls from the content, replacing
+        four weak separators that read as drift.</li>
+      <li><strong>&ldquo;Matched only&rdquo; restored as the default.</strong> Turning it
+        off to make the funnel visible was the wrong fix &mdash; the feed opened on a
+        data-science role. The funnel belongs in the stats strip, which is where it now
+        is.</li>
+      <li><strong>Title exclusions extended</strong> to finance, financial, legal,
+        payroll, procurement, talent and HR operations. Those were only excluded when
+        followed by manager, director or lead, so &ldquo;Finance Operations Lead&rdquo;
+        passed the domain test on the word &ldquo;operations&rdquo; and was caught by
+        the mid-senior tier. Verified against 17 titles.</li>
       <li>Fixed a duplicated line in the publish loop that appended every role to the
         feed twice. 1,128 published roles were 564 real ones. It threw no error and the
         totals looked plausible, which is why it survived a run.</li>
       <li>The geography verdict is now stored on each role. It was computed and
         discarded, so every role shipped with no location classification and the page
         could not distinguish a UK role from &ldquo;remote, region unstated&rdquo;.</li>
-      <li>SmartRecruiters paging verified in production: Sixt 100 to 507 roles, Delivery
-        Hero 100 to 989, Grab 100 to 424. Total supply 3,698 to 5,540.</li>
+      <li>SmartRecruiters paging verified in production: Sixt 100 to about 510 roles,
+        Delivery Hero 100 to about 990, Grab 100 to about 420. Total supply 3,698 to
+        about 5,500.</li>
     </ul>
   </div>
 
