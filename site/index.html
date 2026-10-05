@@ -290,8 +290,9 @@
     font-size: 10px;
     font-weight: 750;
     letter-spacing: 0.14em;
-    padding: 3px 7px;
-    box-shadow: 3px 3px 0 var(--shadow);
+    /* Padding and shadow are set once, above, by the shared .alpha/.ver rule. This block
+       is older and sits after it, which is why this badge rendered 2px narrower than the
+       same badge on every other page. */
   }
   .ver {
     font-size: 11px;

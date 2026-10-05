@@ -98,7 +98,11 @@
   h1 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
   .alpha {
     background: var(--hot); color: #1a1533; font-size: 10px; font-weight: 750;
-    letter-spacing: .14em; padding: 3px 7px; box-shadow: 3px 3px 0 var(--shadow);
+    letter-spacing: .14em;
+    /* Padding and shadow are set once, below, by the shared .alpha/.ver rule. Declaring
+       them here as well is how the feed's badge ended up 2px narrower than every other
+       page's: an identical stale block, but sitting after the override instead of
+       before it. */
   }
   .back { margin-left: auto; font-size: 13px; }
 
@@ -329,7 +333,8 @@
         times <em>across multiple runner configurations</em>, under investigation since
         19:11. That is the same minute the first run here was cancelled, so this project hit
         the leading edge of the incident rather than a known one. Nothing to fix on this
-        side. Next scheduled collection is due at 20:55.</span></li>
+        side. The next collection is scheduled for 20:37 and, on the queue delay measured over
+        the past fortnight, would start between 20:51 and 20:59.</span></li>
       <li><time>20:02</time><span><b>Recovery attempt failed.</b> Run 37365567052 was
         cancelled after 15m 05s with the same annotation, having run on
         <code>ubuntu-24.04</code> rather than <code>ubuntu-latest</code>. Two different
@@ -424,7 +429,7 @@ const el = id => document.getElementById(id);
 
 function fmt(iso) {
   const d = new Date(iso);
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
 }
 
 function paint(runs) {
@@ -454,8 +459,12 @@ function paint(runs) {
   const good = latest.conclusion === "success";
   const b = el("banner");
   b.className = good ? "banner-ok" : "banner-bad";
+  // Forced to UTC. Every timestamp in the incident log below is UTC, and rendering this
+  // one in the viewer's local zone made the same run appear an hour later than the
+  // timeline said it happened — the exact ambiguity a status page cannot afford.
   const when = new Date(latest.run_started_at)
-    .toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    .toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit",
+                               minute: "2-digit", timeZone: "UTC" }) + " UTC";
   b.innerHTML = `<span class="lamp"></span><div>
     <h2>${good ? "All systems operational" : "Collection is failing"}</h2>
     <div class="banner-sub">Last collection ${when} &mdash; ${latest.conclusion}${latest.event === "workflow_dispatch" ? ", run manually" : ""}.</div></div>`;
@@ -483,7 +492,7 @@ fetch(WF)
       <h2>Live status unavailable</h2>
       <div class="banner-sub">Could not reach the GitHub Actions API. The figures below are
       the last recorded values, not live.</div></div>`;
-    el("uptime").textContent = "99.00%";
+    el("uptime").textContent = "98.99%";
     el("uptime-sub").innerHTML =
       "of the last <strong style=\"color:var(--cream)\">100</strong> scheduled collections "
       + "completed successfully, to 5 Oct 2026. Recorded, not live.";

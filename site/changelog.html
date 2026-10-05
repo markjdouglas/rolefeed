@@ -98,7 +98,11 @@
   h1 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
   .alpha {
     background: var(--hot); color: #1a1533; font-size: 10px; font-weight: 750;
-    letter-spacing: .14em; padding: 3px 7px; box-shadow: 3px 3px 0 var(--shadow);
+    letter-spacing: .14em;
+    /* Padding and shadow are set once, below, by the shared .alpha/.ver rule. Declaring
+       them here as well is how the feed's badge ended up 2px narrower than every other
+       page's: an identical stale block, but sitting after the override instead of
+       before it. */
   }
   .back { margin-left: auto; font-size: 13px; }
 
@@ -235,6 +239,16 @@
       <li><strong>Component rows follow the live banner.</strong> The feed row reads
         <em>Stale</em> while collection is failing, rather than every row claiming
         operational underneath a red headline.</li>
+      <li><strong>A third stale duplicate removed, and the pattern named.</strong>
+        <code>.alpha</code> was declared twice on all five pages; on the feed the older
+        block sat <em>after</em> the override rather than before it and therefore won,
+        making that badge 2px narrower than the same badge everywhere else. Padding and
+        shadow now come from one declaration. Three survivors of this kind in two days is
+        the argument for one shared stylesheet instead of five copies of it.</li>
+      <li><strong>The status banner states UTC explicitly.</strong> It had been rendering
+        the last collection's time in the viewer's own timezone while every timestamp in
+        the incident log beneath it was UTC, so in British Summer Time the same run
+        appeared to happen an hour after the timeline said it did.</li>
       <li><strong>Two stale CSS rules removed.</strong> A duplicate <code>.bar-wrap</code> in
         the brief put its navigation 8px right of every other page's, and a leftover
         <code>align-self</code> on the feed's version badge sat it 14px high. Both were

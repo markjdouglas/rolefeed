@@ -98,7 +98,11 @@
   h1 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
   .alpha {
     background: var(--hot); color: #1a1533; font-size: 10px; font-weight: 750;
-    letter-spacing: .14em; padding: 3px 7px; box-shadow: 3px 3px 0 var(--shadow);
+    letter-spacing: .14em;
+    /* Padding and shadow are set once, below, by the shared .alpha/.ver rule. Declaring
+       them here as well is how the feed's badge ended up 2px narrower than every other
+       page's: an identical stale block, but sitting after the override instead of
+       before it. */
   }
   .back { margin-left: auto; font-size: 13px; }
 
