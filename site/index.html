@@ -158,7 +158,6 @@
     display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
   .nav { margin-left: 0; flex: 0 0 auto; }
-  .bar-wrap .tagline { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   @media (max-width: 860px) {
     .bar-wrap { flex-wrap: wrap; }
     .nav { margin-left: 0; }
@@ -229,10 +228,20 @@
      a static file elsewhere — the nav always begins at the same x. A navigation that
      shifts when you change page makes you re-find it every time. */
   .brand {
-    --px: 1.70;   /* 27 art px * 1.70 = 46px, matching the image on the other pages */
+    /* The other four pages draw this as one image, brand/lockup.svg, whose viewBox is
+       128 x 27 art units. The feed composes it from two SVGs instead, because only here
+       does the goose animate and swap frames. So the two implementations have to agree on
+       the art grid, not merely on the overall height.
+         - Unit derived from the height rather than typed as 1.70. 46/27 is 1.70370, and
+           the 0.0037 difference put the lettering a third of a pixel out.
+         - Gap of 8 units, not 5. In lockup.svg the wordmark group sits at
+           translate(38,0.5) and the goose is 30 units wide, so the space between them is
+           8. At 5 the wordmark started three units left of where every other page draws
+           it, which is the jump visible on navigating away from the feed. */
+    --px: calc(46 / 27);
     display: flex;
     align-items: center;
-    gap: calc(var(--px) * 5px);
+    gap: calc(var(--px) * 8px);
     flex: 0 0 var(--brand-w);
     text-decoration: none;
   }
@@ -302,18 +311,6 @@
     border-bottom: 1px dotted var(--border-bright);
   }
   .ver:hover { color: var(--cream); text-decoration: none; }
-
-  .tagline {
-    display: none;
-    color: var(--muted);
-    font-size: 10px;
-    line-height: 1.4;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border-left: 1px solid var(--rule);
-    padding-left: 13px;
-  }
-  @media (min-width: 1240px) { .tagline { display: block; } }
 
   /* Stat row */
   /* Nine tiles at 25px type and 4px shadows cost about 130 vertical pixels and pushed
@@ -722,8 +719,6 @@
 
   @media (max-width: 640px) {
     .freshness-line .sep { display: none; }
-    .masthead { --px: 2; gap: 10px; }
-    .tagline { flex-basis: 100%; border-left: 0; padding-left: 0; margin-top: 4px; }
     /* Bigger tap targets and a roomier grid on a phone. */
     .btn { min-height: 40px; padding: 9px 13px; }
     .toggle { min-height: 40px; }
