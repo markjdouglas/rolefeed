@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#100d22">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<title>RoleFeed — version history</title>
+<title>RoleFeed &mdash; status</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='0' fill='%2314102b'/%3E%3Crect x='7' y='8' width='18' height='3' fill='%238b6cff'/%3E%3Crect x='7' y='15' width='13' height='3' fill='%23f4eddf'/%3E%3Crect x='7' y='22' width='8' height='3' fill='%23ffb84d'/%3E%3C/svg%3E">
 <style>
   :root {
@@ -375,13 +375,19 @@ function fmt(iso) {
 
 function paint(runs) {
   const ordered = runs.slice().reverse();            // oldest first
-  const ok = runs.filter(r => r.conclusion === "success").length;
-  const rate = (ok / runs.length * 100);
 
-  el("uptime").textContent = rate.toFixed(2) + "%";
+  // The percentage counts scheduled runs only. A manual dispatch is a recovery action,
+  // not evidence the schedule is healthy, and letting one inflate the figure would make
+  // the number flattering rather than useful.
+  const sched = runs.filter(r => r.event === "schedule");
+  const base = sched.length ? sched : runs;
+  const ok = base.filter(r => r.conclusion === "success").length;
+
+  el("uptime").textContent = (ok / base.length * 100).toFixed(2) + "%";
   el("uptime-sub").innerHTML =
-    `of <strong style="color:var(--cream)">${runs.length}</strong> scheduled collections `
-    + `completed successfully, since ${fmt(ordered[0].run_started_at)}.`;
+    `of the last <strong style="color:var(--cream)">${base.length}</strong> scheduled `
+    + `collections completed successfully, from ${fmt(ordered[0].run_started_at)} onwards. `
+    + `A rolling window, not the lifetime figure.`;
 
   el("strip").innerHTML = ordered.map(r =>
     `<i class="${r.conclusion === "success" ? "" : "bad"}" title="${r.run_started_at} — ${r.conclusion}"></i>`
@@ -398,7 +404,7 @@ function paint(runs) {
     .toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
   b.innerHTML = `<span class="lamp"></span><div>
     <h2>${good ? "All systems operational" : "Collection is failing"}</h2>
-    <div class="banner-sub">Last scheduled collection ${when} &mdash; ${latest.conclusion}.</div></div>`;
+    <div class="banner-sub">Last collection ${when} &mdash; ${latest.conclusion}${latest.event === "workflow_dispatch" ? ", run manually" : ""}.</div></div>`;
   if (!good) el("c-pipe").textContent = "Degraded", el("c-pipe").className = "st";
 }
 
@@ -407,7 +413,7 @@ fetch(WF)
   .then(d => {
     const runs = (d.workflow_runs || []).filter(r => r.status === "completed");
     if (!runs.length) throw new Error("no runs");
-    paint(runs);
+    paint(runs);  // banner + strip: every completed collection, manual ones included
   })
   .catch(() => {
     // Rate limited, offline, or the API moved. Say so rather than showing a stale claim.
