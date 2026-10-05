@@ -35,7 +35,11 @@ concurrency:
 
 jobs:
   collect:
-    runs-on: ubuntu-latest
+    # Pinned, not `ubuntu-latest`. GitHub annotated this very run three times to say
+    # that label migrates to Ubuntu 26 from 19 October 2026. An unattended job that
+    # nobody watches should not have its operating system changed underneath it on a
+    # date chosen by someone else; pinning turns a surprise into a scheduled upgrade.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
 
     steps:
