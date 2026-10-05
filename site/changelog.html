@@ -61,7 +61,7 @@
   }
   .bar-wrap {
     max-width: var(--max); margin: 0 auto; padding: 7px var(--gutter);
-    min-height: 60px;
+    height: 64px;        /* fixed, so no page's content can change it */
     display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
   .nav { margin-left: auto; flex: 0 0 auto; }
@@ -172,7 +172,11 @@
      row and each one moved as you added pages. A fixed width makes the navigation a grid
      rather than a sentence: the eye learns the positions once and they stay put. 138px
      clears the longest label, "Version history". */
-  .tab { width: 138px; padding: 0; justify-content: center; }
+  .tab {
+    width: 146px; padding: 0; justify-content: center;
+    white-space: nowrap;      /* never wrap — a wrapped tab resizes the whole bar */
+    letter-spacing: 0.1em;
+  }
   @media (max-width: 860px) { .tab { width: auto; padding: 0 var(--control-px); } }
 </style>
 </head>
@@ -221,8 +225,17 @@
         <code>ubuntu-latest</code> label migrates to Ubuntu 26 from 19 October 2026, and an
         unattended job should not have its operating system changed underneath it on
         someone else's schedule.</li>
-      <li><strong>Navigation tabs normalised to equal width.</strong> Sized to their labels
-        they formed a ragged row that shifted every time a page was added.</li>
+      <li><strong>Navigation tabs normalised to equal width</strong>, then widened to 146px
+        and forbidden from wrapping. At 138px "Version history" broke onto a second line,
+        which made that one tab taller than the rest and pushed the whole bar down &mdash;
+        so the header changed height depending on which page you were on.</li>
+      <li><strong>The bar is now a fixed 64px rather than a minimum</strong>, so no page's
+        content can resize it, and the ALPHA badge sits on the same baseline everywhere.</li>
+      <li><strong>The feed's brand lockup rescaled to 46px</strong> to match the shared image
+        used on the other four pages. It had been rendering 2px taller, which was the other
+        half of the shifting header.</li>
+      <li>Tagline removed. With five tabs there was no room for it and it was rendering as
+        a single letter and an ellipsis.</li>
       <li><strong>Correction:</strong> moving the collection off the hour to :37 was
         supposed to shorten GitHub's queue delay. Measured across a fortnight it has not
         &mdash; runs still start 14 to 22 minutes late. The earlier explanation was
