@@ -207,6 +207,13 @@
   table.cov td.rate.low { color: var(--hot); }
   table.cov tr.tot td { border-bottom: 0; border-top: 2px solid var(--border-bright); color: var(--cream); font-weight: 650; }
   .reading { font-size: 13px; color: var(--muted); margin-top: 9px; max-width: 74ch; }
+
+  /* Equal-width tabs. Labels differ in length, so sized to content they formed a ragged
+     row and each one moved as you added pages. A fixed width makes the navigation a grid
+     rather than a sentence: the eye learns the positions once and they stay put. 138px
+     clears the longest label, "Version history". */
+  .tab { width: 138px; padding: 0; justify-content: center; }
+  @media (max-width: 860px) { .tab { width: auto; padding: 0 var(--control-px); } }
 </style>
 </head>
 <body>
@@ -219,10 +226,11 @@
       <a class="tab on" href="coverage.html" aria-current="page">Coverage</a>
       <a class="tab" href="prd.html">Product brief</a>
       <a class="tab" href="changelog.html">Version history</a>
+      <a class="tab" href="outages.html">Outages</a>
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.3</a>
+      <a class="ver" href="changelog.html">v0.4.4</a>
     </span>
   </div>
 </div>

@@ -225,6 +225,13 @@
   table.risks td.fail { color: var(--hot); }
   .src { font-size: 12px; color: var(--muted); margin-top: 11px; }
   .src a { color: var(--muted); border-bottom: 1px dotted var(--border-bright); }
+
+  /* Equal-width tabs. Labels differ in length, so sized to content they formed a ragged
+     row and each one moved as you added pages. A fixed width makes the navigation a grid
+     rather than a sentence: the eye learns the positions once and they stay put. 138px
+     clears the longest label, "Version history". */
+  .tab { width: 138px; padding: 0; justify-content: center; }
+  @media (max-width: 860px) { .tab { width: auto; padding: 0 var(--control-px); } }
 </style>
 
 </head>
@@ -238,10 +245,11 @@
       <a class="tab" href="coverage.html">Coverage</a>
       <a class="tab on" href="prd.html" aria-current="page">Product brief</a>
       <a class="tab" href="changelog.html">Version history</a>
+      <a class="tab" href="outages.html">Outages</a>
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.3</a>
+      <a class="ver" href="changelog.html">v0.4.4</a>
     </span>
   </div>
 </div>

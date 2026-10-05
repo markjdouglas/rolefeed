@@ -783,6 +783,13 @@
     .stat .n { font-size: 21px; }
     h1 { font-size: 19px; }
   }
+
+  /* Equal-width tabs. Labels differ in length, so sized to content they formed a ragged
+     row and each one moved as you added pages. A fixed width makes the navigation a grid
+     rather than a sentence: the eye learns the positions once and they stay put. 138px
+     clears the longest label, "Version history". */
+  .tab { width: 138px; padding: 0; justify-content: center; }
+  @media (max-width: 860px) { .tab { width: auto; padding: 0 var(--control-px); } }
 </style>
 </head>
 <body>
@@ -799,10 +806,11 @@
       <a class="tab" href="coverage.html">Coverage</a>
       <a class="tab" href="prd.html">Product brief</a>
       <a class="tab" href="changelog.html">Version history</a>
+      <a class="tab" href="outages.html">Outages</a>
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html" id="verLink">v0.4.3</a>
+      <a class="ver" href="changelog.html" id="verLink">v0.4.4</a>
     </span>
   </div>
 </div>
@@ -886,7 +894,7 @@
 // Bumped by hand with each change set, and mirrored in changelog.html. Three-part:
 // major.minor.patch. Still 0.x, which is the honest signal — the data contract is not
 // stable and the filters are still being tuned.
-const RF_VERSION = "0.4.3";
+const RF_VERSION = "0.4.4";
 
 const LS_KEY = "rolefeed.annotations.v1";
 const HOUR = 3600 * 1000;

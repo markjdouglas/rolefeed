@@ -167,6 +167,13 @@
   .rel ul { margin: 0; padding-left: 18px; max-width: 80ch; }
   .rel li { margin-bottom: 5px; color: var(--cream-dim); }
   .rel li strong { color: var(--cream); font-weight: 600; }
+
+  /* Equal-width tabs. Labels differ in length, so sized to content they formed a ragged
+     row and each one moved as you added pages. A fixed width makes the navigation a grid
+     rather than a sentence: the eye learns the positions once and they stay put. 138px
+     clears the longest label, "Version history". */
+  .tab { width: 138px; padding: 0; justify-content: center; }
+  @media (max-width: 860px) { .tab { width: auto; padding: 0 var(--control-px); } }
 </style>
 </head>
 <body>
@@ -179,10 +186,11 @@
       <a class="tab" href="coverage.html">Coverage</a>
       <a class="tab" href="prd.html">Product brief</a>
       <a class="tab on" href="changelog.html" aria-current="page">Version history</a>
+      <a class="tab" href="outages.html">Outages</a>
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.3</a>
+      <a class="ver" href="changelog.html">v0.4.4</a>
     </span>
   </div>
 </div>
@@ -196,7 +204,34 @@
 <main class="wrap">
 
   <div class="rel current">
-    <h2>21 September 2026 <span class="tag now">current</span></h2>
+    <h2>5 October 2026 <span class="tag now">current</span></h2>
+    <div class="date">v0.4.4</div>
+    <ul>
+      <li><strong>Status and outages page added</strong>, modelled on Atlassian Statuspage,
+        which Slack and Anthropic both use. Current status and uptime are computed live
+        from the GitHub Actions API when the page loads rather than typed in, so they
+        cannot drift from the truth.</li>
+      <li><strong>Collection reliability: 171 of 172 scheduled runs, 99.42%</strong> since
+        20 September, median run 69 seconds.</li>
+      <li><strong>First incident recorded.</strong> On 5 October GitHub failed to allocate a
+        runner to the 18:55 collection; the job ran zero steps and was cancelled after 15
+        minutes. Infrastructure failure, no application fault, no data loss &mdash; each
+        collection is a full refresh, so the next run restored currency on its own.</li>
+      <li><strong>Runner image pinned to <code>ubuntu-24.04</code>.</strong> The
+        <code>ubuntu-latest</code> label migrates to Ubuntu 26 from 19 October 2026, and an
+        unattended job should not have its operating system changed underneath it on
+        someone else's schedule.</li>
+      <li><strong>Navigation tabs normalised to equal width.</strong> Sized to their labels
+        they formed a ragged row that shifted every time a page was added.</li>
+      <li><strong>Correction:</strong> moving the collection off the hour to :37 was
+        supposed to shorten GitHub's queue delay. Measured across a fortnight it has not
+        &mdash; runs still start 14 to 22 minutes late. The earlier explanation was
+        wrong.</li>
+    </ul>
+  </div>
+
+  <div class="rel">
+    <h2>21 September 2026</h2>
     <div class="date">v0.4.0 &rarr; v0.4.3</div>
     <ul>
       <li><strong>Teamtailor added as a sixth adapter.</strong> Eight employers including
