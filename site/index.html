@@ -157,7 +157,7 @@
        is the flexible element and truncates instead. */
     display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
-  .nav { margin-left: auto; flex: 0 0 auto; }
+  .nav { margin-left: 0; flex: 0 0 auto; }
   .bar-wrap .tagline { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   @media (max-width: 860px) {
     .bar-wrap { flex-wrap: wrap; }
@@ -166,7 +166,7 @@
   /* Fixed width and right-aligned, so the badge and the version read as one balanced
      block against the tabs rather than two differently-sized scraps. */
   .bar-wrap .build {
-    margin-left: 14px; flex: 0 0 116px;
+    margin-left: auto; flex: 0 0 116px;
     display: flex; align-items: center; justify-content: flex-end; gap: 8px;
   }
   .alpha, .ver {
@@ -281,7 +281,6 @@
     align-items: center;
     gap: 8px;
     margin-left: auto;
-    align-self: flex-start;
   }
   /* Says plainly what this is. An alpha that does not admit it is just a broken
      product. */

@@ -64,7 +64,7 @@
     height: 64px;        /* fixed, so no page's content can change it */
     display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
-  .nav { margin-left: auto; flex: 0 0 auto; }
+  .nav { margin-left: 0; flex: 0 0 auto; }
   @media (max-width: 860px) { .bar-wrap { flex-wrap: wrap; } .nav { margin-left: 0; } }
 
   .nav { display: flex; gap: 8px; flex-wrap: nowrap; margin: 0; }
@@ -155,7 +155,7 @@
   .brand { flex: 0 0 var(--brand-w); display: flex; align-items: center; text-decoration: none; }
   .brand img { height: 46px; width: auto; image-rendering: pixelated; display: block; }
   .bar-wrap .build {
-    margin-left: 14px; flex: 0 0 116px;
+    margin-left: auto; flex: 0 0 116px;
     display: flex; align-items: center; justify-content: flex-end; gap: 8px;
   }
   .alpha, .ver {
