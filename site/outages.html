@@ -210,6 +210,10 @@
   .pill { font-size: 10px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; padding: 3px 8px; }
   .pill.resolved { background: var(--green); color: #0a2018; }
   .pill.minor { border: 1px solid var(--gold); color: var(--gold); }
+  /* An open incident is filled, a resolved one is green. Status must be readable
+     from the colour before the word is read. */
+  .pill.ongoing { background: var(--gold); color: #2a1f05; }
+  .corr { border-left: 2px solid var(--hot); padding-left: 11px; }
   .inc-meta { display: flex; flex-wrap: wrap; gap: 0 22px; font-size: 12.5px; color: var(--muted);
               padding-bottom: 13px; margin-bottom: 13px; border-bottom: 1px solid var(--rule); }
   .inc-meta b { color: var(--cream-dim); font-weight: 600; }
@@ -252,7 +256,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.4</a>
+      <a class="ver" href="changelog.html">v0.4.5</a>
     </span>
   </div>
 </div>
@@ -274,7 +278,7 @@
     <h2>Components</h2>
     <table class="comp">
       <tr><td><b>Collection pipeline</b> &mdash; scheduled job, every two hours</td><td class="st up" id="c-pipe">Operational</td></tr>
-      <tr><td><b>Feed data</b> &mdash; the published snapshot</td><td class="st up">Operational</td></tr>
+      <tr><td><b>Feed data</b> &mdash; the published snapshot</td><td class="st up" id="c-feed">Operational</td></tr>
       <tr><td><b>Website</b> &mdash; static pages on Cloudflare</td><td class="st up">Operational</td></tr>
       <tr><td><b>Employer coverage</b> &mdash; 62 of 211 reachable</td><td class="st na">By design</td></tr>
     </table>
@@ -295,70 +299,116 @@
   </div>
 
   <div class="rel">
-    <h2>Incident history</h2>
+    <h2>Active incident</h2>
+    <p>Updates are newest first. Where an earlier update turned out to be wrong it is
+    corrected in place and the correction left visible, because a status page that quietly
+    tidies its own history is not worth reading.</p>
   </div>
 
   <div class="inc">
-    <h3>Scheduled collection did not run
-      <span class="pill resolved">Resolved</span>
+    <h3>Scheduled collections are not running
+      <span class="pill ongoing">Identified</span>
       <span class="pill minor">Minor</span></h3>
     <div class="inc-meta">
-      <span><b>Date</b> 05/10/2026</span>
-      <span><b>Duration</b> 15m 03s</span>
-      <span><b>Detected</b> automatically, within 1 minute</span>
+      <span><b>Started</b> 05/10/2026, 18:55 UTC</span>
+      <span><b>Open</b> 1h 20m and counting</span>
+      <span><b>Cause</b> upstream &mdash; GitHub Actions</span>
       <span><b>Data loss</b> none</span>
-      <span><b>Run</b> 37359683002</span>
+      <span><b>Failed runs</b> 37359683002, 37365567052</span>
     </div>
 
-    <p><strong>One scheduled collection was skipped because GitHub could not allocate a
-    runner to it.</strong> The feed served stale data for roughly two extra hours. No data
-    was lost, nothing needed repairing, and no application code was involved.</p>
+    <p><strong>GitHub is not allocating runners to this repository's jobs.</strong> Each job
+    queues for about fifteen minutes and is then cancelled without executing a single step.
+    GitHub has an open incident covering it. The feed is serving the 16:51 snapshot and
+    states its own age on the front page, so the cost is currency rather than correctness.</p>
 
-    <h4>Timeline &mdash; all times UTC</h4>
+    <h4>Updates &mdash; newest first, all times UTC</h4>
     <ul class="tl">
-      <li><time>18:55</time><span>Scheduled run queued as normal.</span></li>
-      <li><time>18:56</time><span>GitHub began attempting to allocate a hosted runner.</span></li>
-      <li><time>19:11</time><span><b>Job cancelled</b> after 15 minutes without a runner.
-        Zero steps executed. Failure notification sent.</span></li>
-      <li><time>19:30</time><span><b>Investigated.</b> The Actions API showed no steps had
-        run and carried the annotation <em>"The job was not acquired by Runner of type
-        hosted even after multiple attempts"</em>, confirming no application fault.</span></li>
-      <li><time>19:35</time><span><b>Resolved.</b> A manual collection was dispatched and
-        the feed returned to currency. The runner image was pinned as a separate
-        preventive measure.</span></li>
+      <li><time>20:15</time><span><b>Identified as upstream.</b> GitHub's status page shows
+        an open incident: delays assigning GitHub-hosted runners, affecting workflow start
+        times <em>across multiple runner configurations</em>, under investigation since
+        19:11. That is the same minute the first run here was cancelled, so this project hit
+        the leading edge of the incident rather than a known one. Nothing to fix on this
+        side. Next scheduled collection is due at 20:55.</span></li>
+      <li><time>20:02</time><span><b>Recovery attempt failed.</b> Run 37365567052 was
+        cancelled after 15m 05s with the same annotation, having run on
+        <code>ubuntu-24.04</code> rather than <code>ubuntu-latest</code>. Two different
+        runner labels, one identical failure mode, which rules out the runner pin made
+        earlier as a cause.</span></li>
+      <li><time>19:35</time><span class="corr"><b>Correction.</b> This entry previously
+        recorded the incident as resolved at 19:35, on the grounds that a manual collection
+        had been dispatched. That was wrong on its own terms: the dispatched run had not yet
+        finished when the claim was written, and it went on to fail. A recovery action is not
+        a recovery.</span></li>
+      <li><time>19:30</time><span><b>Investigated.</b> The Actions API showed zero steps
+        executed and the annotation <em>"The job was not acquired by Runner of type hosted
+        even after multiple attempts"</em>, which excludes any application fault.</span></li>
+      <li><time>19:11</time><span><b>First failure.</b> Scheduled run 37359683002 cancelled
+        after 15m 03s without ever being assigned a runner. Failure notification
+        sent.</span></li>
+      <li><time>18:55</time><span>Scheduled run queued as normal. Last successful collection
+        was 16:51.</span></li>
     </ul>
 
     <h4>Root cause</h4>
-    <p>GitHub Actions queued the job and then failed to assign it a hosted runner. After
-    about fifteen minutes its scheduler gave up and cancelled the job. This is a capacity
-    or allocation failure inside GitHub's infrastructure.</p>
-    <p>Three things put that beyond reasonable doubt: the job executed <strong>zero
-    steps</strong>, so nothing of ours ran at all; the seventeen preceding runs succeeded
-    on identical code in about a minute each; and the commit at the head of the failed run
-    was one of the collector's own data commits, so no code had changed.</p>
+    <p>GitHub Actions accepts the job, puts it in the queue, and then fails to assign it a
+    hosted runner. After roughly fifteen minutes its scheduler gives up and cancels the job.
+    This is a capacity or allocation failure inside GitHub's own infrastructure, now
+    acknowledged by GitHub as an open incident.</p>
+    <p>Four things put that beyond reasonable doubt. The jobs executed <strong>zero
+    steps</strong>, so nothing written here ran at all. The seventeen preceding runs
+    succeeded on identical code in about a minute each. The commit at the head of the first
+    failed run was one of the collector's own data commits, so no code had changed. And the
+    two failures used different runner images, which eliminates the only local variable
+    between them.</p>
 
-    <h4>Why nothing needed repairing</h4>
-    <p>Every collection is a <strong>full refresh rather than an increment</strong>. Each
-    run re-queries all 62 reachable employers and rebuilds the feed from scratch, with the
-    state merge preserving each role's first-seen date across runs. A missed run therefore
-    costs currency, never correctness, and the next successful run restores everything
-    without intervention. A pipeline built on deltas would have needed a repair job here.</p>
+    <h4>Why nothing needs repairing</h4>
+    <p>Every collection is a <strong>full refresh rather than an increment</strong>. Each run
+    re-queries all 62 reachable employers and rebuilds the feed from scratch, with the state
+    merge preserving each role's first-seen date across runs. A missed run therefore costs
+    currency, never correctness, and the next successful run restores everything without
+    intervention. A pipeline built on deltas would need a repair job here.</p>
 
     <h4>Remediation</h4>
-    <p>No fix was applied to the failure itself, deliberately. Adding retry machinery to
-    defend against a transient third-party failure that self-heals within two hours is
-    over-engineering, and every piece of added machinery is a new thing that can fail.</p>
-    <p>One unrelated change was made. The same failed run carried three notices warning
-    that the <code>ubuntu-latest</code> runner label migrates to Ubuntu 26 from 19 October
-    2026, so the image was pinned to <code>ubuntu-24.04</code>. That converts an operating
-    system change arriving on someone else's schedule into a deliberate upgrade with a
-    diff and a test run.</p>
+    <p>No fix has been applied to the failure itself and none is planned while the cause sits
+    upstream. Adding retry machinery to defend against a third-party capacity fault would
+    mean building permanent complexity in response to a temporary problem, and every piece of
+    added machinery is a new thing that can fail. Waiting is the correct action, not the lazy
+    one.</p>
+    <p>That judgement is falsifiable, so here is the threshold: <strong>three cancelled runs
+    in a fortnight</strong> would make this a pattern rather than an incident, and would
+    justify a scheduled retry a few minutes after a cancellation. Two failures inside one
+    acknowledged provider incident do not meet it.</p>
+    <p>One unrelated change was made during the investigation and should not be mistaken for
+    a fix. The first failed run carried three notices warning that the
+    <code>ubuntu-latest</code> label migrates to Ubuntu 26 from 19 October 2026, so the image
+    was pinned to <code>ubuntu-24.04</code>. That converts an operating system change
+    arriving on someone else's schedule into a deliberate upgrade with a diff and a test run.
+    The second failure then happened on the pinned image, which is how the pin was cleared of
+    involvement.</p>
+
+    <h4>Resolution criteria</h4>
+    <p>This entry moves to resolved when <strong>two consecutive scheduled collections
+    succeed</strong>, not when the first one does and not when GitHub closes its own
+    incident. One green run after a capacity fault is weak evidence; two is enough to say the
+    schedule is working again.</p>
 
     <h4>What this exposed</h4>
-    <p>That dated risk had been attached to every previous <em>successful</em> run as well,
-    and nobody reads annotations on a green build. It took an unrelated failure to surface
-    it. <strong>Warnings on passing runs are effectively invisible</strong>, which
+    <p>The dated runner warning had been attached to every previous <em>successful</em> run
+    as well, and nobody reads annotations on a green build. It took an unrelated failure to
+    surface it. <strong>Warnings on passing runs are effectively invisible</strong>, which
     generalises well beyond this project.</p>
+    <p>The second lesson is about this page. Its first version declared the incident resolved
+    fifteen minutes before the evidence supported it, because dispatching a fix felt like
+    fixing it. <strong>A status page is only useful if it is allowed to say "still
+    broken"</strong>, which means resolution has to be defined in advance and checked against
+    the record rather than against intent.</p>
+  </div>
+
+  <div class="rel">
+    <h2>Incident history</h2>
+    <p>No resolved incidents. The entry above is the first since collection began on
+    20 September 2026.</p>
   </div>
 
 </main>
@@ -409,7 +459,14 @@ function paint(runs) {
   b.innerHTML = `<span class="lamp"></span><div>
     <h2>${good ? "All systems operational" : "Collection is failing"}</h2>
     <div class="banner-sub">Last collection ${when} &mdash; ${latest.conclusion}${latest.event === "workflow_dispatch" ? ", run manually" : ""}.</div></div>`;
-  if (!good) el("c-pipe").textContent = "Degraded", el("c-pipe").className = "st";
+  // Components must agree with the banner. A page reading "operational" on every row while
+  // the headline says collection is failing is the failure mode this page exists to avoid.
+  if (!good) {
+    el("c-pipe").textContent = "Degraded";
+    el("c-pipe").className = "st";
+    el("c-feed").textContent = "Stale";
+    el("c-feed").className = "st";
+  }
 }
 
 fetch(WF)
@@ -426,10 +483,10 @@ fetch(WF)
       <h2>Live status unavailable</h2>
       <div class="banner-sub">Could not reach the GitHub Actions API. The figures below are
       the last recorded values, not live.</div></div>`;
-    el("uptime").textContent = "99.42%";
+    el("uptime").textContent = "99.00%";
     el("uptime-sub").innerHTML =
-      "of <strong style=\"color:var(--cream)\">172</strong> scheduled collections completed "
-      + "successfully, 20 Sep to 5 Oct 2026. Recorded, not live.";
+      "of the last <strong style=\"color:var(--cream)\">100</strong> scheduled collections "
+      + "completed successfully, to 5 Oct 2026. Recorded, not live.";
   });
 </script>
 
