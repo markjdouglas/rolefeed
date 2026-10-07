@@ -65,7 +65,54 @@
     display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
   .nav { margin-left: 0; flex: 0 0 auto; }
-  @media (max-width: 860px) { .bar-wrap { flex-wrap: wrap; } .nav { margin-left: 0; } }
+  /* ---------- The bar on a phone -----------------------------------------
+     The rule above pins the bar to height: 64px, which is what stops it changing
+     between pages on a desktop. Below 860px the bar also wraps — and the pin was
+     never released, so a second row of content was being held inside a box still
+     exactly 64px tall. It overflowed, and painted on top of the page's first
+     heading. A fixed height and wrapping cannot both be true; the height has to
+     be released at exactly the width where the wrapping starts.
+
+     The nav then becomes a scrolling strip rather than five tabs competing for
+     390px. The tab at the right is left deliberately half cut by the screen
+     edge, because a clipped tab is the plainest available signal that the row
+     moves. */
+  @media (max-width: 860px) {
+    .topbar .bar-wrap {
+      height: auto;          /* released — the desktop pin is for the desktop */
+      min-height: 54px;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 9px var(--gutter) 0;
+    }
+    /* Stops reserving 220px of a 390px screen, and drops the artwork to 38px so
+       the mark and the two badges share one row at iPhone widths. Both spellings
+       are set because the feed composes the lockup from the art grid while the
+       other four pages load it as one image. */
+    .topbar .brand { flex: 0 1 auto; --px: calc(38 / 27); }
+    .topbar .brand img { height: 38px; }
+    .topbar .bar-wrap .build { flex: 0 0 auto; margin-left: auto; }
+
+    .topbar .nav {
+      order: 3;
+      flex: 1 0 100%;
+      /* Negative margin with matching padding runs the strip edge to edge while
+         the first tab still lines up with the page gutter. */
+      margin: 0 calc(var(--gutter) * -1);
+      padding: 0 var(--gutter) 9px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+    }
+    .topbar .nav::-webkit-scrollbar { display: none; }
+    .topbar .tab {
+      flex: 0 0 auto;        /* never squeezed to fit; the strip scrolls instead */
+      min-height: 40px;      /* a thumb, not a cursor */
+      scroll-snap-align: start;
+    }
+  }
 
   .nav { display: flex; gap: 8px; flex-wrap: nowrap; margin: 0; }
   .tab {
@@ -198,7 +245,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.5</a>
+      <a class="ver" href="changelog.html">v0.4.6</a>
     </span>
   </div>
 </div>
@@ -212,7 +259,70 @@
 <main class="wrap">
 
   <div class="rel current">
-    <h2>5 October 2026 <span class="tag now">current</span></h2>
+    <h2>7 October 2026 <span class="tag now">current</span></h2>
+    <div class="date">v0.4.6</div>
+    <ul>
+      <li><strong>A failed push no longer throws away a good collection.</strong> On
+        7 October run 196 queried all 62 employers, wrote 967 roles, and then failed at the
+        step that commits the result, so the work was discarded with the runner and the feed
+        went stale. The step ran <code>git push</code> once with nothing after it: the
+        cheapest call in the pipeline, at the end of the job, with no tolerance for failure.
+        It now retries three times with a widening pause.</li>
+      <li><strong>Reconciliation is last-write-wins, not a rebase.</strong> Between attempts
+        the generated file is set aside, the branch is reset onto whatever the remote holds,
+        and the file is committed again. <code>jobs.json</code> has exactly one writer, so a
+        newer collection is always the right answer and there is nothing to merge &mdash;
+        and a rebase conflict in an unattended job would leave the repository stopped half
+        way through a rebase. All four paths through the retry loop were run with git
+        stubbed out before shipping: succeed first time, succeed on the second, succeed on
+        the third, and fail cleanly after three.</li>
+      <li><strong>Every role was being published twice.</strong> The feed said 958 roles
+        in scope; there were 480. Deduplication ran correctly and then the loop below it
+        appended each surviving posting to the output list twice, so all four headline
+        figures, every group count and the matched total were exactly double. The two
+        copies were byte-identical, which is why it survived a casual look: nothing on the
+        page contradicted anything else. One line deleted. Figures correct themselves on
+        the next scheduled collection.</li>
+      <li><strong>Correction:</strong> this was reported fixed on 5 October and it was not.
+        The change was made to a working copy that never reached the repository, and the
+        claim was published without checking the file it was about. Counting distinct URLs
+        in the feed would have caught it in seconds, which is now the check.</li>
+      <li><strong>The match-reason line says where, not just that.</strong> The location
+        test returned its reason &mdash; "London", "UK remote" &mdash; and the collector
+        discarded it, so every card fell back to the generic "Location accepted". Restored,
+        and also unfixed since 5 October for the same reason as above.</li>
+      <li><strong>The header was broken on a phone, and this is why.</strong> The bar is
+        pinned to a fixed 64px so that no page's content can change its height &mdash; that
+        is what stopped it moving between pages on a desktop. Below 860px the bar also
+        wraps, and the pin was never released, so a second row of content was being held
+        inside a box still exactly 64px tall. It overflowed and painted on top of the first
+        heading on every page. A fixed height and wrapping cannot both be true; the height
+        is now released at exactly the width where the wrapping begins.</li>
+      <li><strong>The tabs became a scrolling strip.</strong> Five tabs cannot share 390px
+        at a legible size, so they now scroll edge to edge, 40px tall for a thumb rather
+        than a cursor, with the current page's tab centred on load. The tab at the right is
+        left half cut by the screen edge on purpose: a clipped tab is the plainest signal
+        that the row moves.</li>
+      <li><strong>Nothing widens the page any more.</strong> The uptime strip draws a hundred
+        2px blocks with 2px gaps, which needs 398px and so pushed the whole page sideways on
+        a phone. It now shows as many of the most recent runs as actually fit and dates
+        itself from the first one shown. The coverage band table scrolls inside its own box.
+        Measured at 320, 393, 430, 768 and 1280px across all five pages: horizontal overflow
+        is zero everywhere and the header no longer overlaps content anywhere.</li>
+      <li><strong>The feed's figures sit two-up on a phone</strong> rather than wrapping
+        three-and-one with the fourth stranded on a line of its own.</li>
+      <li><strong>Incident of 5 October resolved.</strong> Collections resumed at 22:48 UTC
+        and the entry closed at 00:56 once a second consecutive scheduled run completed, the
+        criterion written down while the incident was still open.</li>
+      <li><strong>Correction:</strong> that entry estimated the cost at "roughly two extra
+        hours" of stale data while the outage was still running. The measured gap between
+        successful collections was 5h 55m. Duration is the one field a live incident log
+        should leave empty until it can be measured.</li>
+    </ul>
+  </div>
+
+  <div class="rel">
+    <h2>5 October 2026</h2>
     <div class="date">v0.4.5</div>
     <ul>
       <li><strong>Status and outages page added</strong>, modelled on Atlassian Statuspage,
@@ -364,6 +474,21 @@
   Versioning is major.minor.patch, bumped by hand. Still 0.x, and it will stay there: the
   product brief records a decision to stop developing this as a job-search tool.
 </footer>
+
+<script>
+/* The tab strip scrolls on a phone, and the current page's tab can start off the
+   right-hand edge — on Outages it is the fifth of five. This centres it on load.
+   It sets scrollLeft from measured rectangles rather than calling scrollIntoView,
+   which would also scroll the page itself, and rather than offsetLeft, which is
+   measured against whichever ancestor happens to be positioned. */
+(function () {
+  var nav = document.querySelector(".nav");
+  var on  = nav && nav.querySelector(".tab.on");
+  if (!nav || !on || nav.scrollWidth <= nav.clientWidth) return;
+  var n = nav.getBoundingClientRect(), t = on.getBoundingClientRect();
+  nav.scrollLeft += (t.left - n.left) - (n.width - t.width) / 2;
+})();
+</script>
 
 </body>
 </html>

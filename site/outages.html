@@ -65,7 +65,54 @@
     display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
   .nav { margin-left: 0; flex: 0 0 auto; }
-  @media (max-width: 860px) { .bar-wrap { flex-wrap: wrap; } .nav { margin-left: 0; } }
+  /* ---------- The bar on a phone -----------------------------------------
+     The rule above pins the bar to height: 64px, which is what stops it changing
+     between pages on a desktop. Below 860px the bar also wraps — and the pin was
+     never released, so a second row of content was being held inside a box still
+     exactly 64px tall. It overflowed, and painted on top of the page's first
+     heading. A fixed height and wrapping cannot both be true; the height has to
+     be released at exactly the width where the wrapping starts.
+
+     The nav then becomes a scrolling strip rather than five tabs competing for
+     390px. The tab at the right is left deliberately half cut by the screen
+     edge, because a clipped tab is the plainest available signal that the row
+     moves. */
+  @media (max-width: 860px) {
+    .topbar .bar-wrap {
+      height: auto;          /* released — the desktop pin is for the desktop */
+      min-height: 54px;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 9px var(--gutter) 0;
+    }
+    /* Stops reserving 220px of a 390px screen, and drops the artwork to 38px so
+       the mark and the two badges share one row at iPhone widths. Both spellings
+       are set because the feed composes the lockup from the art grid while the
+       other four pages load it as one image. */
+    .topbar .brand { flex: 0 1 auto; --px: calc(38 / 27); }
+    .topbar .brand img { height: 38px; }
+    .topbar .bar-wrap .build { flex: 0 0 auto; margin-left: auto; }
+
+    .topbar .nav {
+      order: 3;
+      flex: 1 0 100%;
+      /* Negative margin with matching padding runs the strip edge to edge while
+         the first tab still lines up with the page gutter. */
+      margin: 0 calc(var(--gutter) * -1);
+      padding: 0 var(--gutter) 9px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+    }
+    .topbar .nav::-webkit-scrollbar { display: none; }
+    .topbar .tab {
+      flex: 0 0 auto;        /* never squeezed to fit; the strip scrolls instead */
+      min-height: 40px;      /* a thumb, not a cursor */
+      scroll-snap-align: start;
+    }
+  }
 
   .nav { display: flex; gap: 8px; flex-wrap: nowrap; margin: 0; }
   .tab {
@@ -260,7 +307,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.5</a>
+      <a class="ver" href="changelog.html">v0.4.6</a>
     </span>
   </div>
 </div>
@@ -304,37 +351,124 @@
 
   <div class="rel">
     <h2>Active incident</h2>
+    <p>One, below. A fix is deployed and the entry stays open until the schedule has
+    proved itself twice.</p>
+  </div>
+
+  <div class="inc">
+    <h3>One collection lost to a failed push
+      <span class="pill ongoing">Monitoring</span>
+      <span class="pill minor">Minor</span></h3>
+    <div class="inc-meta">
+      <span><b>Occurred</b> 07/10/2026, 16:53 UTC</span>
+      <span><b>Collections lost</b> 1</span>
+      <span><b>Feed stale</b> 4h 04m</span>
+      <span><b>Cause</b> this repository</span>
+      <span><b>Data loss</b> none</span>
+      <span><b>Run</b> 37655430555</span>
+    </div>
+
+    <p><strong>The collection worked and the commit of it did not.</strong> Run 196 set up
+    its runner, installed its dependencies, queried all 62 employers and wrote 967 roles to
+    disk &mdash; then failed at the step that commits the result, and the whole run was
+    marked failed. The data existed for about a second and was thrown away with the
+    runner.</p>
+
+    <p>This is <strong>not</strong> the same failure as 5 October, although the email in
+    your inbox looks identical. That one never got a runner and ran zero steps, and the
+    cause sat inside GitHub. This one ran every step and the cause is here.</p>
+
+    <h4>Updates &mdash; newest first, all times UTC</h4>
+    <ul class="tl">
+      <li><time>19:55</time><span><b>Fix shipped</b> in v0.4.6. The commit step now retries
+        the push three times with a widening pause, reconciling against the remote between
+        attempts. One further scheduled collection is needed before this closes.</span></li>
+      <li><time>18:56</time><span><b>Recovered unaided.</b> The next scheduled collection
+        completed normally, which is the expected behaviour: the fault was in the delivery
+        of one run's output, not in the pipeline, so nothing was left broken to repair. The
+        feed was 4h 04m behind at its worst.</span></li>
+      <li><time>17:10</time><span><b>Identified.</b> Step-level results place the failure
+        precisely: <em>Collect roles</em> passed and <em>Summarise the run</em> passed,
+        reading the same two fields from the same file that the commit step reads. That
+        clears the collector and the JSON, leaving the push as the only thing in the step
+        that can fail. The twelve annotations say nothing more specific than "process
+        completed with exit code 1", and GitHub's run logs need credentials this session
+        does not hold &mdash; so this is reasoned from which steps passed, not read off a
+        log.</span></li>
+      <li><time>16:53</time><span><b>Run 196 failed</b> after 1m 12s at <em>Commit the feed
+        if it changed</em>. Every other step succeeded. Notification sent.</span></li>
+    </ul>
+
+    <h4>Root cause</h4>
+    <p>The commit step ran <code>git push</code> once, with nothing after it. A push is a
+    single network call to a service with no uptime guarantee, placed at the very end of a
+    job whose expensive work is already finished and held only in the runner's filesystem.
+    <strong>The cheapest step in the pipeline was the one with no tolerance for
+    failure</strong>, and when it failed it discarded the output of the expensive ones.</p>
+
+    <h4>Remediation</h4>
+    <p>The push now retries three times, pausing ten then twenty seconds. Between attempts
+    it reconciles with the remote by <strong>last-write-wins rather than by rebasing</strong>:
+    the generated file is set aside, the branch is reset onto whatever the remote now holds,
+    the file is put back and committed again. That is sound here specifically because
+    <code>jobs.json</code> is generated and has exactly one writer, so a newer collection is
+    always the correct answer and there is no merge to get wrong &mdash; and because a rebase
+    conflict in an unattended job leaves the repository stopped half way through a rebase,
+    in a file nobody edits by hand.</p>
+    <p>The threshold set on 5 October &mdash; three cancelled runs in a fortnight before
+    building retry machinery &mdash; was about <em>runner allocation</em>, a fault with a
+    cause outside this repository and a habit of curing itself. It does not cover this. A
+    push that drops a completed collection is a local fault with a three-line fix, and the
+    argument against defending a transient third-party outage is not an argument against
+    retrying your own network call.</p>
+
+    <h4>Resolution criteria</h4>
+    <p>Two consecutive scheduled collections completing after the fix is live. The run at
+    18:56 recovered on its own and is not counted: it ran against the old step, so it says
+    nothing about whether the retry works. The same rule as last time, for the same
+    reason.</p>
+  </div>
+
+  <div class="rel">
+    <h2>Incident history</h2>
     <p>Updates are newest first. Where an earlier update turned out to be wrong it is
     corrected in place and the correction left visible, because a status page that quietly
     tidies its own history is not worth reading.</p>
   </div>
 
   <div class="inc">
-    <h3>Scheduled collections are not running
-      <span class="pill ongoing">Identified</span>
+    <h3>Scheduled collections did not run
+      <span class="pill resolved">Resolved</span>
       <span class="pill minor">Minor</span></h3>
     <div class="inc-meta">
       <span><b>Started</b> 05/10/2026, 18:55 UTC</span>
-      <span><b>Open</b> 1h 20m and counting</span>
+      <span><b>Resolved</b> 06/10/2026, 00:56 UTC</span>
+      <span><b>Feed stale</b> 5h 55m</span>
       <span><b>Cause</b> upstream &mdash; GitHub Actions</span>
       <span><b>Data loss</b> none</span>
-      <span><b>Failed runs</b> 37359683002, 37365567052</span>
     </div>
 
-    <p><strong>GitHub is not allocating runners to this repository's jobs.</strong> Each job
-    queues for about fifteen minutes and is then cancelled without executing a single step.
-    GitHub has an open incident covering it. The feed is serving the 16:51 snapshot and
-    states its own age on the front page, so the cost is currency rather than correctness.</p>
+    <p><strong>GitHub stopped allocating runners to this repository's jobs.</strong> Each job
+    queued for about fifteen minutes and was then cancelled without executing a single step,
+    under an incident GitHub acknowledged on its own status page. The feed went
+    <strong>5h 55m</strong> between successful collections, from 16:53 to 22:48 UTC, and
+    stated its own age on the front page throughout. The cost was currency, not
+    correctness.</p>
 
     <h4>Updates &mdash; newest first, all times UTC</h4>
     <ul class="tl">
+      <li><time>00:56</time><span><b>Resolved.</b> A second consecutive scheduled collection
+        completed, meeting the criterion set when this entry was opened. Every collection
+        since has also completed.</span></li>
+      <li><time>22:48</time><span><b>Collection succeeded</b> &mdash; 970 roles, the first
+        since 16:53. GitHub had begun assigning runners again. One success was deliberately
+        not treated as resolution.</span></li>
       <li><time>20:15</time><span><b>Identified as upstream.</b> GitHub's status page shows
         an open incident: delays assigning GitHub-hosted runners, affecting workflow start
         times <em>across multiple runner configurations</em>, under investigation since
         19:11. That is the same minute the first run here was cancelled, so this project hit
         the leading edge of the incident rather than a known one. Nothing to fix on this
-        side. The next collection is scheduled for 20:37 and, on the queue delay measured over
-        the past fortnight, would start between 20:51 and 20:59.</span></li>
+        side.</span></li>
       <li><time>20:02</time><span><b>Recovery attempt failed.</b> Run 37365567052 was
         cancelled after 15m 05s with the same annotation, having run on
         <code>ubuntu-24.04</code> rather than <code>ubuntu-latest</code>. Two different
@@ -392,11 +526,12 @@
     The second failure then happened on the pinned image, which is how the pin was cleared of
     involvement.</p>
 
-    <h4>Resolution criteria</h4>
-    <p>This entry moves to resolved when <strong>two consecutive scheduled collections
-    succeed</strong>, not when the first one does and not when GitHub closes its own
+    <h4>Resolution criteria, and whether they worked</h4>
+    <p>This entry moved to resolved when <strong>two consecutive scheduled collections
+    succeeded</strong> &mdash; not when the first one did, and not when GitHub closed its own
     incident. One green run after a capacity fault is weak evidence; two is enough to say the
-    schedule is working again.</p>
+    schedule is working again. Writing that rule down while the incident was still open is
+    what made the closing decision a check rather than a judgement.</p>
 
     <h4>What this exposed</h4>
     <p>The dated runner warning had been attached to every previous <em>successful</em> run
@@ -408,12 +543,13 @@
     fixing it. <strong>A status page is only useful if it is allowed to say "still
     broken"</strong>, which means resolution has to be defined in advance and checked against
     the record rather than against intent.</p>
-  </div>
-
-  <div class="rel">
-    <h2>Incident history</h2>
-    <p>No resolved incidents. The entry above is the first since collection began on
-    20 September 2026.</p>
+    <p>The third is about estimating from inside an outage. That same first version put the
+    cost at "roughly two extra hours" of stale data while the incident was still running. The
+    gap between successful collections was <strong>5h 55m</strong> &mdash; nearly three times
+    the estimate. The error was not in the arithmetic but in the assumption underneath it,
+    that a capacity fault resolves on the timescale of the one cancelled run you have seen so
+    far. <strong>Duration is the one field a live incident log should leave empty</strong>
+    until it can be measured.</p>
   </div>
 
 </main>
@@ -448,10 +584,18 @@ function paint(runs) {
     + `collections completed successfully, from ${fmt(ordered[0].run_started_at)} onwards. `
     + `A rolling window, not the lifetime figure.`;
 
-  el("strip").innerHTML = ordered.map(r =>
+  // Each block is 2px wide with a 2px gap, so a hundred of them need 398px and on a
+  // phone the strip was pushing the whole page wider than the screen — the one thing a
+  // layout may never do. Rather than shrink the blocks below legibility, show as many
+  // of the most recent runs as actually fit and date the strip from the first one
+  // shown, so the caption stays true at any width.
+  const stripEl = el("strip");
+  const cap = Math.max(20, Math.floor((stripEl.clientWidth + 2) / 4));
+  const shown = ordered.slice(Math.max(0, ordered.length - cap));
+  stripEl.innerHTML = shown.map(r =>
     `<i class="${r.conclusion === "success" ? "" : "bad"}" title="${r.run_started_at} — ${r.conclusion}"></i>`
   ).join("");
-  el("strip-from").textContent = fmt(ordered[0].run_started_at);
+  el("strip-from").textContent = fmt(shown[0].run_started_at);
 
   // The newest run decides the headline. A status page that says "operational" while the
   // last run failed is worse than no status page at all.
@@ -497,6 +641,21 @@ fetch(WF)
       "of the last <strong style=\"color:var(--cream)\">100</strong> scheduled collections "
       + "completed successfully, to 5 Oct 2026. Recorded, not live.";
   });
+</script>
+
+<script>
+/* The tab strip scrolls on a phone, and the current page's tab can start off the
+   right-hand edge — on Outages it is the fifth of five. This centres it on load.
+   It sets scrollLeft from measured rectangles rather than calling scrollIntoView,
+   which would also scroll the page itself, and rather than offsetLeft, which is
+   measured against whichever ancestor happens to be positioned. */
+(function () {
+  var nav = document.querySelector(".nav");
+  var on  = nav && nav.querySelector(".tab.on");
+  if (!nav || !on || nav.scrollWidth <= nav.clientWidth) return;
+  var n = nav.getBoundingClientRect(), t = on.getBoundingClientRect();
+  nav.scrollLeft += (t.left - n.left) - (n.width - t.width) / 2;
+})();
 </script>
 
 </body>

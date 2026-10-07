@@ -60,19 +60,61 @@ jobs:
         env:
           PYTHONUNBUFFERED: "1"
 
+      # The collection has already succeeded by the time this step runs, so the only
+      # thing left that can throw it away is the push. On 7 October run 196 did exactly
+      # that: every step passed, 967 roles were fetched, and the push failed, so a good
+      # collection was discarded and the feed went four hours stale for want of one
+      # retry.
+      #
+      # jobs.json is generated and has exactly one writer, so it never needs merging --
+      # the newest generation is always the right answer. That makes the recovery
+      # last-write-wins rather than a rebase: keep the file aside, reset onto whatever
+      # the remote now has, put the file back, commit again. No merge semantics, and no
+      # way to end up stopped half way through a rebase with a conflict in a file that
+      # nobody edits by hand.
       - name: Commit the feed if it changed
         run: |
           git config user.name "rolefeed-bot"
           git config user.email "markjdouglas@users.noreply.github.com"
+
           if git diff --quiet --exit-code site/data/jobs.json; then
             echo "No change in the feed. Nothing to commit."
-          else
-            NEW=$(python -c "import json;print(json.load(open('site/data/jobs.json'))['new_this_run'])")
-            TOTAL=$(python -c "import json;print(json.load(open('site/data/jobs.json'))['matching_roles'])")
-            git add site/data/jobs.json
-            git commit -m "Feed update: ${TOTAL} roles, ${NEW} new"
-            git push
+            exit 0
           fi
+
+          NEW=$(python -c "import json;print(json.load(open('site/data/jobs.json'))['new_this_run'])")
+          TOTAL=$(python -c "import json;print(json.load(open('site/data/jobs.json'))['matching_roles'])")
+          MSG="Feed update: ${TOTAL} roles, ${NEW} new"
+
+          cp site/data/jobs.json "${RUNNER_TEMP}/jobs.json"
+          git add site/data/jobs.json
+          git commit -m "${MSG}"
+
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "Pushed on attempt ${attempt}."
+              exit 0
+            fi
+            echo "Push attempt ${attempt} failed."
+            if [ "${attempt}" -eq 3 ]; then break; fi
+
+            sleep $(( attempt * 10 ))
+            git fetch origin main
+            git reset --hard origin/main
+            cp "${RUNNER_TEMP}/jobs.json" site/data/jobs.json
+
+            # If another run got there first with the same data there is nothing left to
+            # do, and committing an empty change would fail the step for no reason.
+            if git diff --quiet --exit-code site/data/jobs.json; then
+              echo "The remote already carries this feed. Nothing left to push."
+              exit 0
+            fi
+            git add site/data/jobs.json
+            git commit -m "${MSG}"
+          done
+
+          echo "::error::Collection succeeded but the feed could not be pushed after three attempts."
+          exit 1
 
       - name: Summarise the run
         if: always()

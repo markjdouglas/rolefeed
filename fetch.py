@@ -408,6 +408,11 @@ def main() -> int:
         ok, reason = location_verdict(posting["location"])
         if not ok:
             continue
+        # The verdict's reason is why this location was accepted — "London",
+        # "UK remote" and so on. The front end reads it for the match-reason line
+        # under each role; it was being computed and thrown away, so every card
+        # fell back to the generic "Location accepted".
+        posting["geo"] = reason
         tier = title_tier(posting["title"])
         if tier is None:
             posting["tier"] = None
@@ -417,7 +422,6 @@ def main() -> int:
             # "Priority" is the shortlist-worthy set: leadership scope, not every
             # operations role. Mid-tier stays in the feed and gets its own filter.
             posting["priority"] = tier in ("exec", "director")
-        in_scope.append(posting)
         in_scope.append(posting)
 
     published = in_scope

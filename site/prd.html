@@ -187,7 +187,54 @@
     display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
   }
   .nav { margin-left: 0; flex: 0 0 auto; }
-  @media (max-width: 860px) { .bar-wrap { flex-wrap: wrap; } .nav { margin-left: 0; } }
+  /* ---------- The bar on a phone -----------------------------------------
+     The rule above pins the bar to height: 64px, which is what stops it changing
+     between pages on a desktop. Below 860px the bar also wraps — and the pin was
+     never released, so a second row of content was being held inside a box still
+     exactly 64px tall. It overflowed, and painted on top of the page's first
+     heading. A fixed height and wrapping cannot both be true; the height has to
+     be released at exactly the width where the wrapping starts.
+
+     The nav then becomes a scrolling strip rather than five tabs competing for
+     390px. The tab at the right is left deliberately half cut by the screen
+     edge, because a clipped tab is the plainest available signal that the row
+     moves. */
+  @media (max-width: 860px) {
+    .topbar .bar-wrap {
+      height: auto;          /* released — the desktop pin is for the desktop */
+      min-height: 54px;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 9px var(--gutter) 0;
+    }
+    /* Stops reserving 220px of a 390px screen, and drops the artwork to 38px so
+       the mark and the two badges share one row at iPhone widths. Both spellings
+       are set because the feed composes the lockup from the art grid while the
+       other four pages load it as one image. */
+    .topbar .brand { flex: 0 1 auto; --px: calc(38 / 27); }
+    .topbar .brand img { height: 38px; }
+    .topbar .bar-wrap .build { flex: 0 0 auto; margin-left: auto; }
+
+    .topbar .nav {
+      order: 3;
+      flex: 1 0 100%;
+      /* Negative margin with matching padding runs the strip edge to edge while
+         the first tab still lines up with the page gutter. */
+      margin: 0 calc(var(--gutter) * -1);
+      padding: 0 var(--gutter) 9px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+    }
+    .topbar .nav::-webkit-scrollbar { display: none; }
+    .topbar .tab {
+      flex: 0 0 auto;        /* never squeezed to fit; the strip scrolls instead */
+      min-height: 40px;      /* a thumb, not a cursor */
+      scroll-snap-align: start;
+    }
+  }
   .ver { font-size: 12px; font-variant-numeric: tabular-nums; }
   /* The feed puts its pixel lockup here. These pages use a text mark in the same
      slot at the same height, which is what keeps the nav on identical pixels across
@@ -257,7 +304,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.5</a>
+      <a class="ver" href="changelog.html">v0.4.6</a>
     </span>
   </div>
 </div>
@@ -491,6 +538,21 @@
   outcome available. Changes are in the version history; what cannot be seen is on the
   coverage page.
 </footer>
+
+<script>
+/* The tab strip scrolls on a phone, and the current page's tab can start off the
+   right-hand edge — on Outages it is the fifth of five. This centres it on load.
+   It sets scrollLeft from measured rectangles rather than calling scrollIntoView,
+   which would also scroll the page itself, and rather than offsetLeft, which is
+   measured against whichever ancestor happens to be positioned. */
+(function () {
+  var nav = document.querySelector(".nav");
+  var on  = nav && nav.querySelector(".tab.on");
+  if (!nav || !on || nav.scrollWidth <= nav.clientWidth) return;
+  var n = nav.getBoundingClientRect(), t = on.getBoundingClientRect();
+  nav.scrollLeft += (t.left - n.left) - (n.width - t.width) / 2;
+})();
+</script>
 
 </body>
 </html>
