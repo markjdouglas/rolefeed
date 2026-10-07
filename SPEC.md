@@ -1,12 +1,15 @@
-# RoleFeed — specification
+# RoleFeed — original specification
 
-Last revised 19/09/2026.
+> **Historical.** This is the specification as written on 19 September 2026, before the
+> build. It is kept as a record of the starting assumptions, several of which changed —
+> the Google Sheet interface was replaced by a static site, and the employer list grew
+> from 169 to 211. For the current state see `README.md`; for what was learned, see the
+> product brief at `site/prd.html`.
 
 ## What this is for, in priority order
 
-1. **Learn to build and deploy properly.** 
-   The point is working knowledge of git, GitHub, CI/CD, APIs, secrets
-   and scheduled automation, acquired by building something real.
+1. **Learn to build and deploy properly.** Working knowledge of git, GitHub, CI/CD, APIs,
+   secrets and scheduled automation, acquired by building something real.
 2. **Find a role.** Useful, and secondary.
 
 That ordering is load-bearing. When the two conflict, the build wins. Matching criteria

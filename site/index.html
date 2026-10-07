@@ -203,7 +203,9 @@
     .topbar .tab {
       flex: 0 0 auto;        /* never squeezed to fit; the strip scrolls instead */
       min-height: 40px;      /* a thumb, not a cursor */
-      scroll-snap-align: start;
+      /* Centre, not start. With start-alignment the snap points fought the script that
+         centres the current page's tab, and won by up to 57px on load. */
+      scroll-snap-align: center;
     }
   }
   /* Fixed width and right-aligned, so the badge and the version read as one balanced
@@ -862,7 +864,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html" id="verLink">v0.4.6</a>
+      <a class="ver" href="changelog.html" id="verLink">v0.4.7</a>
     </span>
   </div>
 </div>
@@ -946,7 +948,7 @@
 // Bumped by hand with each change set, and mirrored in changelog.html. Three-part:
 // major.minor.patch. Still 0.x, which is the honest signal — the data contract is not
 // stable and the filters are still being tuned.
-const RF_VERSION = "0.4.6";
+const RF_VERSION = "0.4.7";
 
 const LS_KEY = "rolefeed.annotations.v1";
 const HOUR = 3600 * 1000;
@@ -1338,7 +1340,11 @@ function render() {
       return key === "unknown" ? !BUCKET_KEYS.has(size) || size === "unknown" : size === key;
     });
     if (!rows.length) return "";
-    const collapsed = localStorage.getItem("rolefeed.collapsed." + key) === "1";
+    // Guarded like load() and save(). Unguarded, this one read was enough to stop the
+    // whole feed rendering for anyone whose browser blocks storage — Safari with "Block
+    // all cookies", for instance — because the exception escaped render().
+    let collapsed = false;
+    try { collapsed = localStorage.getItem("rolefeed.collapsed." + key) === "1"; } catch (e) {}
     return `
     <section class="bucket ${collapsed ? "collapsed" : ""}" data-bucket="${key}">
       <button class="bucket-head">

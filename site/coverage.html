@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#100d22">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<title>RoleFeed — version history</title>
+<title>RoleFeed — coverage</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='0' fill='%2314102b'/%3E%3Crect x='7' y='8' width='18' height='3' fill='%238b6cff'/%3E%3Crect x='7' y='15' width='13' height='3' fill='%23f4eddf'/%3E%3Crect x='7' y='22' width='8' height='3' fill='%23ffb84d'/%3E%3C/svg%3E">
 <style>
   :root {
@@ -110,7 +110,9 @@
     .topbar .tab {
       flex: 0 0 auto;        /* never squeezed to fit; the strip scrolls instead */
       min-height: 40px;      /* a thumb, not a cursor */
-      scroll-snap-align: start;
+      /* Centre, not start. With start-alignment the snap points fought the script that
+         centres the current page's tab, and won by up to 57px on load. */
+      scroll-snap-align: center;
     }
   }
 
@@ -209,7 +211,7 @@
     text-align: left; font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
     color: var(--muted); font-weight: 700; padding: 0 0 7px; border-bottom: 1px solid var(--rule);
   }
-  table.cov th.r, table.cov td.r { text-align: right; }
+  table.cov th.r, table.cov td.r { text-align: right; padding-left: 14px; }
   table.cov td { padding: 7px 0; border-bottom: 1px solid var(--rule); color: var(--cream-dim); }
   table.cov td.k { color: var(--cream); font-weight: 600; }
   table.cov td.r { color: var(--cream); font-weight: 650; }
@@ -289,7 +291,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.6</a>
+      <a class="ver" href="changelog.html">v0.4.7</a>
     </span>
   </div>
 </div>
@@ -356,7 +358,9 @@ const OPEN_THREE = new Set(["greenhouse", "lever", "ashby"]);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
-const rateCell = p => '<td class="rate' + (p < 35 ? " low" : "") + '">' + p + '%</td>';
+// Right-aligned like the other figures. It was left-aligned with no padding, so it sat
+// flush against the right-aligned "Of" column and "39" next to "51%" read as "3951%".
+const rateCell = p => '<td class="r rate' + (p < 35 ? " low" : "") + '">' + p + '%</td>';
 
 function render(cov) {
   const reached = cov.filter(c => c.ats);

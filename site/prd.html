@@ -232,7 +232,9 @@
     .topbar .tab {
       flex: 0 0 auto;        /* never squeezed to fit; the strip scrolls instead */
       min-height: 40px;      /* a thumb, not a cursor */
-      scroll-snap-align: start;
+      /* Centre, not start. With start-alignment the snap points fought the script that
+         centres the current page's tab, and won by up to 57px on load. */
+      scroll-snap-align: center;
     }
   }
   .ver { font-size: 12px; font-variant-numeric: tabular-nums; }
@@ -304,7 +306,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.6</a>
+      <a class="ver" href="changelog.html">v0.4.7</a>
     </span>
   </div>
 </div>
@@ -435,7 +437,7 @@
     HR suite &mdash; SuccessFactors, Taleo, iCIMS &mdash; that publishes nothing.</p>
     <p><strong>So the method's reach is inversely correlated with the employers it is
     aimed at.</strong> Lengthening the list cannot fix that: going from 169 employers to
-    211 moved reachability seven points and left the shape untouched, because a longer
+    211 moved reachability 1.6 points, from 28% to 29%, and left the shape untouched, because a longer
     list adds reachable and unreachable employers in the same proportion.</p>
   </div>
 

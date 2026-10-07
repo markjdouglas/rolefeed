@@ -110,7 +110,9 @@
     .topbar .tab {
       flex: 0 0 auto;        /* never squeezed to fit; the strip scrolls instead */
       min-height: 40px;      /* a thumb, not a cursor */
-      scroll-snap-align: start;
+      /* Centre, not start. With start-alignment the snap points fought the script that
+         centres the current page's tab, and won by up to 57px on load. */
+      scroll-snap-align: center;
     }
   }
 
@@ -307,7 +309,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.6</a>
+      <a class="ver" href="changelog.html">v0.4.7</a>
     </span>
   </div>
 </div>
@@ -369,7 +371,7 @@
     </div>
 
     <p><strong>The collection worked and the commit of it did not.</strong> Run 196 set up
-    its runner, installed its dependencies, queried all 62 employers and wrote 967 roles to
+    its runner, installed its dependencies, queried all 62 employers and wrote the feed to
     disk &mdash; then failed at the step that commits the result, and the whole run was
     marked failed. The data existed for about a second and was thrown away with the
     runner.</p>
@@ -460,7 +462,7 @@
       <li><time>00:56</time><span><b>Resolved.</b> A second consecutive scheduled collection
         completed, meeting the criterion set when this entry was opened. Every collection
         since has also completed.</span></li>
-      <li><time>22:48</time><span><b>Collection succeeded</b> &mdash; 970 roles, the first
+      <li><time>22:48</time><span><b>Collection succeeded</b> &mdash; 486 roles, the first
         since 16:53. GitHub had begun assigning runners again. One success was deliberately
         not treated as resolution.</span></li>
       <li><time>20:15</time><span><b>Identified as upstream.</b> GitHub's status page shows
@@ -486,7 +488,7 @@
         after 15m 03s without ever being assigned a runner. Failure notification
         sent.</span></li>
       <li><time>18:55</time><span>Scheduled run queued as normal. Last successful collection
-        was 16:51.</span></li>
+        landed at 16:53.</span></li>
     </ul>
 
     <h4>Root cause</h4>
@@ -552,6 +554,48 @@
     until it can be measured.</p>
   </div>
 
+  <div class="inc">
+    <h3>Scheduled runs not started
+      <span class="pill resolved">Resolved</span>
+      <span class="pill minor">Minor</span></h3>
+    <div class="inc-meta">
+      <span><b>Dates</b> 03&ndash;04/10/2026</span>
+      <span><b>Runs not started</b> 11 of about 24</span>
+      <span><b>Longest gap</b> 8h 14m</span>
+      <span><b>Cause</b> upstream &mdash; GitHub scheduler</span>
+      <span><b>Data loss</b> none</span>
+      <span><b>Found</b> 7 October, by audit</span>
+    </div>
+
+    <p><strong>GitHub did not start 11 of the roughly 24 scheduled collections across 3
+    and 4 October.</strong> Every run that did start succeeded, so this page &mdash; which
+    counted only runs that happened &mdash; reported 100% throughout, while the feed went as
+    long as 8h 14m between collections. Nobody noticed for three days. This also means the
+    5 October entry above was not the first incident, as this page and the version history
+    originally said.</p>
+
+    <h4>Gaps between collections &mdash; UTC</h4>
+    <ul class="tl">
+      <li><time>3 Oct</time><span>11:06 to 16:58 &mdash; 5h 52m</span></li>
+      <li><time>3&ndash;4 Oct</time><span>16:58 to 01:13 &mdash; <b>8h 14m</b></span></li>
+      <li><time>4 Oct</time><span>04:28 to 10:53 &mdash; 6h 25m</span></li>
+      <li><time>4 Oct</time><span>10:53 to 18:20 &mdash; 7h 26m</span></li>
+    </ul>
+
+    <h4>Root cause</h4>
+    <p>GitHub's documentation says scheduled workflows can be delayed under heavy load, and
+    that some may be dropped altogether. That is what happened: the runs were never
+    created, so there was nothing to fail. Not a fault in this repository.</p>
+
+    <h4>Why the page missed it</h4>
+    <p>The reliability figure divided successful runs by <em>runs that happened</em>. A run
+    GitHub never starts leaves no record, so it cannot appear in either number.
+    <strong>A metric built from events cannot see the events that did not occur.</strong>
+    The banner now also checks how long it has been since the last scheduled run started,
+    and reports "Collection is late" past three hours &mdash; the longest healthy gap,
+    given a two-hour schedule and start delays measured up to 43 minutes, is about 2h 35m.</p>
+  </div>
+
 </main>
 
 <footer class="wrap">
@@ -568,27 +612,23 @@ function fmt(iso) {
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
 }
 
-function paint(runs) {
-  const ordered = runs.slice().reverse();            // oldest first
+function setComponent(id, text, cls) {
+  el(id).textContent = text;
+  el(id).className = "st" + (cls ? " " + cls : "");
+}
 
-  // The percentage counts scheduled runs only. A manual dispatch is a recovery action,
-  // not evidence the schedule is healthy, and letting one inflate the figure would make
-  // the number flattering rather than useful.
-  const sched = runs.filter(r => r.event === "schedule");
-  const base = sched.length ? sched : runs;
-  const ok = base.filter(r => r.conclusion === "success").length;
+// The schedule is what this page reports on. Manual runs are recovery actions: they are
+// drawn nowhere and counted nowhere, because a manual success says nothing about whether
+// the schedule is healthy. An earlier version took the headline from the newest run of
+// any kind, so one manual success could read "All systems operational" over a schedule
+// that was failing every time.
+let lastRuns = null;
 
-  el("uptime").textContent = (ok / base.length * 100).toFixed(2) + "%";
-  el("uptime-sub").innerHTML =
-    `of the last <strong style="color:var(--cream)">${base.length}</strong> scheduled `
-    + `collections completed successfully, from ${fmt(ordered[0].run_started_at)} onwards. `
-    + `A rolling window, not the lifetime figure.`;
-
-  // Each block is 2px wide with a 2px gap, so a hundred of them need 398px and on a
-  // phone the strip was pushing the whole page wider than the screen — the one thing a
-  // layout may never do. Rather than shrink the blocks below legibility, show as many
-  // of the most recent runs as actually fit and date the strip from the first one
-  // shown, so the caption stays true at any width.
+function drawStrip(base) {
+  // Each block is 2px wide with a 2px gap, so a hundred need 398px. Show as many of the
+  // most recent runs as fit, and recompute on resize — computing once at load meant a
+  // phone rotated from landscape to portrait was left holding a strip wider than itself.
+  const ordered = base.slice().reverse();             // oldest first
   const stripEl = el("strip");
   const cap = Math.max(20, Math.floor((stripEl.clientWidth + 2) / 4));
   const shown = ordered.slice(Math.max(0, ordered.length - cap));
@@ -596,50 +636,87 @@ function paint(runs) {
     `<i class="${r.conclusion === "success" ? "" : "bad"}" title="${r.run_started_at} — ${r.conclusion}"></i>`
   ).join("");
   el("strip-from").textContent = fmt(shown[0].run_started_at);
+}
 
-  // The newest run decides the headline. A status page that says "operational" while the
-  // last run failed is worse than no status page at all.
-  const latest = runs[0];
-  const good = latest.conclusion === "success";
+function utc(iso) {
+  return new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short",
+    hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC";
+}
+
+function paint(runs) {
+  const sched = runs.filter(r => r.event === "schedule");
+  const base = sched.length ? sched : runs;
+  const noun = sched.length ? "scheduled collections" : "collections";
+  const ok = base.filter(r => r.conclusion === "success").length;
+
+  el("uptime").textContent = (ok / base.length * 100).toFixed(2) + "%";
+  el("uptime-sub").innerHTML =
+    `of the last <strong style="color:var(--cream)">${base.length}</strong> ${noun} `
+    + `completed successfully, from ${fmt(base[base.length - 1].run_started_at)} onwards. `
+    + `It counts runs that happened, so a run GitHub never started is invisible here; `
+    + `the lateness check in the banner catches those.`;
+
+  lastRuns = base;
+  drawStrip(base);
+
+  // Two ways to be unhealthy. The newest scheduled run failed, or there has not been one
+  // for too long. The second matters as much as the first: on 3–4 October GitHub never
+  // started 11 of about 24 scheduled runs, and a page that only judged the runs that did
+  // start reported 100% while the feed went more than eight hours stale. Scheduled at :37
+  // every two hours with start delays measured up to 43 minutes, the longest healthy gap
+  // between starts is about 2h35m; three hours means at least one run did not happen.
+  const latest = base[0];
+  const hoursSince = (Date.now() - new Date(latest.run_started_at)) / 3.6e6;
+  const failed = latest.conclusion !== "success";
+  const late = sched.length > 0 && hoursSince > 3;
+  const newerManual = runs.find(r => r.event !== "schedule"
+    && new Date(r.run_started_at) > new Date(latest.run_started_at));
+
   const b = el("banner");
-  b.className = good ? "banner-ok" : "banner-bad";
-  // Forced to UTC. Every timestamp in the incident log below is UTC, and rendering this
-  // one in the viewer's local zone made the same run appear an hour later than the
-  // timeline said it happened — the exact ambiguity a status page cannot afford.
-  const when = new Date(latest.run_started_at)
-    .toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit",
-                               minute: "2-digit", timeZone: "UTC" }) + " UTC";
-  b.innerHTML = `<span class="lamp"></span><div>
-    <h2>${good ? "All systems operational" : "Collection is failing"}</h2>
-    <div class="banner-sub">Last collection ${when} &mdash; ${latest.conclusion}${latest.event === "workflow_dispatch" ? ", run manually" : ""}.</div></div>`;
-  // Components must agree with the banner. A page reading "operational" on every row while
-  // the headline says collection is failing is the failure mode this page exists to avoid.
-  if (!good) {
-    el("c-pipe").textContent = "Degraded";
-    el("c-pipe").className = "st";
-    el("c-feed").textContent = "Stale";
-    el("c-feed").className = "st";
+  b.className = failed || late ? "banner-bad" : "banner-ok";
+  const head = failed ? "Collection is failing"
+             : late   ? "Collection is late"
+             :          "All systems operational";
+  let sub = `Last scheduled collection ${utc(latest.run_started_at)} &mdash; ${latest.conclusion}`;
+  if (late && !failed) sub += `, ${Math.floor(hoursSince)}h ago`;
+  sub += ".";
+  if (newerManual) sub += ` A manual run at ${utc(newerManual.run_started_at)} ${newerManual.conclusion === "success" ? "succeeded" : "failed"}; it is not counted.`;
+  b.innerHTML = `<span class="lamp"></span><div><h2>${head}</h2><div class="banner-sub">${sub}</div></div>`;
+
+  // Components must agree with the banner.
+  if (failed || late) {
+    setComponent("c-pipe", failed ? "Degraded" : "Late");
+    setComponent("c-feed", "Stale");
   }
+}
+
+window.addEventListener("resize", () => { if (lastRuns) drawStrip(lastRuns); });
+
+function unavailable(message) {
+  // No figure is shown when live data cannot be read. An earlier version hard-coded a
+  // fallback percentage, which was both stale and arithmetically impossible ("98.99% of
+  // the last 100"). A status page should say it does not know rather than invent.
+  el("banner").className = "banner-wait";
+  el("banner").innerHTML = `<span class="lamp"></span><div>
+    <h2>Live status unavailable</h2>
+    <div class="banner-sub">${message}</div></div>`;
+  el("uptime").textContent = "—";
+  el("uptime-sub").textContent = "Not available without live data.";
+  setComponent("c-pipe", "Unknown", "na");
+  setComponent("c-feed", "Unknown", "na");
 }
 
 fetch(WF)
   .then(r => r.ok ? r.json() : Promise.reject(r.status))
   .then(d => {
     const runs = (d.workflow_runs || []).filter(r => r.status === "completed");
-    if (!runs.length) throw new Error("no runs");
-    paint(runs);  // banner + strip: every completed collection, manual ones included
+    if (!runs.length) return unavailable("GitHub returned no completed collections to report on.");
+    paint(runs);
   })
-  .catch(() => {
-    // Rate limited, offline, or the API moved. Say so rather than showing a stale claim.
-    el("banner").className = "banner-wait";
-    el("banner").innerHTML = `<span class="lamp"></span><div>
-      <h2>Live status unavailable</h2>
-      <div class="banner-sub">Could not reach the GitHub Actions API. The figures below are
-      the last recorded values, not live.</div></div>`;
-    el("uptime").textContent = "98.99%";
-    el("uptime-sub").innerHTML =
-      "of the last <strong style=\"color:var(--cream)\">100</strong> scheduled collections "
-      + "completed successfully, to 5 Oct 2026. Recorded, not live.";
+  .catch(status => {
+    unavailable(status === 403
+      ? "GitHub's API refused the request, usually its hourly limit for unsigned requests. Try again later."
+      : "Could not reach the GitHub Actions API.");
   });
 </script>
 

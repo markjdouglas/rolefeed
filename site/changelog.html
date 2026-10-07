@@ -110,7 +110,9 @@
     .topbar .tab {
       flex: 0 0 auto;        /* never squeezed to fit; the strip scrolls instead */
       min-height: 40px;      /* a thumb, not a cursor */
-      scroll-snap-align: start;
+      /* Centre, not start. With start-alignment the snap points fought the script that
+         centres the current page's tab, and won by up to 57px on load. */
+      scroll-snap-align: center;
     }
   }
 
@@ -245,7 +247,7 @@
     </nav>
     <span class="build">
       <span class="alpha">ALPHA</span>
-      <a class="ver" href="changelog.html">v0.4.6</a>
+      <a class="ver" href="changelog.html">v0.4.7</a>
     </span>
   </div>
 </div>
@@ -260,7 +262,7 @@
 
   <div class="rel current">
     <h2>7 October 2026 <span class="tag now">current</span></h2>
-    <div class="date">v0.4.6</div>
+    <div class="date">v0.4.6 &rarr; v0.4.7</div>
     <ul>
       <li><strong>Every role was published twice.</strong> 958 roles in scope were really
         480. One duplicated line; every figure on the feed was double.</li>
@@ -281,6 +283,22 @@
         to "Location accepted".</li>
       <li><strong>The status page separates an open incident from history</strong> and now
         carries two.</li>
+      <li><strong>An audit found the problems below</strong>, each reproduced before being
+        fixed.</li>
+      <li><strong>Coverage figures no longer run together.</strong> "39" beside "51%" read as
+        "3951%".</li>
+      <li><strong>The feed renders when browser storage is blocked.</strong> One unguarded
+        read stopped the whole page.</li>
+      <li><strong>The status page judges the schedule, not the newest run.</strong> A manual
+        success could read as healthy over a failing schedule. It now also flags a schedule
+        that has stopped starting.</li>
+      <li><strong>Correction:</strong> 5 October was not the first outage. On 3&ndash;4
+        October GitHub never started 11 of about 24 scheduled runs. The feed went 8h 14m
+        stale while the status page showed 100%, because it counted only runs that happened
+        &mdash; <a href="outages.html">now recorded</a>.</li>
+      <li><strong>Correction:</strong> going from 169 to 211 employers moved reachability 1.6
+        points, not seven, and from 28%, not 22%. Several role counts on the outages page
+        were also doubled.</li>
       <li><strong>Correction:</strong> the 5 October outage was estimated at two hours while
         it was still running. It was 5h 55m.</li>
     </ul>
@@ -310,7 +328,7 @@
         migration on 19 October.</li>
       <li><strong>Correction:</strong> moving the schedule to :37 was meant to shorten
         GitHub's queue delay. Measured over a fortnight it has not &mdash; runs still start
-        14 to 22 minutes late.</li>
+        a median of about 13 minutes late, and up to 43.</li>
     </ul>
   </div>
 
@@ -322,7 +340,7 @@
         GXO, Maersk, Geodis and Europcar. It alone moved enterprise reachability from 15%
         to 22%.</li>
       <li><strong>Discovery re-run across 211 employers:</strong> 62 resolved (29%, from
-        22%), 5,541 roles assessed, 564 in scope, 7 matched.</li>
+        28%), 5,541 roles assessed, 564 in scope, 7 matched.</li>
       <li><strong>SmartRecruiters paging fixed.</strong> Sixt, Delivery Hero and Grab were
         each capped at exactly 100 postings. Total supply rose from 3,698 to about 5,500.</li>
       <li><strong>Recency now uses the employer's publication date</strong> where the

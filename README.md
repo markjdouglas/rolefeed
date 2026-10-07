@@ -26,7 +26,8 @@ project with these packages. Run it in every new terminal tab; `deactivate` undo
 ## Use
 
 Resolve where each employer's job board lives. Run after editing `companies.yaml`.
-Roughly three minutes.
+About 23 minutes for 211 employers, because it probes several token variants per
+employer and is rate-limited per host.
 
 ```bash
 python discover.py                  # everything
@@ -103,11 +104,12 @@ Tagged by size, because results read better grouped by company type than as one 
 | Bucket | Headcount | Count |
 |---|---|---|
 | `enterprise` | 5,000+ | 60 |
-| `large` | 1,000–5,000 | 37 |
-| `mid` | 250–1,000 | 42 |
-| `scaleup` | 50–250 | 30 |
+| `large` | 1,000–5,000 | 39 |
+| `mid` | 250–1,000 | 51 |
+| `scaleup` | 50–250 | 49 |
+| `startup` | 10–50 | 12 |
 
-Anything under roughly 50 people is excluded. Headcounts are approximate.
+211 in total. Headcounts are approximate.
 
 Previous employers are excluded by design: Uber, Gett, Glue Home, Ontruck, ParkBee,
 Otto Car, POSTX, Apolitical, Abercrombie & Fitch.
