@@ -262,137 +262,53 @@
     <h2>7 October 2026 <span class="tag now">current</span></h2>
     <div class="date">v0.4.6</div>
     <ul>
-      <li><strong>A failed push no longer throws away a good collection.</strong> On
-        7 October run 196 queried all 62 employers, wrote 967 roles, and then failed at the
-        step that commits the result, so the work was discarded with the runner and the feed
-        went stale. The step ran <code>git push</code> once with nothing after it: the
-        cheapest call in the pipeline, at the end of the job, with no tolerance for failure.
-        It now retries three times with a widening pause.</li>
-      <li><strong>Reconciliation is last-write-wins, not a rebase.</strong> Between attempts
-        the generated file is set aside, the branch is reset onto whatever the remote holds,
-        and the file is committed again. <code>jobs.json</code> has exactly one writer, so a
-        newer collection is always the right answer and there is nothing to merge &mdash;
-        and a rebase conflict in an unattended job would leave the repository stopped half
-        way through a rebase. All four paths through the retry loop were run with git
-        stubbed out before shipping: succeed first time, succeed on the second, succeed on
-        the third, and fail cleanly after three.</li>
-      <li><strong>Every role was being published twice.</strong> The feed said 958 roles
-        in scope; there were 480. Deduplication ran correctly and then the loop below it
-        appended each surviving posting to the output list twice, so all four headline
-        figures, every group count and the matched total were exactly double. The two
-        copies were byte-identical, which is why it survived a casual look: nothing on the
-        page contradicted anything else. One line deleted. Figures correct themselves on
-        the next scheduled collection.</li>
-      <li><strong>Correction:</strong> this was reported fixed on 5 October and it was not.
-        The change was made to a working copy that never reached the repository, and the
-        claim was published without checking the file it was about. Counting distinct URLs
-        in the feed would have caught it in seconds, which is now the check.</li>
-      <li><strong>The match-reason line says where, not just that.</strong> The location
-        test returned its reason &mdash; "London", "UK remote" &mdash; and the collector
-        discarded it, so every card fell back to the generic "Location accepted". Restored,
-        and also unfixed since 5 October for the same reason as above.</li>
-      <li><strong>The header was broken on a phone, and this is why.</strong> The bar is
-        pinned to a fixed 64px so that no page's content can change its height &mdash; that
-        is what stopped it moving between pages on a desktop. Below 860px the bar also
-        wraps, and the pin was never released, so a second row of content was being held
-        inside a box still exactly 64px tall. It overflowed and painted on top of the first
-        heading on every page. A fixed height and wrapping cannot both be true; the height
-        is now released at exactly the width where the wrapping begins.</li>
-      <li><strong>The tabs became a scrolling strip.</strong> Five tabs cannot share 390px
-        at a legible size, so they now scroll edge to edge, 40px tall for a thumb rather
-        than a cursor, with the current page's tab centred on load. The tab at the right is
-        left half cut by the screen edge on purpose: a clipped tab is the plainest signal
-        that the row moves.</li>
-      <li><strong>Nothing widens the page any more.</strong> The uptime strip draws a hundred
-        2px blocks with 2px gaps, which needs 398px and so pushed the whole page sideways on
-        a phone. It now shows as many of the most recent runs as actually fit and dates
-        itself from the first one shown. The coverage band table scrolls inside its own box.
-        Measured at 320, 393, 430, 768 and 1280px across all five pages: horizontal overflow
-        is zero everywhere and the header no longer overlaps content anywhere.</li>
-      <li><strong>The feed's figures sit two-up on a phone</strong> rather than wrapping
-        three-and-one with the fourth stranded on a line of its own.</li>
-      <li><strong>Incident of 5 October resolved.</strong> Collections resumed at 22:48 UTC
-        and the entry closed at 00:56 once a second consecutive scheduled run completed, the
-        criterion written down while the incident was still open.</li>
-      <li><strong>Correction:</strong> that entry estimated the cost at "roughly two extra
-        hours" of stale data while the outage was still running. The measured gap between
-        successful collections was 5h 55m. Duration is the one field a live incident log
-        should leave empty until it can be measured.</li>
+      <li><strong>Every role was published twice.</strong> 958 roles in scope were really
+        480. One duplicated line; every figure on the feed was double.</li>
+      <li><strong>Correction:</strong> that was reported fixed on 5 October and was not. The
+        edit never reached the repository and the claim went out unchecked.</li>
+      <li><strong>A failed push no longer discards a collection.</strong> It now retries
+        three times, reconciling last-write-wins rather than rebasing &mdash;
+        <a href="outages.html">incident</a>.</li>
+      <li><strong>The header was broken on a phone.</strong> Its fixed 64px height was never
+        released at the width where the bar wraps, so the second row painted over the
+        page.</li>
+      <li><strong>Tabs scroll on a phone</strong>, 40px targets, current page centred.
+        Figures sit two-up. Nothing widens the page, checked from 320 to 1280px on all five
+        pages.</li>
+      <li><strong>The match line names the location again</strong> instead of falling back
+        to "Location accepted".</li>
+      <li><strong>The status page separates an open incident from history</strong> and now
+        carries two.</li>
+      <li><strong>Correction:</strong> the 5 October outage was estimated at two hours while
+        it was still running. It was 5h 55m.</li>
     </ul>
   </div>
 
   <div class="rel">
     <h2>5 October 2026</h2>
-    <div class="date">v0.4.5</div>
+    <div class="date">v0.4.4 &rarr; v0.4.5</div>
     <ul>
-      <li><strong>Status and outages page added</strong>, modelled on Atlassian Statuspage,
-        which Slack and Anthropic both use. Current status and uptime are computed live
-        from the GitHub Actions API when the page loads rather than typed in, so they
-        cannot drift from the truth.</li>
-      <li><strong>Collection reliability when the page launched: 171 of 172 scheduled
-        runs</strong> since 20 September, median run 69 seconds. The live figure is on the
-        status page; this one is a snapshot and will not be updated.</li>
-      <li><strong>First incident recorded, and still open.</strong> On 5 October GitHub
-        stopped allocating runners to this repository. Two jobs queued for fifteen minutes
-        and were cancelled having executed zero steps, and GitHub has an open Actions
-        incident covering it. No application fault and no data loss &mdash; each collection
-        is a full refresh, so one successful run restores currency unaided.</li>
-      <li><strong>Correction:</strong> this entry first recorded that incident as resolved,
-        on the grounds that a manual collection had been dispatched. The dispatched run then
-        failed the same way on a different runner image. Dispatching a recovery is not
-        recovering, and the status page now says so in its own timeline.</li>
-      <li><strong>The status page separates an active incident from incident history</strong>,
-        logs updates newest first, and states its resolution criteria in advance: two
-        consecutive successful scheduled collections, not one, and not GitHub closing its own
-        incident. Defining resolution before you want it is what stops a status page
-        flattering itself.</li>
-      <li><strong>Component rows follow the live banner.</strong> The feed row reads
-        <em>Stale</em> while collection is failing, rather than every row claiming
-        operational underneath a red headline.</li>
-      <li><strong>The logotype no longer shifts when you leave the feed.</strong> Four
-        pages draw it as a single image; the feed composes it from two SVGs, because only
-        there does the goose animate and change frames. The two agreed on overall height
-        but not on the art grid beneath it &mdash; the feed left 5 art units between goose
-        and wordmark where the shared image leaves 8, so the lettering began three units
-        further left, and its unit was typed as 1.70 rather than derived from 46/27. Both
-        now come off the same 27-unit grid.</li>
+      <li><strong>Status and outages page added.</strong> Status and uptime are computed
+        live from the GitHub Actions API, not typed in, so they cannot drift from the
+        truth.</li>
+      <li><strong>First incident recorded.</strong> GitHub stopped allocating runners for
+        nearly six hours. No application fault and no data loss.</li>
+      <li><strong>Updates run newest first,</strong> and resolution criteria are written
+        down before they are wanted &mdash; which is what stops a status page flattering
+        itself.</li>
+      <li><strong>The header stopped moving between pages.</strong> Four stale rules had
+        each survived an earlier layout and quietly won: a duplicate
+        <code>.bar-wrap</code>, a leftover <code>align-self</code>, a second
+        <code>.alpha</code>, and the feed's own lockup off the shared art grid.</li>
       <li><strong>Five dead rules deleted</strong> for a masthead and a tagline that no
-        longer exist in the markup. Rules outlive the elements they were written for, and
-        each survivor is somewhere a future change can go wrong invisibly.</li>
-      <li><strong>A third stale duplicate removed, and the pattern named.</strong>
-        <code>.alpha</code> was declared twice on all five pages; on the feed the older
-        block sat <em>after</em> the override rather than before it and therefore won,
-        making that badge 2px narrower than the same badge everywhere else. Padding and
-        shadow now come from one declaration. Three survivors of this kind in two days is
-        the argument for one shared stylesheet instead of five copies of it.</li>
-      <li><strong>The status banner states UTC explicitly.</strong> It had been rendering
-        the last collection's time in the viewer's own timezone while every timestamp in
-        the incident log beneath it was UTC, so in British Summer Time the same run
-        appeared to happen an hour after the timeline said it did.</li>
-      <li><strong>Two stale CSS rules removed.</strong> A duplicate <code>.bar-wrap</code> in
-        the brief put its navigation 8px right of every other page's, and a leftover
-        <code>align-self</code> on the feed's version badge sat it 14px high. Both were
-        survivors of earlier layouts that the newer rules never overrode, which is the usual
-        way a shared header drifts apart.</li>
-      <li><strong>Runner image pinned to <code>ubuntu-24.04</code>.</strong> The
-        <code>ubuntu-latest</code> label migrates to Ubuntu 26 from 19 October 2026, and an
-        unattended job should not have its operating system changed underneath it on
-        someone else's schedule.</li>
-      <li><strong>Navigation tabs normalised to equal width</strong>, then widened to 146px
-        and forbidden from wrapping. At 138px "Version history" broke onto a second line,
-        which made that one tab taller than the rest and pushed the whole bar down &mdash;
-        so the header changed height depending on which page you were on.</li>
-      <li><strong>The bar is now a fixed 64px rather than a minimum</strong>, so no page's
-        content can resize it, and the ALPHA badge sits on the same baseline everywhere.</li>
-      <li><strong>The feed's brand lockup rescaled to 46px</strong> to match the shared image
-        used on the other four pages. It had been rendering 2px taller, which was the other
-        half of the shifting header.</li>
-      <li>Tagline removed. With five tabs there was no room for it and it was rendering as
-        a single letter and an ellipsis.</li>
-      <li><strong>Correction:</strong> moving the collection off the hour to :37 was
-        supposed to shorten GitHub's queue delay. Measured across a fortnight it has not
-        &mdash; runs still start 14 to 22 minutes late. The earlier explanation was
-        wrong.</li>
+        longer exist in the markup.</li>
+      <li><strong>The banner states UTC.</strong> It had shown the viewer's own timezone
+        against a log written entirely in UTC.</li>
+      <li><strong>Runner pinned to <code>ubuntu-24.04</code></strong> ahead of the Ubuntu 26
+        migration on 19 October.</li>
+      <li><strong>Correction:</strong> moving the schedule to :37 was meant to shorten
+        GitHub's queue delay. Measured over a fortnight it has not &mdash; runs still start
+        14 to 22 minutes late.</li>
     </ul>
   </div>
 
